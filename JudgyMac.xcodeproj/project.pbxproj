@@ -9,17 +9,17 @@
 /* Begin PBXBuildFile section */
 		0D35ACC341554D0B4B625AD2 /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384C3A8579A07694C8026266 /* StoreManager.swift */; };
 		118E2439288F4D9BFC0136F9 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1793841F167922FBC48BDEEF /* PaywallView.swift */; };
+		129433952593655A98DE179F /* CPUMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3F4279DEAB034963BF3879 /* CPUMonitor.swift */; };
 		14C70E038FC91B16A70DFE95 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EE2BD5868466FD569BEE3 /* SettingsView.swift */; };
-		187886FFD88C7CCCD45F7494 /* AnimatedFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = B544CA9C3AFACCEB2ACDAAE0 /* AnimatedFace.swift */; };
 		1C76E6CAD2E2742343BD1A5A /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38E714ECDC40E0710486EDE9 /* SettingsWindowController.swift */; };
 		229AC52AE0C821CCE442EEDD /* DailySummaryGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC34BF823FCBCCDCA5C2A0C /* DailySummaryGenerator.swift */; };
+		2D0F5308856499428A4F8F1E /* FluentEmoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE37C414A6717B82D99B4629 /* FluentEmoji.swift */; };
 		2E45B75B1073D8EC651EAF60 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1CAAC9FE2B10A28F010DC1 /* HistoryView.swift */; };
 		2FF2144CB375DC348C431214 /* RoastEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9100DF1CA31D047308E4216 /* RoastEntry.swift */; };
 		3265259BB2F0F6826C1DED94 /* RoastBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51F274515A877D4EB33C49 /* RoastBubble.swift */; };
 		366814E659DAF2E942B88717 /* DetectionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7162979E25841246E79E8578 /* DetectionCoordinator.swift */; };
 		3D348B5D222B1CBB6B03E5D3 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA629D49B1C788897ECD732C /* GlassCard.swift */; };
 		4332C1F72B138EEF404397B6 /* IdleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38B35251CB604B1CED9835B5 /* IdleDetector.swift */; };
-		49A96D53F59FEFA5EB1608EE /* MenuBarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A594CDA89222061DD8AADA81 /* MenuBarIcon.swift */; };
 		5292F342E6FF37AD2BF52BE8 /* ToastWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0811A026395AC21A32063256 /* ToastWindow.swift */; };
 		636FCD6617EBBF3071C0C201 /* Roasts in Resources */ = {isa = PBXBuildFile; fileRef = FCE69F46BDD51CABB4A52FCA /* Roasts */; };
 		65D816688A8C27434247E80A /* RoastEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F45A53EAB9A5FF2172C637 /* RoastEngine.swift */; };
@@ -31,6 +31,7 @@
 		892603636714B1581AC7D21B /* BehaviorEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF25446265E393933579BE1C /* BehaviorEvent.swift */; };
 		8E932A2EF78C43994D8FB1AF /* PersonalityPack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEF41255395933677FDF0E5 /* PersonalityPack.swift */; };
 		9409005EFC052EF8F77BD804 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6191C983FB84F61B13E6C87F /* AppDelegate.swift */; };
+		94D48CD67AA617B676C3ECF5 /* Emoji in Resources */ = {isa = PBXBuildFile; fileRef = 6B27FE2482465FBC17BC4011 /* Emoji */; };
 		9513A82AA2118F4EAA68AEDA /* SummaryCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1099E327C918F88773A0CD69 /* SummaryCardView.swift */; };
 		9661F064E0C3EB4E29282C83 /* Mood.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66B9C7466A2F6F286959A58 /* Mood.swift */; };
 		98EFB9A3865F4938F6CDD2D4 /* ProductIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CFD1CCB886B29269B6FF3 /* ProductIdentifiers.swift */; };
@@ -69,22 +70,22 @@
 		384C3A8579A07694C8026266 /* StoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreManager.swift; sourceTree = "<group>"; };
 		38B35251CB604B1CED9835B5 /* IdleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleDetector.swift; sourceTree = "<group>"; };
 		38E714ECDC40E0710486EDE9 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		4A3F4279DEAB034963BF3879 /* CPUMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUMonitor.swift; sourceTree = "<group>"; };
 		5BDEDB80CB9A81667318B218 /* RoastTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastTemplate.swift; sourceTree = "<group>"; };
 		5EA8F9880213B6271E776347 /* StatsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsStore.swift; sourceTree = "<group>"; };
 		6191C983FB84F61B13E6C87F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		65F45A53EAB9A5FF2172C637 /* RoastEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastEngine.swift; sourceTree = "<group>"; };
 		675FFD5CA556A54DEEE43D37 /* UserStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStats.swift; sourceTree = "<group>"; };
 		6AEF41255395933677FDF0E5 /* PersonalityPack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalityPack.swift; sourceTree = "<group>"; };
+		6B27FE2482465FBC17BC4011 /* Emoji */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Emoji; path = JudgyMac/Resources/Emoji; sourceTree = SOURCE_ROOT; };
 		7162979E25841246E79E8578 /* DetectionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionCoordinator.swift; sourceTree = "<group>"; };
 		9BE02200D5870AF01016DA0E /* JudgyMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JudgyMacApp.swift; sourceTree = "<group>"; };
 		9C1CAAC9FE2B10A28F010DC1 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
-		A594CDA89222061DD8AADA81 /* MenuBarIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIcon.swift; sourceTree = "<group>"; };
 		A5E7CEB8EA7BCC2E987AEE93 /* JudgyMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JudgyMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A66B9C7466A2F6F286959A58 /* Mood.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mood.swift; sourceTree = "<group>"; };
 		A9100DF1CA31D047308E4216 /* RoastEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastEntry.swift; sourceTree = "<group>"; };
 		AA629D49B1C788897ECD732C /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
 		AB08813283AB6FA67974B4E0 /* EntitlementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementManager.swift; sourceTree = "<group>"; };
-		B544CA9C3AFACCEB2ACDAAE0 /* AnimatedFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedFace.swift; sourceTree = "<group>"; };
 		BCC34BF823FCBCCDCA5C2A0C /* DailySummaryGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailySummaryGenerator.swift; sourceTree = "<group>"; };
 		BF25446265E393933579BE1C /* BehaviorEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviorEvent.swift; sourceTree = "<group>"; };
 		BF30272CC10DE7074C471CF2 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -92,6 +93,7 @@
 		CA02D1EC626473B027D56BDE /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		D0FE6AF81934ED2393BB02AB /* JudgyMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JudgyMac.entitlements; sourceTree = "<group>"; };
 		D55EE2BD5868466FD569BEE3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		DE37C414A6717B82D99B4629 /* FluentEmoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluentEmoji.swift; sourceTree = "<group>"; };
 		E18F5D092B33FACE9B7C389F /* ThermalDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThermalDetector.swift; sourceTree = "<group>"; };
 		EBF248A6E63A9EF1DCEBB5FD /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		EEAA773191E3D1797A5D705D /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -149,7 +151,6 @@
 			isa = PBXGroup;
 			children = (
 				9C1CAAC9FE2B10A28F010DC1 /* HistoryView.swift */,
-				A594CDA89222061DD8AADA81 /* MenuBarIcon.swift */,
 				372FB6B53D1F0B92358F5D67 /* MenuBarView.swift */,
 				10EFC8B386DD003C98F2BA6D /* MoodEngine.swift */,
 				0811A026395AC21A32063256 /* ToastWindow.swift */,
@@ -190,6 +191,7 @@
 		959FF718B3BBCF5C393FB905 = {
 			isa = PBXGroup;
 			children = (
+				6B27FE2482465FBC17BC4011 /* Emoji */,
 				FCE69F46BDD51CABB4A52FCA /* Roasts */,
 				1AFD3F9AE3079600C37CAB10 /* JudgyMac */,
 				E87CF9EF3E6E547CCB6E3FEB /* Products */,
@@ -199,6 +201,7 @@
 		B13C7B5A8DCD61C175279F5D /* Detection */ = {
 			isa = PBXGroup;
 			children = (
+				4A3F4279DEAB034963BF3879 /* CPUMonitor.swift */,
 				7162979E25841246E79E8578 /* DetectionCoordinator.swift */,
 				38B35251CB604B1CED9835B5 /* IdleDetector.swift */,
 				237AB8A5032A73070937DB19 /* LidDetector.swift */,
@@ -239,7 +242,7 @@
 		DC2929823CD8C1B792286E14 /* Design */ = {
 			isa = PBXGroup;
 			children = (
-				B544CA9C3AFACCEB2ACDAAE0 /* AnimatedFace.swift */,
+				DE37C414A6717B82D99B4629 /* FluentEmoji.swift */,
 				AA629D49B1C788897ECD732C /* GlassCard.swift */,
 				2E51F274515A877D4EB33C49 /* RoastBubble.swift */,
 				EBF248A6E63A9EF1DCEBB5FD /* Theme.swift */,
@@ -334,6 +337,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				94D48CD67AA617B676C3ECF5 /* Emoji in Resources */,
 				EF0768F2BBF8B1CFBF4E3F80 /* JudgyMac.storekit in Resources */,
 				636FCD6617EBBF3071C0C201 /* Roasts in Resources */,
 			);
@@ -346,21 +350,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				187886FFD88C7CCCD45F7494 /* AnimatedFace.swift in Sources */,
 				9409005EFC052EF8F77BD804 /* AppDelegate.swift in Sources */,
 				D9AAED4E8DC60AF14E68D65B /* AppState.swift in Sources */,
 				FFAEEDD746E4E8D242714A0B /* BehaviorDetector.swift in Sources */,
 				892603636714B1581AC7D21B /* BehaviorEvent.swift in Sources */,
+				129433952593655A98DE179F /* CPUMonitor.swift in Sources */,
 				EEF111B1F50F7449C31A6A04 /* Constants.swift in Sources */,
 				229AC52AE0C821CCE442EEDD /* DailySummaryGenerator.swift in Sources */,
 				366814E659DAF2E942B88717 /* DetectionCoordinator.swift in Sources */,
 				ADA1258BBB8B5FE359F34CEE /* EntitlementManager.swift in Sources */,
+				2D0F5308856499428A4F8F1E /* FluentEmoji.swift in Sources */,
 				3D348B5D222B1CBB6B03E5D3 /* GlassCard.swift in Sources */,
 				2E45B75B1073D8EC651EAF60 /* HistoryView.swift in Sources */,
 				4332C1F72B138EEF404397B6 /* IdleDetector.swift in Sources */,
 				7270FC211B986C2F320B42EC /* JudgyMacApp.swift in Sources */,
 				662DE64D63EB8805A711EE24 /* LidDetector.swift in Sources */,
-				49A96D53F59FEFA5EB1608EE /* MenuBarIcon.swift in Sources */,
 				8308261336EE90F27DED82A2 /* MenuBarView.swift in Sources */,
 				9661F064E0C3EB4E29282C83 /* Mood.swift in Sources */,
 				E02AF58E670B0BC9515A4861 /* MoodEngine.swift in Sources */,

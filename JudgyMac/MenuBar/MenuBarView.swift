@@ -29,15 +29,21 @@ struct MenuBarView: View {
         VStack(spacing: 14) {
             // Header
             HStack(spacing: 12) {
-                Text(appState.currentMood.emoji)
-                    .font(.system(size: 28))
+                fluentFace(mood: appState.currentMood, size: 32)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("JudgyMac")
                         .font(.system(size: 16, weight: .bold, design: .rounded))
-                    Text(appState.todayStats.todayVibe)
-                        .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 8) {
+                        Text(appState.todayStats.todayVibe)
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                        if appState.cpuUsage > 0.01 {
+                            Text("CPU \(Int(appState.cpuUsage * 100))%")
+                                .font(.system(size: 10, weight: .medium, design: .monospaced))
+                                .foregroundStyle(appState.cpuUsage > 0.7 ? .red : .secondary)
+                        }
+                    }
                 }
                 Spacer()
             }
@@ -87,8 +93,7 @@ struct MenuBarView: View {
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                 Spacer()
-                Text(roast?.mood.emoji ?? "😐")
-                    .font(.system(size: 16))
+                fluentFace(mood: roast?.mood ?? .neutral, size: 24)
             }
         }
         .padding(14)
@@ -227,6 +232,20 @@ struct MenuBarView: View {
         }
         .padding(16)
     }
+}
+
+// MARK: - Fluent Emoji Helper
+
+private func fluentFace(mood: Mood, size: CGFloat) -> some View {
+    Group {
+        let name = FluentEmoji.primary(for: mood)
+        if let img = FluentEmoji.swiftUIImage(named: name) {
+            img.resizable().aspectRatio(contentMode: .fit)
+        } else {
+            Text(mood.emoji).font(.system(size: size * 0.8))
+        }
+    }
+    .frame(width: size, height: size)
 }
 
 // MARK: - Bar Button

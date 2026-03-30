@@ -31,6 +31,9 @@ targets:
       - path: JudgyMac/Resources/Roasts
         type: folder
         buildPhase: resources
+      - path: JudgyMac/Resources/Emoji
+        type: folder
+        buildPhase: resources
     info:
       path: JudgyMac/Info.plist
       properties:

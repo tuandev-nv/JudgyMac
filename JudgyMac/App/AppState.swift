@@ -19,6 +19,9 @@ final class AppState {
     var enabledTriggers: Set<TriggerType> = Set(TriggerType.allCases)
     var isOnboarded: Bool = false
 
+    // MARK: - System Stats
+    var cpuUsage: Double = 0
+
     // MARK: - Purchase
     // App is paid upfront ($4.99 on App Store) — all features always unlocked
     var isFullVersion: Bool = true

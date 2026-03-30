@@ -2,10 +2,12 @@ import AppKit
 import SwiftUI
 
 /// Custom floating toast — dark, bold, screenshot-worthy.
+/// Hover pauses auto-dismiss. Close button always visible.
 @MainActor
 final class ToastWindow {
     private var window: NSPanel?
     private var dismissTask: Task<Void, Never>?
+    private var isHovered = false
 
     static let shared = ToastWindow()
     private init() {}
@@ -13,7 +15,11 @@ final class ToastWindow {
     func show(roast: RoastEntry) {
         dismiss()
 
-        let toastView = ToastView(roast: roast)
+        let toastView = ToastView(
+            roast: roast,
+            onClose: { [weak self] in self?.dismiss() },
+            onHover: { [weak self] hovering in self?.isHovered = hovering }
+        )
         let hostingController = NSHostingController(rootView: toastView)
 
         let panel = NSPanel(
@@ -25,7 +31,7 @@ final class ToastWindow {
         panel.contentViewController = hostingController
         panel.isOpaque = false
         panel.backgroundColor = .clear
-        panel.hasShadow = false // We draw our own shadow
+        panel.hasShadow = false
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.titlebarAppearsTransparent = true
@@ -35,7 +41,6 @@ final class ToastWindow {
         let fittingSize = hostingController.view.fittingSize
         panel.setContentSize(NSSize(width: 420, height: fittingSize.height))
 
-        // Position: center-top of main screen
         if let screen = NSScreen.main {
             let screenFrame = screen.visibleFrame
             let x = screenFrame.midX - 210
@@ -45,7 +50,7 @@ final class ToastWindow {
 
         window = panel
 
-        // Animate: slide down + fade in
+        // Animate in: slide down + fade
         panel.alphaValue = 0
         let finalOrigin = panel.frame.origin
         panel.setFrameOrigin(NSPoint(x: finalOrigin.x, y: finalOrigin.y + 20))
@@ -58,9 +63,19 @@ final class ToastWindow {
             panel.animator().setFrameOrigin(finalOrigin)
         }
 
-        // Auto-dismiss after 6 seconds
+        // Auto-dismiss after 10s (paused while hovered)
+        startDismissCountdown()
+    }
+
+    private func startDismissCountdown() {
         dismissTask = Task {
-            try? await Task.sleep(for: .seconds(10))
+            var remaining: Double = 10
+            while remaining > 0 {
+                try? await Task.sleep(for: .milliseconds(500))
+                if !isHovered {
+                    remaining -= 0.5
+                }
+            }
             dismiss()
         }
     }
@@ -86,16 +101,19 @@ final class ToastWindow {
 
 private struct ToastView: View {
     let roast: RoastEntry
+    let onClose: () -> Void
+    let onHover: (Bool) -> Void
     @State private var emojiAppeared = false
+    @State private var isHovering = false
 
     private var moodColor: Color {
         switch roast.mood {
-        case .judging:   return Color(red: 1, green: 0.18, blue: 0.47) // #FF2D78
-        case .horrified: return Color(red: 0, green: 0.83, blue: 1)    // #00D4FF
-        case .raging:    return Color(red: 1, green: 0.27, blue: 0.27) // #FF4444
-        case .sleeping:  return Color(red: 0.55, green: 0.5, blue: 0.78) // #8B7FC7
-        case .impressed: return Color(red: 0, green: 0.9, blue: 0.63)  // #00E5A0
-        case .neutral:   return Color(red: 0.61, green: 0.35, blue: 1)  // #9B59FF
+        case .judging:   return Color(red: 1, green: 0.18, blue: 0.47)
+        case .horrified: return Color(red: 0, green: 0.83, blue: 1)
+        case .raging:    return Color(red: 1, green: 0.27, blue: 0.27)
+        case .sleeping:  return Color(red: 0.55, green: 0.5, blue: 0.78)
+        case .impressed: return Color(red: 0, green: 0.9, blue: 0.63)
+        case .neutral:   return Color(red: 0.61, green: 0.35, blue: 1)
         }
     }
 
@@ -106,46 +124,53 @@ private struct ToastView: View {
                 .fill(moodColor)
                 .frame(height: 3)
 
-            HStack(alignment: .top, spacing: 16) {
-                // Big emoji
-                Text(roast.mood.emoji)
-                    .font(.system(size: 48))
-                    .scaleEffect(emojiAppeared ? 1 : 0.3)
-                    .animation(
-                        .spring(response: 0.4, dampingFraction: 0.5)
-                            .delay(0.15),
-                        value: emojiAppeared
-                    )
+            ZStack(alignment: .topTrailing) {
+                HStack(alignment: .top, spacing: 16) {
+                    // Fluent 3D Emoji
+                    fluentEmojiView
+                        .frame(width: 56, height: 56)
+                        .scaleEffect(emojiAppeared ? 1 : 0.3)
+                        .animation(
+                            .spring(response: 0.4, dampingFraction: 0.5).delay(0.15),
+                            value: emojiAppeared
+                        )
 
-                VStack(alignment: .leading, spacing: 8) {
-                    // Roast text — the star
-                    Text(roast.text)
-                        .font(.system(size: 17, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .lineSpacing(4)
-                        .fixedSize(horizontal: false, vertical: true)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(roast.text)
+                            .font(.system(size: 17, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .lineSpacing(4)
+                            .fixedSize(horizontal: false, vertical: true)
 
-                    // Personality name
-                    Text(roast.personality)
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundStyle(moodColor)
+                        Text(roast.personality)
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundStyle(moodColor)
 
-                    // Branding
-                    HStack(spacing: 4) {
-                        Text("🤨")
-                            .font(.system(size: 10))
-                        Text("JudgyMac")
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundStyle(.white.opacity(0.4))
-                        Text("·")
-                            .foregroundStyle(.white.opacity(0.2))
-                        Text("judgymac.com")
-                            .font(.system(size: 10))
-                            .foregroundStyle(.white.opacity(0.3))
+                        HStack(spacing: 4) {
+                            Text("JudgyMac")
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundStyle(.white.opacity(0.4))
+                            Text("·")
+                                .foregroundStyle(.white.opacity(0.2))
+                            Text("judgymac.com")
+                                .font(.system(size: 10))
+                                .foregroundStyle(.white.opacity(0.3))
+                        }
                     }
                 }
+                .padding(20)
+
+                // Close button
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(.white.opacity(isHovering ? 0.8 : 0.3))
+                        .frame(width: 20, height: 20)
+                        .background(.white.opacity(isHovering ? 0.15 : 0), in: Circle())
+                }
+                .buttonStyle(.plain)
+                .padding(10)
             }
-            .padding(20)
         }
         .frame(width: 420)
         .background(
@@ -157,10 +182,22 @@ private struct ToastView: View {
             RoundedRectangle(cornerRadius: 20)
                 .stroke(moodColor.opacity(0.3), lineWidth: 1)
         )
-        // Main shadow
         .shadow(color: .black.opacity(0.4), radius: 20, y: 8)
-        // Mood color glow
         .shadow(color: moodColor.opacity(0.25), radius: 30, y: 12)
         .onAppear { emojiAppeared = true }
+        .onHover { hovering in
+            isHovering = hovering
+            onHover(hovering)
+        }
+    }
+
+    @ViewBuilder
+    private var fluentEmojiView: some View {
+        let name = FluentEmoji.primary(for: roast.mood)
+        if let img = FluentEmoji.swiftUIImage(named: name) {
+            img.resizable().aspectRatio(contentMode: .fit)
+        } else {
+            Text(roast.mood.emoji).font(.system(size: 40))
+        }
     }
 }

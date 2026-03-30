@@ -12,6 +12,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private var coordinator: DetectionCoordinator?
     private var presenter: RoastPresenter?
 
+    // Animated menu bar icon
+    private let cpuMonitor = CPUMonitor()
+    private var animationTimer: Timer?
+    private var animationFrame = 0
+    private var currentMood: Mood = .neutral
+
     // MARK: - App Lifecycle
 
     private var saveTimer: Timer?
@@ -45,10 +51,57 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "face.smiling", accessibilityDescription: "JudgyMac")
-            button.image?.size = NSSize(width: 18, height: 18)
+            // Initial icon — Fluent Emoji
+            updateMenuBarIcon()
             button.action = #selector(togglePopover)
             button.target = self
+        }
+
+        // Animate menu bar icon — speed based on CPU
+        startMenuBarAnimation()
+    }
+
+    private func startMenuBarAnimation() {
+        animationTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                self.tickAnimation()
+            }
+        }
+    }
+
+    private func tickAnimation() {
+        // Update mood from app state
+        currentMood = _appState.currentMood
+
+        // Read CPU and adjust animation speed
+        let cpu = cpuMonitor.currentUsage()
+        _appState.cpuUsage = cpu
+
+        // Faster animation = higher CPU
+        let interval: TimeInterval = switch cpu {
+        case 0.8...: 0.3   // Very fast — panic
+        case 0.5..<0.8: 0.6 // Fast — stressed
+        case 0.2..<0.5: 1.2 // Normal
+        default: 2.5        // Slow — chill
+        }
+        animationTimer?.invalidate()
+        animationTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                self.tickAnimation()
+            }
+        }
+
+        // Advance frame
+        animationFrame = (animationFrame + 1) % 4
+        updateMenuBarIcon()
+    }
+
+    private func updateMenuBarIcon() {
+        let faceName = FluentEmoji.face(for: currentMood, frame: animationFrame)
+        if let image = FluentEmoji.menuBarImage(named: faceName) {
+            statusItem.button?.image = image
         }
     }
 

@@ -3,60 +3,47 @@
   "language": "vi",
   "templates": {
     "lid_open": [
-      {"id": "lid_vi_001", "text": "Lai mo may roi. Hom nay {count} lan roi do. Con nha nguoi ta thi di ngu som.", "variables": ["count"], "intensity": 2, "weight": 1.0},
-      {"id": "lid_vi_002", "text": "Mo may ra lam gi? Hoc hay choi? Me biet het do.", "variables": [], "intensity": 1, "weight": 1.0},
-      {"id": "lid_vi_003", "text": "{count} lan mo may. Con Hoa nha bac Tam chi mo 2 lan thoi, ma no diem 10 do.", "variables": ["count"], "intensity": 2, "weight": 1.0},
-      {"id": "lid_vi_004", "text": "Mo may ra la me biet la khong hoc dau. Me hieu con ma.", "variables": [], "intensity": 1, "weight": 1.0},
-      {"id": "lid_vi_005", "text": "Lan thu {count}. Me dem duoc het do con. Me dem duoc het.", "variables": ["count"], "intensity": 2, "weight": 1.0},
-      {"id": "lid_vi_006", "text": "Con nha nguoi ta thi hoc xong moi mo may. Con thi mo may roi moi... cung khong hoc.", "variables": [], "intensity": 3, "weight": 1.0},
-      {"id": "lid_vi_007", "text": "Me noi roi, mo nhieu qua hong ban le do con.", "variables": [], "intensity": 1, "weight": 1.0},
-      {"id": "lid_vi_008", "text": "Cai may nay me mua bao nhieu tien. {count} lan mo mot ngay. Tiec ban le lam.", "variables": ["count"], "intensity": 2, "weight": 1.0}
+      {"id": "lid_vi_001", "text": "Lại mở máy rồi. Hôm nay {count} lần rồi đó. Con nhà người ta thì đi ngủ sớm.", "variables": ["count"], "intensity": 2, "weight": 1.0},
+      {"id": "lid_vi_002", "text": "Mở máy ra làm gì? Học hay chơi? Mẹ biết hết đó.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "lid_vi_003", "text": "{count} lần mở máy. Con Hoa nhà bác Tám chỉ mở 2 lần thôi, mà nó điểm 10 đó.", "variables": ["count"], "intensity": 2, "weight": 1.0},
+      {"id": "lid_vi_004", "text": "Mở máy ra là mẹ biết là không học đâu. Mẹ hiểu con mà.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "lid_vi_005", "text": "Lần thứ {count}. Mẹ đếm được hết đó con. Mẹ đếm được hết.", "variables": ["count"], "intensity": 2, "weight": 1.0},
+      {"id": "lid_vi_006", "text": "Con nhà người ta thì học xong mới mở máy. Con thì mở máy rồi mới... cũng không học.", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "lid_vi_007", "text": "Mẹ nói rồi, mở nhiều quá hỏng bản lề đó con.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "lid_vi_008", "text": "Cái máy này mẹ mua bao nhiêu tiền. {count} lần mở một ngày. Tiếc bản lề lắm.", "variables": ["count"], "intensity": 2, "weight": 1.0}
     ],
     "lid_reopen": [
-      {"id": "reopen_vi_001", "text": "{seconds_since_close} giay. Quen cai gi roi ha? Dau oc de dau?", "variables": ["seconds_since_close"], "intensity": 2, "weight": 1.0},
-      {"id": "reopen_vi_002", "text": "Moi dong {seconds_since_close} giay da mo lai. Con lam cai gi cung nua voi nua mua.", "variables": ["seconds_since_close"], "intensity": 2, "weight": 1.0},
-      {"id": "reopen_vi_003", "text": "Dong roi mo, mo roi dong. Giong cai tu lanh y chang.", "variables": [], "intensity": 1, "weight": 1.0},
-      {"id": "reopen_vi_004", "text": "Quyet dinh gi cung khong xong. Lon roi ma van vay.", "variables": [], "intensity": 3, "weight": 1.0}
+      {"id": "reopen_vi_001", "text": "{seconds_since_close} giây. Quên cái gì rồi hả? Đầu óc để đâu?", "variables": ["seconds_since_close"], "intensity": 2, "weight": 1.0},
+      {"id": "reopen_vi_002", "text": "Mới đóng {seconds_since_close} giây đã mở lại. Con làm cái gì cũng nửa vời nửa mùa.", "variables": ["seconds_since_close"], "intensity": 2, "weight": 1.0},
+      {"id": "reopen_vi_003", "text": "Đóng rồi mở, mở rồi đóng. Giống cái tủ lạnh y chang.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "reopen_vi_004", "text": "Quyết định gì cũng không xong. Lớn rồi mà vẫn vậy.", "variables": [], "intensity": 3, "weight": 1.0}
     ],
     "late_night": [
-      {"id": "late_vi_001", "text": "{hour} gio dem roi ma con thuc. Mai day duoc khong day?", "variables": ["hour"], "intensity": 1, "weight": 1.0},
-      {"id": "late_vi_002", "text": "{time} roi con oi. Me ngu khong duoc vi lo con thuc khuya.", "variables": ["time"], "intensity": 2, "weight": 1.0},
-      {"id": "late_vi_003", "text": "Nguoi ta ngu tu 10 gio. Con thi {time} van ngoi do. Suc khoe ai lo?", "variables": ["time"], "intensity": 2, "weight": 1.0},
-      {"id": "late_vi_004", "text": "Khuya roi. Con nha nguoi ta ngu tu lau roi. Con thi...", "variables": [], "intensity": 2, "weight": 1.0},
-      {"id": "late_vi_005", "text": "{hour} gio sang. Mat thi tham quang, da thi mun. Me noi roi ma khong nghe.", "variables": ["hour"], "intensity": 3, "weight": 1.0},
-      {"id": "late_vi_006", "text": "Gio nay ai cung ngu het roi, chi co con voi may tinh thoi.", "variables": [], "intensity": 1, "weight": 1.0}
+      {"id": "late_vi_001", "text": "{hour} giờ đêm rồi mà còn thức. Mai dậy được không đấy?", "variables": ["hour"], "intensity": 1, "weight": 1.0},
+      {"id": "late_vi_002", "text": "{time} rồi con ơi. Mẹ ngủ không được vì lo con thức khuya.", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "late_vi_003", "text": "Người ta ngủ từ 10 giờ. Con thì {time} vẫn ngồi đó. Sức khỏe ai lo?", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "late_vi_004", "text": "Khuya rồi. Con nhà người ta ngủ từ lâu rồi. Con thì...", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "late_vi_005", "text": "{hour} giờ sáng. Mặt thì thâm quầng, da thì mụn. Mẹ nói rồi mà không nghe.", "variables": ["hour"], "intensity": 3, "weight": 1.0},
+      {"id": "late_vi_006", "text": "Giờ này ai cũng ngủ hết rồi, chỉ có con với máy tính thôi.", "variables": [], "intensity": 1, "weight": 1.0}
     ],
     "early_morning": [
-      {"id": "early_vi_001", "text": "{time}? Day som the? Hay la chua ngu? Me biet het do.", "variables": ["time"], "intensity": 2, "weight": 1.0},
-      {"id": "early_vi_002", "text": "Day som the nay thi tot. Nhung me nghi la con chua ngu dung khong?", "variables": [], "intensity": 2, "weight": 1.0},
-      {"id": "early_vi_003", "text": "Ga chua gay ma con da mo may roi.", "variables": [], "intensity": 1, "weight": 1.0}
-    ],
-    "aggressive_typing": [
-      {"id": "type_vi_001", "text": "Go phim gi du vay? Binh tinh di con. Nong tinh la hong chuyen do.", "variables": [], "intensity": 2, "weight": 1.0},
-      {"id": "type_vi_002", "text": "{wpm} chu moi phut. Con dang go hay dang dap may?", "variables": ["wpm"], "intensity": 2, "weight": 1.0},
-      {"id": "type_vi_003", "text": "Cai ban phim me mua bao nhieu tien. Go nhe thoi con.", "variables": [], "intensity": 1, "weight": 1.0},
-      {"id": "type_vi_004", "text": "Go phim nhu danh nhau. Ai lam con gian vay?", "variables": [], "intensity": 2, "weight": 1.0},
-      {"id": "type_vi_005", "text": "Con nha nguoi ta go phim nhe nhang. Con thi nhu dang tru ai.", "variables": [], "intensity": 3, "weight": 1.0}
-    ],
-    "type_delete": [
-      {"id": "del_vi_001", "text": "Viet roi xoa, viet roi xoa. Suy nghi cho chin roi hay go con.", "variables": [], "intensity": 1, "weight": 1.0},
-      {"id": "del_vi_002", "text": "Phim Backspace lam viec nhieu hon con hom nay.", "variables": [], "intensity": 2, "weight": 1.0},
-      {"id": "del_vi_003", "text": "Xoa {ratio}% nhung gi vua go. Con lam gi cung khong tron ven.", "variables": ["ratio"], "intensity": 2, "weight": 1.0},
-      {"id": "del_vi_004", "text": "Nghi cho ky roi hay viet. Me noi roi ma.", "variables": [], "intensity": 1, "weight": 1.0}
+      {"id": "early_vi_001", "text": "{time}? Dậy sớm thế? Hay là chưa ngủ? Mẹ biết hết đó.", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "early_vi_002", "text": "Dậy sớm thế này thì tốt. Nhưng mẹ nghĩ là con chưa ngủ đúng không?", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "early_vi_003", "text": "Gà chưa gáy mà con đã mở máy rồi.", "variables": [], "intensity": 1, "weight": 1.0}
     ],
     "thermal": [
-      {"id": "hot_vi_001", "text": "May nong qua roi con oi. Con dang lam gi vay?? Mo bao nhieu tab do?", "variables": [], "intensity": 2, "weight": 1.0},
-      {"id": "hot_vi_002", "text": "Nong nhu noi chao. Con nha nguoi ta thi biet giu gin do dac.", "variables": [], "intensity": 2, "weight": 1.0},
-      {"id": "hot_vi_003", "text": "May tinh me mua may chuc trieu. Nong the nay hong mat do con.", "variables": [], "intensity": 3, "weight": 1.0},
-      {"id": "hot_vi_004", "text": "Dong bot tab di con. May nong nhu cai bep gas.", "variables": [], "intensity": 2, "weight": 1.0}
+      {"id": "hot_vi_001", "text": "Máy nóng quá rồi con ơi. Con đang làm gì vậy?? Mở bao nhiêu tab đó?", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "hot_vi_002", "text": "Nóng như nồi chảo. Con nhà người ta thì biết giữ gìn đồ đạc.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "hot_vi_003", "text": "Máy tính mẹ mua mấy chục triệu. Nóng thế này hỏng mất đó con.", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "hot_vi_004", "text": "Đóng bớt tab đi con. Máy nóng như cái bếp gas.", "variables": [], "intensity": 2, "weight": 1.0}
     ],
     "idle": [
-      {"id": "idle_vi_001", "text": "{idle_minutes} phut khong lam gi. Con con do khong hay di pha ca phe lan thu 4?", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
-      {"id": "idle_vi_002", "text": "Mo may ra roi ngoi do {idle_minutes} phut. Dien voi tien ai tra?", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
-      {"id": "idle_vi_003", "text": "Con nha nguoi ta thi lam viec cham chi. Con thi ngoi... nhin man hinh.", "variables": [], "intensity": 2, "weight": 1.0},
-      {"id": "idle_vi_004", "text": "{idle_minutes} phut. Me tuong con lam bai. Hoa ra la ngoi choi.", "variables": ["idle_minutes"], "intensity": 1, "weight": 1.0},
-      {"id": "idle_vi_005", "text": "Ngoi lau qua hong lung do con. Ma cung khong lam gi.", "variables": [], "intensity": 2, "weight": 1.0},
-      {"id": "idle_vi_006", "text": "May tinh cho con hoc chur khong phai cho con ngoi nhin.", "variables": [], "intensity": 3, "weight": 1.0}
+      {"id": "idle_vi_001", "text": "{idle_minutes} phút không làm gì. Con còn đó không hay đi pha cà phê lần thứ 4?", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
+      {"id": "idle_vi_002", "text": "Mở máy ra rồi ngồi đó {idle_minutes} phút. Điện với tiền ai trả?", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
+      {"id": "idle_vi_003", "text": "Con nhà người ta thì làm việc chăm chỉ. Con thì ngồi... nhìn màn hình.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "idle_vi_004", "text": "{idle_minutes} phút. Mẹ tưởng con làm bài. Hóa ra là ngồi chơi.", "variables": ["idle_minutes"], "intensity": 1, "weight": 1.0},
+      {"id": "idle_vi_005", "text": "Ngồi lâu quá hỏng lưng đó con. Mà cũng không làm gì.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "idle_vi_006", "text": "Máy tính cho con học chứ không phải cho con ngồi nhìn.", "variables": [], "intensity": 3, "weight": 1.0}
     ]
   }
 }
