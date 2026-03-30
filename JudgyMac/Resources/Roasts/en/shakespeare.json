@@ -1,0 +1,52 @@
+{
+  "personality": "shakespeare",
+  "language": "en",
+  "templates": {
+    "lid_open": [
+      {"id": "shk_lid_001", "text": "What light through yonder lid breaks? 'Tis the fool, returning for the {count}th time.", "variables": ["count"], "intensity": 2, "weight": 1.0},
+      {"id": "shk_lid_002", "text": "To open, or not to open — that is the question thou hast answered {count} times today.", "variables": ["count"], "intensity": 2, "weight": 1.0},
+      {"id": "shk_lid_003", "text": "Once more unto the breach, dear friend! Lid the {count}th doth creak open.", "variables": ["count"], "intensity": 1, "weight": 1.0},
+      {"id": "shk_lid_004", "text": "The lady doth open too much, methinks.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "shk_lid_005", "text": "All the world's a stage, and thou art merely opening and closing props.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "shk_lid_006", "text": "Thou return'st like Banquo's ghost — uninvited and far too often.", "variables": [], "intensity": 3, "weight": 1.0}
+    ],
+    "lid_reopen": [
+      {"id": "shk_reopen_001", "text": "Parting is such sweet sorrow — for {seconds_since_close} seconds, apparently.", "variables": ["seconds_since_close"], "intensity": 2, "weight": 1.0},
+      {"id": "shk_reopen_002", "text": "What, gone and back again? Even Romeo showed more commitment to leaving.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "shk_reopen_003", "text": "Brief as the lightning in the collied night — so was thy absence of {seconds_since_close} seconds.", "variables": ["seconds_since_close"], "intensity": 2, "weight": 1.0}
+    ],
+    "late_night": [
+      {"id": "shk_late_001", "text": "'Tis now the very witching time of night — {time}, to be precise. To bed, thou wretch!", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "shk_late_002", "text": "The hour of {time} belongs to ghosts and fools. Thou art no ghost.", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "shk_late_003", "text": "Sleep that knits up the ravell'd sleeve of care — thou deniest thyself at {time}!", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "shk_late_004", "text": "By the pricking of my thumbs, something nocturnal this way comes. 'Tis thee. At {time}.", "variables": ["time"], "intensity": 3, "weight": 1.0}
+    ],
+    "early_morning": [
+      {"id": "shk_early_001", "text": "But soft, what dawn through yonder window breaks? And thou art already at thy screen.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "shk_early_002", "text": "The lark hath not yet sung, yet here thou toil'st at {time}.", "variables": ["time"], "intensity": 1, "weight": 1.0},
+      {"id": "shk_early_003", "text": "Early riseth the fool. Or the genius. Time shall reveal which thou art.", "variables": [], "intensity": 2, "weight": 1.0}
+    ],
+    "aggressive_typing": [
+      {"id": "shk_type_001", "text": "Thou dost pound the keys as though composing a declaration of war. {wpm} strokes per minute!", "variables": ["wpm"], "intensity": 2, "weight": 1.0},
+      {"id": "shk_type_002", "text": "Is this a keyboard I see before me, its keys toward my hand? Thou strikest it with fury!", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "shk_type_003", "text": "Sound and fury, signifying nothing — at {wpm} words per minute.", "variables": ["wpm"], "intensity": 3, "weight": 1.0},
+      {"id": "shk_type_004", "text": "Thou typest as Macbeth murdered — with great passion and questionable judgment.", "variables": [], "intensity": 3, "weight": 1.0}
+    ],
+    "type_delete": [
+      {"id": "shk_del_001", "text": "Write, erase, write, erase. Even Hamlet was less indecisive. Well... perhaps not.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "shk_del_002", "text": "Out, damned word! Out, I say! Thou hast deleted {ratio}% of thy labours.", "variables": ["ratio"], "intensity": 2, "weight": 1.0},
+      {"id": "shk_del_003", "text": "What's done cannot be undone — unless thou hast a backspace key, which thou abusest greatly.", "variables": [], "intensity": 2, "weight": 1.0}
+    ],
+    "thermal": [
+      {"id": "shk_hot_001", "text": "Now is the winter of our discontent made glorious summer by thy overworked processor!", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "shk_hot_002", "text": "Hell is empty, and all the devils are in thy browser tabs.", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "shk_hot_003", "text": "Double, double toil and trouble; fire burn and laptop bubble!", "variables": [], "intensity": 2, "weight": 1.0}
+    ],
+    "idle": [
+      {"id": "shk_idle_001", "text": "{idle_minutes} minutes of nothing! Tomorrow, and tomorrow, and tomorrow — is that thy plan?", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
+      {"id": "shk_idle_002", "text": "To do, or not to do. Thou hast chosen 'not' for {idle_minutes} minutes.", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
+      {"id": "shk_idle_003", "text": "How weary, stale, flat and unprofitable seem all the uses of this {idle_minutes}-minute void.", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
+      {"id": "shk_idle_004", "text": "Thou art idle as a painted ship upon a painted ocean. For {idle_minutes} minutes.", "variables": ["idle_minutes"], "intensity": 1, "weight": 1.0}
+    ]
+  }
+}

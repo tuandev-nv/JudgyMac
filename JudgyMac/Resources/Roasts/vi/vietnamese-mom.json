@@ -1,0 +1,62 @@
+{
+  "personality": "vietnamese-mom",
+  "language": "vi",
+  "templates": {
+    "lid_open": [
+      {"id": "lid_vi_001", "text": "Lai mo may roi. Hom nay {count} lan roi do. Con nha nguoi ta thi di ngu som.", "variables": ["count"], "intensity": 2, "weight": 1.0},
+      {"id": "lid_vi_002", "text": "Mo may ra lam gi? Hoc hay choi? Me biet het do.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "lid_vi_003", "text": "{count} lan mo may. Con Hoa nha bac Tam chi mo 2 lan thoi, ma no diem 10 do.", "variables": ["count"], "intensity": 2, "weight": 1.0},
+      {"id": "lid_vi_004", "text": "Mo may ra la me biet la khong hoc dau. Me hieu con ma.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "lid_vi_005", "text": "Lan thu {count}. Me dem duoc het do con. Me dem duoc het.", "variables": ["count"], "intensity": 2, "weight": 1.0},
+      {"id": "lid_vi_006", "text": "Con nha nguoi ta thi hoc xong moi mo may. Con thi mo may roi moi... cung khong hoc.", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "lid_vi_007", "text": "Me noi roi, mo nhieu qua hong ban le do con.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "lid_vi_008", "text": "Cai may nay me mua bao nhieu tien. {count} lan mo mot ngay. Tiec ban le lam.", "variables": ["count"], "intensity": 2, "weight": 1.0}
+    ],
+    "lid_reopen": [
+      {"id": "reopen_vi_001", "text": "{seconds_since_close} giay. Quen cai gi roi ha? Dau oc de dau?", "variables": ["seconds_since_close"], "intensity": 2, "weight": 1.0},
+      {"id": "reopen_vi_002", "text": "Moi dong {seconds_since_close} giay da mo lai. Con lam cai gi cung nua voi nua mua.", "variables": ["seconds_since_close"], "intensity": 2, "weight": 1.0},
+      {"id": "reopen_vi_003", "text": "Dong roi mo, mo roi dong. Giong cai tu lanh y chang.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "reopen_vi_004", "text": "Quyet dinh gi cung khong xong. Lon roi ma van vay.", "variables": [], "intensity": 3, "weight": 1.0}
+    ],
+    "late_night": [
+      {"id": "late_vi_001", "text": "{hour} gio dem roi ma con thuc. Mai day duoc khong day?", "variables": ["hour"], "intensity": 1, "weight": 1.0},
+      {"id": "late_vi_002", "text": "{time} roi con oi. Me ngu khong duoc vi lo con thuc khuya.", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "late_vi_003", "text": "Nguoi ta ngu tu 10 gio. Con thi {time} van ngoi do. Suc khoe ai lo?", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "late_vi_004", "text": "Khuya roi. Con nha nguoi ta ngu tu lau roi. Con thi...", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "late_vi_005", "text": "{hour} gio sang. Mat thi tham quang, da thi mun. Me noi roi ma khong nghe.", "variables": ["hour"], "intensity": 3, "weight": 1.0},
+      {"id": "late_vi_006", "text": "Gio nay ai cung ngu het roi, chi co con voi may tinh thoi.", "variables": [], "intensity": 1, "weight": 1.0}
+    ],
+    "early_morning": [
+      {"id": "early_vi_001", "text": "{time}? Day som the? Hay la chua ngu? Me biet het do.", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "early_vi_002", "text": "Day som the nay thi tot. Nhung me nghi la con chua ngu dung khong?", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "early_vi_003", "text": "Ga chua gay ma con da mo may roi.", "variables": [], "intensity": 1, "weight": 1.0}
+    ],
+    "aggressive_typing": [
+      {"id": "type_vi_001", "text": "Go phim gi du vay? Binh tinh di con. Nong tinh la hong chuyen do.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "type_vi_002", "text": "{wpm} chu moi phut. Con dang go hay dang dap may?", "variables": ["wpm"], "intensity": 2, "weight": 1.0},
+      {"id": "type_vi_003", "text": "Cai ban phim me mua bao nhieu tien. Go nhe thoi con.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "type_vi_004", "text": "Go phim nhu danh nhau. Ai lam con gian vay?", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "type_vi_005", "text": "Con nha nguoi ta go phim nhe nhang. Con thi nhu dang tru ai.", "variables": [], "intensity": 3, "weight": 1.0}
+    ],
+    "type_delete": [
+      {"id": "del_vi_001", "text": "Viet roi xoa, viet roi xoa. Suy nghi cho chin roi hay go con.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "del_vi_002", "text": "Phim Backspace lam viec nhieu hon con hom nay.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "del_vi_003", "text": "Xoa {ratio}% nhung gi vua go. Con lam gi cung khong tron ven.", "variables": ["ratio"], "intensity": 2, "weight": 1.0},
+      {"id": "del_vi_004", "text": "Nghi cho ky roi hay viet. Me noi roi ma.", "variables": [], "intensity": 1, "weight": 1.0}
+    ],
+    "thermal": [
+      {"id": "hot_vi_001", "text": "May nong qua roi con oi. Con dang lam gi vay?? Mo bao nhieu tab do?", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "hot_vi_002", "text": "Nong nhu noi chao. Con nha nguoi ta thi biet giu gin do dac.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "hot_vi_003", "text": "May tinh me mua may chuc trieu. Nong the nay hong mat do con.", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "hot_vi_004", "text": "Dong bot tab di con. May nong nhu cai bep gas.", "variables": [], "intensity": 2, "weight": 1.0}
+    ],
+    "idle": [
+      {"id": "idle_vi_001", "text": "{idle_minutes} phut khong lam gi. Con con do khong hay di pha ca phe lan thu 4?", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
+      {"id": "idle_vi_002", "text": "Mo may ra roi ngoi do {idle_minutes} phut. Dien voi tien ai tra?", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
+      {"id": "idle_vi_003", "text": "Con nha nguoi ta thi lam viec cham chi. Con thi ngoi... nhin man hinh.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "idle_vi_004", "text": "{idle_minutes} phut. Me tuong con lam bai. Hoa ra la ngoi choi.", "variables": ["idle_minutes"], "intensity": 1, "weight": 1.0},
+      {"id": "idle_vi_005", "text": "Ngoi lau qua hong lung do con. Ma cung khong lam gi.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "idle_vi_006", "text": "May tinh cho con hoc chur khong phai cho con ngoi nhin.", "variables": [], "intensity": 3, "weight": 1.0}
+    ]
+  }
+}

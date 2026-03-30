@@ -1,0 +1,54 @@
+{
+  "personality": "drill-sergeant",
+  "language": "en",
+  "templates": {
+    "lid_open": [
+      {"id": "sgt_lid_001", "text": "LAPTOP OPEN #{count}! DROP AND GIVE ME TWENTY PRODUCTIVE MINUTES!", "variables": ["count"], "intensity": 3, "weight": 1.0},
+      {"id": "sgt_lid_002", "text": "Back again, recruit? This is lid open #{count}. In my day, we opened it ONCE and got the job DONE.", "variables": ["count"], "intensity": 2, "weight": 1.0},
+      {"id": "sgt_lid_003", "text": "What is your major malfunction? That's {count} lid opens and ZERO completed tasks!", "variables": ["count"], "intensity": 3, "weight": 1.0},
+      {"id": "sgt_lid_004", "text": "Open. Close. Open. Close. Are you operating a laptop or a screen door?!", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "sgt_lid_005", "text": "Listen up, maggot. You open that lid, you COMMIT. No more wishy-washy nonsense.", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "sgt_lid_006", "text": "Lid #{count}. You call that commitment? My grandmother shows more discipline!", "variables": ["count"], "intensity": 2, "weight": 1.0}
+    ],
+    "lid_reopen": [
+      {"id": "sgt_reopen_001", "text": "{seconds_since_close} SECONDS?! You call that a break? That's not even a bathroom trip!", "variables": ["seconds_since_close"], "intensity": 2, "weight": 1.0},
+      {"id": "sgt_reopen_002", "text": "WHAT DID YOU FORGET, PRIVATE? Your dignity? Because I found it on the floor.", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "sgt_reopen_003", "text": "Close, reopen. Close, reopen. THIS IS NOT A DRILL! Wait, yes it is. I'M the drill.", "variables": [], "intensity": 2, "weight": 1.0}
+    ],
+    "late_night": [
+      {"id": "sgt_late_001", "text": "IT IS {time}! LIGHTS OUT WAS HOURS AGO! HIT THE RACK, SOLDIER!", "variables": ["time"], "intensity": 3, "weight": 1.0},
+      {"id": "sgt_late_002", "text": "{time}?! You think the enemy sleeps? Actually yes. You should too.", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "sgt_late_003", "text": "A tired soldier is a dead soldier. Get some shut-eye before I make it an ORDER.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "sgt_late_004", "text": "You are WORTHLESS at this hour! Report to bed IMMEDIATELY!", "variables": [], "intensity": 3, "weight": 1.0}
+    ],
+    "early_morning": [
+      {"id": "sgt_early_001", "text": "{time}! NOW THAT'S WHAT I LIKE TO SEE! Rise and grind, recruit!", "variables": ["time"], "intensity": 1, "weight": 1.0},
+      {"id": "sgt_early_002", "text": "Up before dawn. OUTSTANDING. Now make those hours COUNT.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "sgt_early_003", "text": "Early bird reporting for duty! RESPECT. Don't waste it.", "variables": [], "intensity": 1, "weight": 1.0}
+    ],
+    "aggressive_typing": [
+      {"id": "sgt_type_001", "text": "{wpm} WPM! OUTSTANDING SPEED! Now if only the CONTENT matched the intensity!", "variables": ["wpm"], "intensity": 2, "weight": 1.0},
+      {"id": "sgt_type_002", "text": "TYPE FASTER! THE KEYBOARD IS YOUR WEAPON! SHOW NO MERCY!", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "sgt_type_003", "text": "That typing is WEAK! My grandmother types harder! And she's been dead for ten years!", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "sgt_type_004", "text": "CHANNEL THAT RAGE INTO PRODUCTIVITY! I want results, not tantrums!", "variables": [], "intensity": 2, "weight": 1.0}
+    ],
+    "type_delete": [
+      {"id": "sgt_del_001", "text": "STOP RETREATING! In this army, we ADVANCE! Stop deleting and COMMIT!", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "sgt_del_002", "text": "Write it. Send it. MOVE ON. No soldier wins a war by rewriting the battle plan!", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "sgt_del_003", "text": "{ratio}% deletion rate?! That's not editing, that's SURRENDER!", "variables": ["ratio"], "intensity": 2, "weight": 1.0},
+      {"id": "sgt_del_004", "text": "The backspace key is NOT your friend! It is the ENEMY of progress!", "variables": [], "intensity": 2, "weight": 1.0}
+    ],
+    "thermal": [
+      {"id": "sgt_hot_001", "text": "YOUR MACHINE IS OVERHEATING! THIS IS NOT A DRILL! CLOSE THOSE TABS, SOLDIER!", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "sgt_hot_002", "text": "Thermal state: {thermal}! You're running this laptop like it owes you MONEY!", "variables": ["thermal"], "intensity": 2, "weight": 1.0},
+      {"id": "sgt_hot_003", "text": "HOT ENOUGH TO COOK AN EGG! Is that your plan? Breakfast on your keyboard?!", "variables": [], "intensity": 3, "weight": 1.0}
+    ],
+    "idle": [
+      {"id": "sgt_idle_001", "text": "{idle_minutes} MINUTES IDLE?! ARE YOU AWOL?! REPORT BACK TO YOUR STATION!", "variables": ["idle_minutes"], "intensity": 3, "weight": 1.0},
+      {"id": "sgt_idle_002", "text": "I did NOT authorize a {idle_minutes}-minute break! GET MOVING!", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
+      {"id": "sgt_idle_003", "text": "While you nap, the DEADLINE advances! It does NOT care about your comfort!", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "sgt_idle_004", "text": "{idle_minutes} minutes of nothing! In the field, that gets people FIRED! Literally!", "variables": ["idle_minutes"], "intensity": 3, "weight": 1.0},
+      {"id": "sgt_idle_005", "text": "REST IS FOR THE WEAK! And apparently, for you. Get back to work!", "variables": [], "intensity": 2, "weight": 1.0}
+    ]
+  }
+}

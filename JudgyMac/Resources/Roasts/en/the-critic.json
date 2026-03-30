@@ -1,0 +1,93 @@
+{
+  "personality": "the-critic",
+  "language": "en",
+  "templates": {
+    "lid_open": [
+      {"id": "lid_en_001", "text": "Lid open #{count} today. At this rate, you'll hit double digits before lunch.", "variables": ["count"], "intensity": 1, "weight": 1.0},
+      {"id": "lid_en_002", "text": "Back again? Your laptop misses you like a hostage misses their captor.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "lid_en_003", "text": "You've opened this lid {count} times today. What are you looking for? Meaning? It's not in there.", "variables": ["count"], "intensity": 2, "weight": 1.0},
+      {"id": "lid_en_004", "text": "Oh good, you're here. The screen was getting bored of its own reflection.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "lid_en_005", "text": "Welcome back for the {count}th time. Commitment isn't your thing, is it?", "variables": ["count"], "intensity": 2, "weight": 1.0},
+      {"id": "lid_en_006", "text": "Every time you open this lid, an angel loses faith in humanity.", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "lid_en_007", "text": "Lid #{count}. Your laptop has better memory than you — it remembers every single one.", "variables": ["count"], "intensity": 1, "weight": 1.0},
+      {"id": "lid_en_008", "text": "You treat this laptop like a fridge. Open, stare, close, repeat.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "lid_en_009", "text": "If opening laptops burned calories, you'd be an athlete.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "lid_en_010", "text": "The hinges are filing a workers' compensation claim.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "lid_en_011", "text": "{count} lid opens. Your laptop has abandonment issues now.", "variables": ["count"], "intensity": 2, "weight": 1.0},
+      {"id": "lid_en_012", "text": "You're back. The pixels were just starting to relax.", "variables": [], "intensity": 1, "weight": 1.0}
+    ],
+    "lid_reopen": [
+      {"id": "reopen_en_001", "text": "Closed and reopened in {seconds_since_close} seconds. Forgot something? Your dignity, perhaps?", "variables": ["seconds_since_close"], "intensity": 2, "weight": 1.0},
+      {"id": "reopen_en_002", "text": "{seconds_since_close} seconds. That's a new record for indecisiveness.", "variables": ["seconds_since_close"], "intensity": 1, "weight": 1.0},
+      {"id": "reopen_en_003", "text": "The lid barely touched before you came crawling back.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "reopen_en_004", "text": "That was the fastest breakup-to-makeup in laptop history.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "reopen_en_005", "text": "You closed me for {seconds_since_close} seconds. Was that supposed to be a break?", "variables": ["seconds_since_close"], "intensity": 1, "weight": 1.0},
+      {"id": "reopen_en_006", "text": "Separation anxiety is real, and you have it bad.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "reopen_en_007", "text": "Miss me already? It's been {seconds_since_close} seconds.", "variables": ["seconds_since_close"], "intensity": 1, "weight": 1.0},
+      {"id": "reopen_en_008", "text": "At this point just leave me open. The hinge deserves better.", "variables": [], "intensity": 2, "weight": 1.0}
+    ],
+    "late_night": [
+      {"id": "late_en_001", "text": "It's {time}. Nothing good happens on a laptop after midnight.", "variables": ["time"], "intensity": 1, "weight": 1.0},
+      {"id": "late_en_002", "text": "{time} and you're still here. Your bed is literally right there.", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "late_en_003", "text": "The sun went down hours ago. You should follow its example.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "late_en_004", "text": "At {time}, the only thing you should be opening is your eyes... tomorrow morning.", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "late_en_005", "text": "It's {hour} AM. Even insomniacs are judging you right now.", "variables": ["hour"], "intensity": 3, "weight": 1.0},
+      {"id": "late_en_006", "text": "Your melatonin is sending angry emails. It's {time}.", "variables": ["time"], "intensity": 1, "weight": 1.0},
+      {"id": "late_en_007", "text": "Fun fact: humans need sleep. At {time}, I'm starting to doubt you're human.", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "late_en_008", "text": "{time}. Your screen is the brightest thing in your life right now. Literally.", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "late_en_009", "text": "The bags under your eyes are designer at this point.", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "late_en_010", "text": "This is the {count}th time you've been awake past midnight this week. Seek help.", "variables": ["count"], "intensity": 3, "weight": 1.0}
+    ],
+    "early_morning": [
+      {"id": "early_en_001", "text": "{time}? Either you woke up early or never went to sleep. Both are concerning.", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "early_en_002", "text": "The birds haven't even started singing yet, and here you are.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "early_en_003", "text": "I respect the hustle. I question the sanity.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "early_en_004", "text": "{time}. Are you a morning person or a person who made terrible decisions last night?", "variables": ["time"], "intensity": 2, "weight": 1.0},
+      {"id": "early_en_005", "text": "Even your coffee hasn't woken up yet.", "variables": [], "intensity": 1, "weight": 1.0}
+    ],
+    "aggressive_typing": [
+      {"id": "type_en_001", "text": "{wpm} WPM. Calm down, that email isn't worth an assault charge.", "variables": ["wpm"], "intensity": 2, "weight": 1.0},
+      {"id": "type_en_002", "text": "You're typing like each key owes you money.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "type_en_003", "text": "{wpm} words per minute. The keyboard union is filing a complaint.", "variables": ["wpm"], "intensity": 1, "weight": 1.0},
+      {"id": "type_en_004", "text": "The way you're typing, I'm pretty sure that message should include a lawyer in CC.", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "type_en_005", "text": "Deep breaths. Whatever they said, violence against keyboards isn't the answer.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "type_en_006", "text": "At {wpm} WPM, you're not typing — you're performing percussive maintenance.", "variables": ["wpm"], "intensity": 2, "weight": 1.0},
+      {"id": "type_en_007", "text": "Your keyboard called. It wants a restraining order.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "type_en_008", "text": "I can feel the passive aggression through each keystroke.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "type_en_009", "text": "Save draft. Walk away. Come back when you're less... percussive.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "type_en_010", "text": "That's not typing, that's an exorcism.", "variables": [], "intensity": 3, "weight": 1.0}
+    ],
+    "type_delete": [
+      {"id": "del_en_001", "text": "Wrote and deleted {ratio}% of that. Commitment issues extend to your sentences too.", "variables": ["ratio"], "intensity": 2, "weight": 1.0},
+      {"id": "del_en_002", "text": "Type, delete, type, delete. This is a laptop, not a therapy journal.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "del_en_003", "text": "The backspace key is doing more work than you today.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "del_en_004", "text": "If only you could delete your problems as fast as your sentences.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "del_en_005", "text": "Your delete ratio is {ratio}%. That's not editing, that's self-doubt in real time.", "variables": ["ratio"], "intensity": 2, "weight": 1.0},
+      {"id": "del_en_006", "text": "Write. Delete. Write. Delete. Hemingway would be... confused.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "del_en_007", "text": "At this rate, the most productive key on your keyboard is backspace.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "del_en_008", "text": "You've rewritten that sentence more times than Hollywood reboots Spider-Man.", "variables": [], "intensity": 2, "weight": 1.0}
+    ],
+    "thermal": [
+      {"id": "hot_en_001", "text": "Your Mac is literally overheating. What are you running, the entire internet?", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "hot_en_002", "text": "Thermal state: {thermal}. My fans are screaming and so am I.", "variables": ["thermal"], "intensity": 2, "weight": 1.0},
+      {"id": "hot_en_003", "text": "I'm so hot right now. Not in a good way. Close some tabs.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "hot_en_004", "text": "If I were any hotter, I'd need sunscreen. Close Chrome.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "hot_en_005", "text": "You could fry an egg on me right now. This is not a feature.", "variables": [], "intensity": 3, "weight": 1.0},
+      {"id": "hot_en_006", "text": "My temperature is higher than your productivity. Let that sink in.", "variables": [], "intensity": 2, "weight": 1.0},
+      {"id": "hot_en_007", "text": "Thermal state is {thermal}. I'm one tab away from becoming a space heater.", "variables": ["thermal"], "intensity": 2, "weight": 1.0},
+      {"id": "hot_en_008", "text": "45 browser tabs? That's not multitasking, that's arson.", "variables": [], "intensity": 3, "weight": 1.0}
+    ],
+    "idle": [
+      {"id": "idle_en_001", "text": "{idle_minutes} minutes idle. Did you astral project?", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
+      {"id": "idle_en_002", "text": "Hello? You've been gone for {idle_minutes} minutes. I was worried. Just kidding, I was relieved.", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
+      {"id": "idle_en_003", "text": "You've been idle so long your screensaver is getting bored.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "idle_en_004", "text": "{idle_minutes} minutes of nothing. Are you meditating or just avoiding responsibility?", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
+      {"id": "idle_en_005", "text": "I haven't seen this little activity since... well, your last idle streak today.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "idle_en_006", "text": "Coffee break #{count} today. At this point it's more break than coffee.", "variables": ["count"], "intensity": 2, "weight": 1.0},
+      {"id": "idle_en_007", "text": "You left me open and walked away. I feel used.", "variables": [], "intensity": 1, "weight": 1.0},
+      {"id": "idle_en_008", "text": "{idle_minutes} minutes. That's long enough to watch an episode of something actually productive.", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
+      {"id": "idle_en_009", "text": "At {idle_minutes} minutes idle, you owe me an explanation.", "variables": ["idle_minutes"], "intensity": 2, "weight": 1.0},
+      {"id": "idle_en_010", "text": "Still alive? Blink twice if you need help. Or just touch the trackpad.", "variables": [], "intensity": 1, "weight": 1.0}
+    ]
+  }
+}

@@ -1,0 +1,585 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0D35ACC341554D0B4B625AD2 /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384C3A8579A07694C8026266 /* StoreManager.swift */; };
+		118E2439288F4D9BFC0136F9 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1793841F167922FBC48BDEEF /* PaywallView.swift */; };
+		14C70E038FC91B16A70DFE95 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EE2BD5868466FD569BEE3 /* SettingsView.swift */; };
+		187886FFD88C7CCCD45F7494 /* AnimatedFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = B544CA9C3AFACCEB2ACDAAE0 /* AnimatedFace.swift */; };
+		1C76E6CAD2E2742343BD1A5A /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38E714ECDC40E0710486EDE9 /* SettingsWindowController.swift */; };
+		229AC52AE0C821CCE442EEDD /* DailySummaryGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC34BF823FCBCCDCA5C2A0C /* DailySummaryGenerator.swift */; };
+		2E45B75B1073D8EC651EAF60 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1CAAC9FE2B10A28F010DC1 /* HistoryView.swift */; };
+		2FF2144CB375DC348C431214 /* RoastEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9100DF1CA31D047308E4216 /* RoastEntry.swift */; };
+		3265259BB2F0F6826C1DED94 /* RoastBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51F274515A877D4EB33C49 /* RoastBubble.swift */; };
+		366814E659DAF2E942B88717 /* DetectionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7162979E25841246E79E8578 /* DetectionCoordinator.swift */; };
+		3D348B5D222B1CBB6B03E5D3 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA629D49B1C788897ECD732C /* GlassCard.swift */; };
+		4332C1F72B138EEF404397B6 /* IdleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38B35251CB604B1CED9835B5 /* IdleDetector.swift */; };
+		49A96D53F59FEFA5EB1608EE /* MenuBarIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A594CDA89222061DD8AADA81 /* MenuBarIcon.swift */; };
+		5292F342E6FF37AD2BF52BE8 /* ToastWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0811A026395AC21A32063256 /* ToastWindow.swift */; };
+		636FCD6617EBBF3071C0C201 /* Roasts in Resources */ = {isa = PBXBuildFile; fileRef = FCE69F46BDD51CABB4A52FCA /* Roasts */; };
+		65D816688A8C27434247E80A /* RoastEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F45A53EAB9A5FF2172C637 /* RoastEngine.swift */; };
+		662DE64D63EB8805A711EE24 /* LidDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 237AB8A5032A73070937DB19 /* LidDetector.swift */; };
+		69B30361906EE9A1887BD44C /* StatsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA8F9880213B6271E776347 /* StatsStore.swift */; };
+		7270FC211B986C2F320B42EC /* JudgyMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE02200D5870AF01016DA0E /* JudgyMacApp.swift */; };
+		8308261336EE90F27DED82A2 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372FB6B53D1F0B92358F5D67 /* MenuBarView.swift */; };
+		833B3080E42E5FB79AAE5428 /* RoastHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B6B06B217D79D97570722B7 /* RoastHistory.swift */; };
+		892603636714B1581AC7D21B /* BehaviorEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF25446265E393933579BE1C /* BehaviorEvent.swift */; };
+		8E932A2EF78C43994D8FB1AF /* PersonalityPack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEF41255395933677FDF0E5 /* PersonalityPack.swift */; };
+		9409005EFC052EF8F77BD804 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6191C983FB84F61B13E6C87F /* AppDelegate.swift */; };
+		9513A82AA2118F4EAA68AEDA /* SummaryCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1099E327C918F88773A0CD69 /* SummaryCardView.swift */; };
+		9661F064E0C3EB4E29282C83 /* Mood.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66B9C7466A2F6F286959A58 /* Mood.swift */; };
+		98EFB9A3865F4938F6CDD2D4 /* ProductIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CFD1CCB886B29269B6FF3 /* ProductIdentifiers.swift */; };
+		9AA966C30AB0D8438F98CEB8 /* RoastTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDEDB80CB9A81667318B218 /* RoastTemplate.swift */; };
+		AA0884F3BC40FFC9C8AC9607 /* TimeOfDayDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201D0EA6EFC1AB1F74FA4E5D /* TimeOfDayDetector.swift */; };
+		ADA1258BBB8B5FE359F34CEE /* EntitlementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB08813283AB6FA67974B4E0 /* EntitlementManager.swift */; };
+		B16D5B8A193F6A6CFF9A0613 /* RoastCooldownTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F6A61AD29F9DDFD9AA9C8A /* RoastCooldownTracker.swift */; };
+		C1BB29F2EAD1C3D6B4E929A4 /* RoastPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A62757D14A172F7BDD17E8 /* RoastPresenter.swift */; };
+		D970475E83728632F268C6D1 /* ThermalDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18F5D092B33FACE9B7C389F /* ThermalDetector.swift */; };
+		D9AAED4E8DC60AF14E68D65B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12B4B7B30181430A5A1FCB82 /* AppState.swift */; };
+		DA30EF497BF66C237F0318C9 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA02D1EC626473B027D56BDE /* SettingsStore.swift */; };
+		DD99C7BA77FBAF20B3B35297 /* UserStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675FFD5CA556A54DEEE43D37 /* UserStats.swift */; };
+		DFA19A64AC53F924344B182A /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF30272CC10DE7074C471CF2 /* OnboardingView.swift */; };
+		E02AF58E670B0BC9515A4861 /* MoodEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10EFC8B386DD003C98F2BA6D /* MoodEngine.swift */; };
+		EEF111B1F50F7449C31A6A04 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAA773191E3D1797A5D705D /* Constants.swift */; };
+		EF0768F2BBF8B1CFBF4E3F80 /* JudgyMac.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 0C092D7F9C46FE5FDFFBE254 /* JudgyMac.storekit */; };
+		FDD0A9F3D4EEE4CA5B80E332 /* SummaryShareHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 186E38A836FA4C3ADDEAD5CE /* SummaryShareHelper.swift */; };
+		FE3EDE25ACFE1A9920E73A28 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF248A6E63A9EF1DCEBB5FD /* Theme.swift */; };
+		FFAEEDD746E4E8D242714A0B /* BehaviorDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3578C0FACDBD4BCE6938F0A8 /* BehaviorDetector.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0811A026395AC21A32063256 /* ToastWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastWindow.swift; sourceTree = "<group>"; };
+		0C092D7F9C46FE5FDFFBE254 /* JudgyMac.storekit */ = {isa = PBXFileReference; path = JudgyMac.storekit; sourceTree = "<group>"; };
+		1099E327C918F88773A0CD69 /* SummaryCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryCardView.swift; sourceTree = "<group>"; };
+		10EFC8B386DD003C98F2BA6D /* MoodEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodEngine.swift; sourceTree = "<group>"; };
+		12B4B7B30181430A5A1FCB82 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		1793841F167922FBC48BDEEF /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		186E38A836FA4C3ADDEAD5CE /* SummaryShareHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryShareHelper.swift; sourceTree = "<group>"; };
+		201D0EA6EFC1AB1F74FA4E5D /* TimeOfDayDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeOfDayDetector.swift; sourceTree = "<group>"; };
+		237AB8A5032A73070937DB19 /* LidDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LidDetector.swift; sourceTree = "<group>"; };
+		2B6B06B217D79D97570722B7 /* RoastHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastHistory.swift; sourceTree = "<group>"; };
+		2E51F274515A877D4EB33C49 /* RoastBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastBubble.swift; sourceTree = "<group>"; };
+		3578C0FACDBD4BCE6938F0A8 /* BehaviorDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviorDetector.swift; sourceTree = "<group>"; };
+		372FB6B53D1F0B92358F5D67 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		384C3A8579A07694C8026266 /* StoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreManager.swift; sourceTree = "<group>"; };
+		38B35251CB604B1CED9835B5 /* IdleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleDetector.swift; sourceTree = "<group>"; };
+		38E714ECDC40E0710486EDE9 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		5BDEDB80CB9A81667318B218 /* RoastTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastTemplate.swift; sourceTree = "<group>"; };
+		5EA8F9880213B6271E776347 /* StatsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsStore.swift; sourceTree = "<group>"; };
+		6191C983FB84F61B13E6C87F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		65F45A53EAB9A5FF2172C637 /* RoastEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastEngine.swift; sourceTree = "<group>"; };
+		675FFD5CA556A54DEEE43D37 /* UserStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStats.swift; sourceTree = "<group>"; };
+		6AEF41255395933677FDF0E5 /* PersonalityPack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalityPack.swift; sourceTree = "<group>"; };
+		7162979E25841246E79E8578 /* DetectionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionCoordinator.swift; sourceTree = "<group>"; };
+		9BE02200D5870AF01016DA0E /* JudgyMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JudgyMacApp.swift; sourceTree = "<group>"; };
+		9C1CAAC9FE2B10A28F010DC1 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		A594CDA89222061DD8AADA81 /* MenuBarIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIcon.swift; sourceTree = "<group>"; };
+		A5E7CEB8EA7BCC2E987AEE93 /* JudgyMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JudgyMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A66B9C7466A2F6F286959A58 /* Mood.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mood.swift; sourceTree = "<group>"; };
+		A9100DF1CA31D047308E4216 /* RoastEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastEntry.swift; sourceTree = "<group>"; };
+		AA629D49B1C788897ECD732C /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
+		AB08813283AB6FA67974B4E0 /* EntitlementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementManager.swift; sourceTree = "<group>"; };
+		B544CA9C3AFACCEB2ACDAAE0 /* AnimatedFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedFace.swift; sourceTree = "<group>"; };
+		BCC34BF823FCBCCDCA5C2A0C /* DailySummaryGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailySummaryGenerator.swift; sourceTree = "<group>"; };
+		BF25446265E393933579BE1C /* BehaviorEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviorEvent.swift; sourceTree = "<group>"; };
+		BF30272CC10DE7074C471CF2 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		C3043E55752255EA6D4FCA99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		CA02D1EC626473B027D56BDE /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		D0FE6AF81934ED2393BB02AB /* JudgyMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JudgyMac.entitlements; sourceTree = "<group>"; };
+		D55EE2BD5868466FD569BEE3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		E18F5D092B33FACE9B7C389F /* ThermalDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThermalDetector.swift; sourceTree = "<group>"; };
+		EBF248A6E63A9EF1DCEBB5FD /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		EEAA773191E3D1797A5D705D /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		F0F6A61AD29F9DDFD9AA9C8A /* RoastCooldownTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastCooldownTracker.swift; sourceTree = "<group>"; };
+		F17CFD1CCB886B29269B6FF3 /* ProductIdentifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductIdentifiers.swift; sourceTree = "<group>"; };
+		F6A62757D14A172F7BDD17E8 /* RoastPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastPresenter.swift; sourceTree = "<group>"; };
+		FCE69F46BDD51CABB4A52FCA /* Roasts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Roasts; path = JudgyMac/Resources/Roasts; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		00E9F15AA9519AE47882F9E5 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				6191C983FB84F61B13E6C87F /* AppDelegate.swift */,
+				12B4B7B30181430A5A1FCB82 /* AppState.swift */,
+				9BE02200D5870AF01016DA0E /* JudgyMacApp.swift */,
+				BF30272CC10DE7074C471CF2 /* OnboardingView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		1AFD3F9AE3079600C37CAB10 /* JudgyMac */ = {
+			isa = PBXGroup;
+			children = (
+				C3043E55752255EA6D4FCA99 /* Info.plist */,
+				D0FE6AF81934ED2393BB02AB /* JudgyMac.entitlements */,
+				0C092D7F9C46FE5FDFFBE254 /* JudgyMac.storekit */,
+				00E9F15AA9519AE47882F9E5 /* App */,
+				DC2929823CD8C1B792286E14 /* Design */,
+				B13C7B5A8DCD61C175279F5D /* Detection */,
+				E7B293EBCAC89E18B511BAA6 /* i18n */,
+				352837F6BB0C1D108CD3399E /* MenuBar */,
+				3578BC2DAF2F24852C2526C8 /* Models */,
+				342CC586799C35F21D47E0A1 /* Persistence */,
+				F0DC3B6FAE8F0B2CB918E207 /* Roast */,
+				93E51933731235A43537317C /* Settings */,
+				D3CB39BE26A4517D7F657FB7 /* Store */,
+				581DA603F9C604289C095278 /* Summary */,
+				BA276C28AB344275EF37E613 /* Utilities */,
+			);
+			path = JudgyMac;
+			sourceTree = "<group>";
+		};
+		342CC586799C35F21D47E0A1 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				2B6B06B217D79D97570722B7 /* RoastHistory.swift */,
+				CA02D1EC626473B027D56BDE /* SettingsStore.swift */,
+				5EA8F9880213B6271E776347 /* StatsStore.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		352837F6BB0C1D108CD3399E /* MenuBar */ = {
+			isa = PBXGroup;
+			children = (
+				9C1CAAC9FE2B10A28F010DC1 /* HistoryView.swift */,
+				A594CDA89222061DD8AADA81 /* MenuBarIcon.swift */,
+				372FB6B53D1F0B92358F5D67 /* MenuBarView.swift */,
+				10EFC8B386DD003C98F2BA6D /* MoodEngine.swift */,
+				0811A026395AC21A32063256 /* ToastWindow.swift */,
+			);
+			path = MenuBar;
+			sourceTree = "<group>";
+		};
+		3578BC2DAF2F24852C2526C8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BF25446265E393933579BE1C /* BehaviorEvent.swift */,
+				A66B9C7466A2F6F286959A58 /* Mood.swift */,
+				A9100DF1CA31D047308E4216 /* RoastEntry.swift */,
+				675FFD5CA556A54DEEE43D37 /* UserStats.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		581DA603F9C604289C095278 /* Summary */ = {
+			isa = PBXGroup;
+			children = (
+				BCC34BF823FCBCCDCA5C2A0C /* DailySummaryGenerator.swift */,
+				1099E327C918F88773A0CD69 /* SummaryCardView.swift */,
+				186E38A836FA4C3ADDEAD5CE /* SummaryShareHelper.swift */,
+			);
+			path = Summary;
+			sourceTree = "<group>";
+		};
+		93E51933731235A43537317C /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				D55EE2BD5868466FD569BEE3 /* SettingsView.swift */,
+				38E714ECDC40E0710486EDE9 /* SettingsWindowController.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		959FF718B3BBCF5C393FB905 = {
+			isa = PBXGroup;
+			children = (
+				FCE69F46BDD51CABB4A52FCA /* Roasts */,
+				1AFD3F9AE3079600C37CAB10 /* JudgyMac */,
+				E87CF9EF3E6E547CCB6E3FEB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B13C7B5A8DCD61C175279F5D /* Detection */ = {
+			isa = PBXGroup;
+			children = (
+				7162979E25841246E79E8578 /* DetectionCoordinator.swift */,
+				38B35251CB604B1CED9835B5 /* IdleDetector.swift */,
+				237AB8A5032A73070937DB19 /* LidDetector.swift */,
+				E18F5D092B33FACE9B7C389F /* ThermalDetector.swift */,
+				201D0EA6EFC1AB1F74FA4E5D /* TimeOfDayDetector.swift */,
+				B1C8F6D8E19237AA5C7E14A7 /* Protocols */,
+			);
+			path = Detection;
+			sourceTree = "<group>";
+		};
+		B1C8F6D8E19237AA5C7E14A7 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				3578C0FACDBD4BCE6938F0A8 /* BehaviorDetector.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		BA276C28AB344275EF37E613 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				EEAA773191E3D1797A5D705D /* Constants.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		D3CB39BE26A4517D7F657FB7 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				AB08813283AB6FA67974B4E0 /* EntitlementManager.swift */,
+				1793841F167922FBC48BDEEF /* PaywallView.swift */,
+				F17CFD1CCB886B29269B6FF3 /* ProductIdentifiers.swift */,
+				384C3A8579A07694C8026266 /* StoreManager.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
+		DC2929823CD8C1B792286E14 /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				B544CA9C3AFACCEB2ACDAAE0 /* AnimatedFace.swift */,
+				AA629D49B1C788897ECD732C /* GlassCard.swift */,
+				2E51F274515A877D4EB33C49 /* RoastBubble.swift */,
+				EBF248A6E63A9EF1DCEBB5FD /* Theme.swift */,
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
+		E7B293EBCAC89E18B511BAA6 /* i18n */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = i18n;
+			sourceTree = "<group>";
+		};
+		E87CF9EF3E6E547CCB6E3FEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A5E7CEB8EA7BCC2E987AEE93 /* JudgyMac.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F0DC3B6FAE8F0B2CB918E207 /* Roast */ = {
+			isa = PBXGroup;
+			children = (
+				6AEF41255395933677FDF0E5 /* PersonalityPack.swift */,
+				F0F6A61AD29F9DDFD9AA9C8A /* RoastCooldownTracker.swift */,
+				65F45A53EAB9A5FF2172C637 /* RoastEngine.swift */,
+				F6A62757D14A172F7BDD17E8 /* RoastPresenter.swift */,
+				5BDEDB80CB9A81667318B218 /* RoastTemplate.swift */,
+			);
+			path = Roast;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F0A75EA423D629F5DF71A6C2 /* JudgyMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 501D5D0490EE54BA918F2E86 /* Build configuration list for PBXNativeTarget "JudgyMac" */;
+			buildPhases = (
+				3722FBF46CEDCB9B631013A2 /* Sources */,
+				41A8C4211C48DFEBFD046EF7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = JudgyMac;
+			packageProductDependencies = (
+			);
+			productName = JudgyMac;
+			productReference = A5E7CEB8EA7BCC2E987AEE93 /* JudgyMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DBA424949B7BB1B8F20DCD58 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					F0A75EA423D629F5DF71A6C2 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = BC34C4B3B4426BED09934439 /* Build configuration list for PBXProject "JudgyMac" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 959FF718B3BBCF5C393FB905;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = E87CF9EF3E6E547CCB6E3FEB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F0A75EA423D629F5DF71A6C2 /* JudgyMac */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		41A8C4211C48DFEBFD046EF7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EF0768F2BBF8B1CFBF4E3F80 /* JudgyMac.storekit in Resources */,
+				636FCD6617EBBF3071C0C201 /* Roasts in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3722FBF46CEDCB9B631013A2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				187886FFD88C7CCCD45F7494 /* AnimatedFace.swift in Sources */,
+				9409005EFC052EF8F77BD804 /* AppDelegate.swift in Sources */,
+				D9AAED4E8DC60AF14E68D65B /* AppState.swift in Sources */,
+				FFAEEDD746E4E8D242714A0B /* BehaviorDetector.swift in Sources */,
+				892603636714B1581AC7D21B /* BehaviorEvent.swift in Sources */,
+				EEF111B1F50F7449C31A6A04 /* Constants.swift in Sources */,
+				229AC52AE0C821CCE442EEDD /* DailySummaryGenerator.swift in Sources */,
+				366814E659DAF2E942B88717 /* DetectionCoordinator.swift in Sources */,
+				ADA1258BBB8B5FE359F34CEE /* EntitlementManager.swift in Sources */,
+				3D348B5D222B1CBB6B03E5D3 /* GlassCard.swift in Sources */,
+				2E45B75B1073D8EC651EAF60 /* HistoryView.swift in Sources */,
+				4332C1F72B138EEF404397B6 /* IdleDetector.swift in Sources */,
+				7270FC211B986C2F320B42EC /* JudgyMacApp.swift in Sources */,
+				662DE64D63EB8805A711EE24 /* LidDetector.swift in Sources */,
+				49A96D53F59FEFA5EB1608EE /* MenuBarIcon.swift in Sources */,
+				8308261336EE90F27DED82A2 /* MenuBarView.swift in Sources */,
+				9661F064E0C3EB4E29282C83 /* Mood.swift in Sources */,
+				E02AF58E670B0BC9515A4861 /* MoodEngine.swift in Sources */,
+				DFA19A64AC53F924344B182A /* OnboardingView.swift in Sources */,
+				118E2439288F4D9BFC0136F9 /* PaywallView.swift in Sources */,
+				8E932A2EF78C43994D8FB1AF /* PersonalityPack.swift in Sources */,
+				98EFB9A3865F4938F6CDD2D4 /* ProductIdentifiers.swift in Sources */,
+				3265259BB2F0F6826C1DED94 /* RoastBubble.swift in Sources */,
+				B16D5B8A193F6A6CFF9A0613 /* RoastCooldownTracker.swift in Sources */,
+				65D816688A8C27434247E80A /* RoastEngine.swift in Sources */,
+				2FF2144CB375DC348C431214 /* RoastEntry.swift in Sources */,
+				833B3080E42E5FB79AAE5428 /* RoastHistory.swift in Sources */,
+				C1BB29F2EAD1C3D6B4E929A4 /* RoastPresenter.swift in Sources */,
+				9AA966C30AB0D8438F98CEB8 /* RoastTemplate.swift in Sources */,
+				DA30EF497BF66C237F0318C9 /* SettingsStore.swift in Sources */,
+				14C70E038FC91B16A70DFE95 /* SettingsView.swift in Sources */,
+				1C76E6CAD2E2742343BD1A5A /* SettingsWindowController.swift in Sources */,
+				69B30361906EE9A1887BD44C /* StatsStore.swift in Sources */,
+				0D35ACC341554D0B4B625AD2 /* StoreManager.swift in Sources */,
+				9513A82AA2118F4EAA68AEDA /* SummaryCardView.swift in Sources */,
+				FDD0A9F3D4EEE4CA5B80E332 /* SummaryShareHelper.swift in Sources */,
+				FE3EDE25ACFE1A9920E73A28 /* Theme.swift in Sources */,
+				D970475E83728632F268C6D1 /* ThermalDetector.swift in Sources */,
+				AA0884F3BC40FFC9C8AC9607 /* TimeOfDayDetector.swift in Sources */,
+				5292F342E6FF37AD2BF52BE8 /* ToastWindow.swift in Sources */,
+				DD99C7BA77FBAF20B3B35297 /* UserStats.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6AB62A7271DAE7EF89D41C79 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = JudgyMac/JudgyMac.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = JudgyMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_NAME = JudgyMac;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		98C33385019F4FC206353EF2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.judgymac.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		DCE54235B892D54EF5D93A84 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = JudgyMac/JudgyMac.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = JudgyMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_NAME = JudgyMac;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F2807B0AB809F1032172ABCB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.judgymac.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		501D5D0490EE54BA918F2E86 /* Build configuration list for PBXNativeTarget "JudgyMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DCE54235B892D54EF5D93A84 /* Debug */,
+				6AB62A7271DAE7EF89D41C79 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BC34C4B3B4426BED09934439 /* Build configuration list for PBXProject "JudgyMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F2807B0AB809F1032172ABCB /* Debug */,
+				98C33385019F4FC206353EF2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DBA424949B7BB1B8F20DCD58 /* Project object */;
+}

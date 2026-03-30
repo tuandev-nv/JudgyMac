@@ -1,0 +1,35 @@
+{
+  "identifier" : "com.judgymac",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : true,
+      "internalID" : "1",
+      "localizations" : [
+        {
+          "description" : "Unlock all personalities, unlimited roasts, daily summary, and all future updates.",
+          "displayName" : "JudgyMac Full Version",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.judgymac.full",
+      "referenceName" : "Full Version",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "1",
+    "_developerTeamID" : "",
+    "_lastSynchronizedDate" : 0
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}
