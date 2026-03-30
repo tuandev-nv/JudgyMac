@@ -50,17 +50,25 @@ final class ToastWindow {
 
         window = panel
 
-        // Animate in: slide down + fade
-        panel.alphaValue = 0
-        let finalOrigin = panel.frame.origin
-        panel.setFrameOrigin(NSPoint(x: finalOrigin.x, y: finalOrigin.y + 20))
-        panel.orderFrontRegardless()
+        let reduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
 
-        NSAnimationContext.runAnimationGroup { ctx in
-            ctx.duration = 0.4
-            ctx.timingFunction = CAMediaTimingFunction(name: .default)
-            panel.animator().alphaValue = 1
-            panel.animator().setFrameOrigin(finalOrigin)
+        if reduceMotion {
+            // No animation — just show immediately
+            panel.alphaValue = 1
+            panel.orderFrontRegardless()
+        } else {
+            // Animate in: slide down + fade
+            panel.alphaValue = 0
+            let finalOrigin = panel.frame.origin
+            panel.setFrameOrigin(NSPoint(x: finalOrigin.x, y: finalOrigin.y + 20))
+            panel.orderFrontRegardless()
+
+            NSAnimationContext.runAnimationGroup { ctx in
+                ctx.duration = 0.4
+                ctx.timingFunction = CAMediaTimingFunction(name: .default)
+                panel.animator().alphaValue = 1
+                panel.animator().setFrameOrigin(finalOrigin)
+            }
         }
 
         // Auto-dismiss after 10s (paused while hovered)
@@ -84,16 +92,25 @@ final class ToastWindow {
         dismissTask?.cancel()
         guard let panel = window else { return }
 
-        let origin = panel.frame.origin
-        NSAnimationContext.runAnimationGroup({ ctx in
-            ctx.duration = 0.25
-            ctx.timingFunction = CAMediaTimingFunction(name: .easeIn)
-            panel.animator().alphaValue = 0
-            panel.animator().setFrameOrigin(NSPoint(x: origin.x, y: origin.y + 15))
-        }, completionHandler: { [weak self] in
+        let reduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+
+        if reduceMotion {
             panel.orderOut(nil)
-            self?.window = nil
-        })
+            window = nil
+        } else {
+            let origin = panel.frame.origin
+            NSAnimationContext.runAnimationGroup({ ctx in
+                ctx.duration = 0.25
+                ctx.timingFunction = CAMediaTimingFunction(name: .easeIn)
+                panel.animator().alphaValue = 0
+                panel.animator().setFrameOrigin(NSPoint(x: origin.x, y: origin.y + 15))
+            }, completionHandler: {
+                Task { @MainActor [weak self] in
+                    panel.orderOut(nil)
+                    self?.window = nil
+                }
+            })
+        }
     }
 }
 
@@ -105,6 +122,7 @@ private struct ToastView: View {
     let onHover: (Bool) -> Void
     @State private var emojiAppeared = false
     @State private var isHovering = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var moodColor: Color {
         switch roast.mood {
@@ -129,9 +147,9 @@ private struct ToastView: View {
                     // Fluent 3D Emoji
                     fluentEmojiView
                         .frame(width: 56, height: 56)
-                        .scaleEffect(emojiAppeared ? 1 : 0.3)
+                        .scaleEffect(emojiAppeared || reduceMotion ? 1 : 0.3)
                         .animation(
-                            .spring(response: 0.4, dampingFraction: 0.5).delay(0.15),
+                            reduceMotion ? nil : .spring(response: 0.4, dampingFraction: 0.5).delay(0.15),
                             value: emojiAppeared
                         )
 
@@ -184,6 +202,9 @@ private struct ToastView: View {
         )
         .shadow(color: .black.opacity(0.4), radius: 20, y: 8)
         .shadow(color: moodColor.opacity(0.25), radius: 30, y: 12)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("JudgyMac roast from \(roast.personality): \(roast.text)")
+        .accessibilityAddTraits(.isStaticText)
         .onAppear { emojiAppeared = true }
         .onHover { hovering in
             isHovering = hovering

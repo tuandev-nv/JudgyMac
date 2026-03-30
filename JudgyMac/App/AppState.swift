@@ -19,6 +19,9 @@ final class AppState {
     var enabledTriggers: Set<TriggerType> = Set(TriggerType.allCases)
     var isOnboarded: Bool = false
 
+    // MARK: - Slap
+    var selectedSlapCharacter: String = "face-judgy"
+
     // MARK: - System Stats
     var cpuUsage: Double = 0
 

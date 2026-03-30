@@ -46,11 +46,15 @@ final class LidDetector: BehaviorDetector, @unchecked Sendable {
         )
 
         guard rootPort != 0, let notifyPortRef else {
+            #if DEBUG
             print("🤨 [LidDetector] ❌ IORegisterForSystemPower failed — sandbox blocking?")
+            #endif
             isRunning = false
             return
         }
+        #if DEBUG
         print("🤨 [LidDetector] ✅ Registered for power notifications")
+        #endif
 
         CFRunLoopAddSource(
             CFRunLoopGetCurrent(),
@@ -74,7 +78,9 @@ final class LidDetector: BehaviorDetector, @unchecked Sendable {
     // MARK: - Handle Power Events
 
     fileprivate func handlePowerEvent(_ messageType: UInt32, _ messageArgument: Int) {
+        #if DEBUG
         print("🤨 [LidDetector] Power event: \(String(format: "0x%X", messageType))")
+        #endif
         switch messageType {
         case sleepMessage:
             IOAllowPowerChange(rootPort, messageArgument) // ACK FIRST — never delay this

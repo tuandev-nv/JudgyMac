@@ -8,9 +8,15 @@ enum Constants {
     enum Roast {
         static let freeRoastsPerDay = 3
         static let fullRoastsPerDay = 50
-        static let cooldownSeconds: TimeInterval = 5 // TODO: change to 300 before release
+        static let cooldownSeconds: TimeInterval = 300
         static let templateRepeatCooldownHours = 24
         static let maxHistoryEntries = 100
+    }
+
+    enum Slap {
+        static let pressureThreshold: Double = 0.8
+        static let dismissIdleSeconds: TimeInterval = 1.5
+        static let windowSize: CGFloat = 600
     }
 
     enum Detection {

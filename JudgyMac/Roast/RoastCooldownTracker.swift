@@ -13,6 +13,9 @@ final class RoastCooldownTracker: Sendable {
     private let weightDecay: LockedValue<[String: Double]> = LockedValue([:])
 
     func canRoast(templateId: String, triggerType: TriggerType, isFullVersion: Bool) -> Bool {
+        #if DEBUG
+        return true
+        #else
         let now = Date()
         cleanupIfNewDay(now: now)
 
@@ -36,6 +39,7 @@ final class RoastCooldownTracker: Sendable {
         }
 
         return true
+        #endif
     }
 
     func recordRoast(templateId: String, triggerType: TriggerType) {
@@ -52,6 +56,14 @@ final class RoastCooldownTracker: Sendable {
 
     var todayRoastCount: Int {
         dailyCount.value.count
+    }
+
+    /// Reset all cooldowns (for dev/testing only)
+    func resetAll() {
+        usedTemplates.mutate { $0.removeAll() }
+        triggerCooldowns.mutate { $0.removeAll() }
+        dailyCount.mutate { $0 = (0, Date()) }
+        weightDecay.mutate { $0.removeAll() }
     }
 
     private func cleanupIfNewDay(now: Date) {

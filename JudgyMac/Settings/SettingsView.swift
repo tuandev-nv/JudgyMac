@@ -74,12 +74,6 @@ struct TriggersSettingsTab: View {
                 }
             }
 
-            Section("No special permissions needed") {
-                Text("All 6 triggers work without any extra permissions.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
             Section("Cooldowns") {
                 LabeledContent("Between same trigger") {
                     Text("5 minutes").foregroundStyle(.secondary)
@@ -96,8 +90,11 @@ struct TriggersSettingsTab: View {
         Binding(
             get: { appState.enabledTriggers.contains(trigger) },
             set: { enabled in
-                if enabled { appState.enabledTriggers.insert(trigger) }
-                else { appState.enabledTriggers.remove(trigger) }
+                if enabled {
+                    appState.enabledTriggers.insert(trigger)
+                } else {
+                    appState.enabledTriggers.remove(trigger)
+                }
                 SettingsStore.save(appState)
             }
         )

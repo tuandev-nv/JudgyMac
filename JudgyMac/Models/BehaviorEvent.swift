@@ -7,6 +7,7 @@ enum TriggerType: String, CaseIterable, Codable, Sendable {
     case earlyMorning = "early_morning"
     case thermal = "thermal"
     case idle = "idle"
+    case slap = "slap"
 
     var displayName: String {
         switch self {
@@ -16,6 +17,7 @@ enum TriggerType: String, CaseIterable, Codable, Sendable {
         case .earlyMorning:  return "Early Morning"
         case .thermal:       return "Overheating"
         case .idle:          return "Too Idle"
+        case .slap:          return "Slap"
         }
     }
 
@@ -27,6 +29,7 @@ enum TriggerType: String, CaseIterable, Codable, Sendable {
         case .earlyMorning:  return "sunrise.fill"
         case .thermal:       return "flame.fill"
         case .idle:          return "zzz"
+        case .slap:          return "hand.raised.fill"
         }
     }
 }
@@ -66,5 +69,9 @@ struct BehaviorEvent: Sendable {
 
     static func idle(minutes: Int) -> BehaviorEvent {
         BehaviorEvent(type: .idle, metadata: ["idle_minutes": "\(minutes)"])
+    }
+
+    static func slap(pressure: Double) -> BehaviorEvent {
+        BehaviorEvent(type: .slap, metadata: ["pressure": String(format: "%.2f", pressure)])
     }
 }

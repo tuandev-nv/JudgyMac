@@ -76,6 +76,9 @@ final class RoastPresenter {
     }
 
     private func handleEvent(_ event: BehaviorEvent) {
+        // Slap events are handled by SlapPresenter
+        guard event.type != .slap else { return }
+
         // Check snooze
         if let snoozedUntil, Date() < snoozedUntil { return }
 

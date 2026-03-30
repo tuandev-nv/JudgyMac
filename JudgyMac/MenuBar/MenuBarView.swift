@@ -57,26 +57,84 @@ struct MenuBarView: View {
             // Judgment bar
             judgmentBar
 
-            // DEBUG: Test button (remove before release)
-            Button {
-                let event = BehaviorEvent.lidOpen(count: appState.todayStats.lidOpenCount + 1)
-                appState.handleEvent(event)
-                NotificationCenter.default.post(
-                    name: .behaviorEventDetected,
-                    object: nil,
-                    userInfo: ["event": event]
-                )
-            } label: {
-                Text("🧪 Test Roast")
-                    .font(.system(size: 12, weight: .medium))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
-                    .background(.purple.opacity(0.15), in: RoundedRectangle(cornerRadius: 8))
-            }
-            .buttonStyle(.plain)
+            #if DEBUG
+            devTools
+            #endif
         }
         .padding(16)
     }
+
+    // MARK: - Dev Tools (DEBUG only)
+
+    #if DEBUG
+    @State private var devExpanded = false
+
+    private var devTools: some View {
+        DisclosureGroup("🛠 Dev Tools", isExpanded: $devExpanded) {
+            VStack(spacing: 6) {
+                DevButton(label: "🧪 Trigger Roast (Lid Open)") {
+                    let event = BehaviorEvent.lidOpen(count: appState.todayStats.lidOpenCount + 1)
+                    appState.handleEvent(event)
+                    NotificationCenter.default.post(
+                        name: .behaviorEventDetected,
+                        object: nil,
+                        userInfo: ["event": event]
+                    )
+                }
+
+                DevButton(label: "😴 Trigger Idle") {
+                    let event = BehaviorEvent.idle(minutes: 30)
+                    appState.handleEvent(event)
+                    NotificationCenter.default.post(
+                        name: .behaviorEventDetected,
+                        object: nil,
+                        userInfo: ["event": event]
+                    )
+                }
+
+                DevButton(label: "🌙 Trigger Late Night") {
+                    let event = BehaviorEvent.lateNight(hour: 3)
+                    appState.handleEvent(event)
+                    NotificationCenter.default.post(
+                        name: .behaviorEventDetected,
+                        object: nil,
+                        userInfo: ["event": event]
+                    )
+                }
+
+                DevButton(label: "🔥 Trigger Thermal") {
+                    let event = BehaviorEvent.thermal(state: "critical")
+                    appState.handleEvent(event)
+                    NotificationCenter.default.post(
+                        name: .behaviorEventDetected,
+                        object: nil,
+                        userInfo: ["event": event]
+                    )
+                }
+
+                DevButton(label: "👋 Trigger Slap") {
+                    let event = BehaviorEvent.slap(pressure: 0.95)
+                    appState.handleEvent(event)
+                    NotificationCenter.default.post(
+                        name: .behaviorEventDetected,
+                        object: nil,
+                        userInfo: ["event": event]
+                    )
+                }
+
+                DevButton(label: "🔄 Reset Stats") {
+                    appState.todayStats = UserStats()
+                    appState.currentRoast = nil
+                    appState.currentMood = .neutral
+                }
+            }
+        }
+        .font(.system(size: 11, weight: .medium))
+        .foregroundStyle(.orange)
+        .padding(8)
+        .background(.orange.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+    }
+    #endif
 
     // MARK: - Roast
 
@@ -102,6 +160,8 @@ struct MenuBarView: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(.purple.opacity(0.15), lineWidth: 0.5)
         )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Current roast: \(appState.currentRoast?.text ?? "No roast yet") by \(appState.currentRoast?.personality ?? "The Critic")")
     }
 
     // MARK: - Stats
@@ -112,7 +172,6 @@ struct MenuBarView: View {
             StatPill(icon: "laptopcomputer", value: "\(stats.lidOpenCount)", label: "Opens")
             StatPill(icon: "flame", value: "\(stats.roastCount)", label: "Roasts")
             StatPill(icon: "zzz", value: "\(stats.maxIdleMinutes)m", label: "Idle")
-            StatPill(icon: "keyboard", value: "\(stats.keystrokeCount)", label: "Keys")
         }
     }
 
@@ -269,6 +328,7 @@ private struct BarButton: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(label)
     }
 }
 
@@ -297,8 +357,31 @@ private struct StatPill: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 10)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(value)")
     }
 }
+
+// MARK: - Dev Button (DEBUG only)
+
+#if DEBUG
+private struct DevButton: View {
+    let label: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(label)
+                .font(.system(size: 11, weight: .medium))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, 4)
+                .padding(.horizontal, 6)
+                .background(.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
+        }
+        .buttonStyle(.plain)
+    }
+}
+#endif
 
 // MARK: - Previews
 

@@ -7,17 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		076DEE6EB6CDAACC7083EB7E /* SlapTargets in Resources */ = {isa = PBXBuildFile; fileRef = 42457EA5580850E1B8ACCC1D /* SlapTargets */; };
 		0D35ACC341554D0B4B625AD2 /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384C3A8579A07694C8026266 /* StoreManager.swift */; };
 		118E2439288F4D9BFC0136F9 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1793841F167922FBC48BDEEF /* PaywallView.swift */; };
 		129433952593655A98DE179F /* CPUMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3F4279DEAB034963BF3879 /* CPUMonitor.swift */; };
 		14C70E038FC91B16A70DFE95 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EE2BD5868466FD569BEE3 /* SettingsView.swift */; };
+		1C4A4E0B75FD831179EC2832 /* SlapCharacter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D85B928D19EC03A8895EBC4 /* SlapCharacter.swift */; };
 		1C76E6CAD2E2742343BD1A5A /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38E714ECDC40E0710486EDE9 /* SettingsWindowController.swift */; };
+		1E6CE19518AC9BCFA4E257B3 /* SlapDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0AFD822028086438C8EE649 /* SlapDetector.swift */; };
 		229AC52AE0C821CCE442EEDD /* DailySummaryGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC34BF823FCBCCDCA5C2A0C /* DailySummaryGenerator.swift */; };
+		267D85BFE780078C1D05B56B /* SlapPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28CC31A371F7808F02A5CE32 /* SlapPresenter.swift */; };
+		275B2626CE3BBA292D4419FA /* AccessibilityHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D786061E93EA29E7F3A893 /* AccessibilityHelper.swift */; };
 		2D0F5308856499428A4F8F1E /* FluentEmoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE37C414A6717B82D99B4629 /* FluentEmoji.swift */; };
 		2E45B75B1073D8EC651EAF60 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1CAAC9FE2B10A28F010DC1 /* HistoryView.swift */; };
 		2FF2144CB375DC348C431214 /* RoastEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9100DF1CA31D047308E4216 /* RoastEntry.swift */; };
 		3265259BB2F0F6826C1DED94 /* RoastBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51F274515A877D4EB33C49 /* RoastBubble.swift */; };
 		366814E659DAF2E942B88717 /* DetectionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7162979E25841246E79E8578 /* DetectionCoordinator.swift */; };
+		37D5F54E16C82B0687704C6E /* SoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C863C21F0DA4E197BDFAFA43 /* SoundPlayer.swift */; };
 		3D348B5D222B1CBB6B03E5D3 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA629D49B1C788897ECD732C /* GlassCard.swift */; };
 		4332C1F72B138EEF404397B6 /* IdleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38B35251CB604B1CED9835B5 /* IdleDetector.swift */; };
 		5292F342E6FF37AD2BF52BE8 /* ToastWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0811A026395AC21A32063256 /* ToastWindow.swift */; };
@@ -30,12 +36,15 @@
 		833B3080E42E5FB79AAE5428 /* RoastHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B6B06B217D79D97570722B7 /* RoastHistory.swift */; };
 		892603636714B1581AC7D21B /* BehaviorEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF25446265E393933579BE1C /* BehaviorEvent.swift */; };
 		8E932A2EF78C43994D8FB1AF /* PersonalityPack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AEF41255395933677FDF0E5 /* PersonalityPack.swift */; };
+		92907AEFB63A2C6EFF3EEF23 /* SlapWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336E4DCE2440E5914688639A /* SlapWindow.swift */; };
 		9409005EFC052EF8F77BD804 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6191C983FB84F61B13E6C87F /* AppDelegate.swift */; };
+		94476549918F8840D875661D /* PressureTrackingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BDE62CC433E43448BCD092 /* PressureTrackingView.swift */; };
 		94D48CD67AA617B676C3ECF5 /* Emoji in Resources */ = {isa = PBXBuildFile; fileRef = 6B27FE2482465FBC17BC4011 /* Emoji */; };
 		9513A82AA2118F4EAA68AEDA /* SummaryCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1099E327C918F88773A0CD69 /* SummaryCardView.swift */; };
 		9661F064E0C3EB4E29282C83 /* Mood.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66B9C7466A2F6F286959A58 /* Mood.swift */; };
 		98EFB9A3865F4938F6CDD2D4 /* ProductIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CFD1CCB886B29269B6FF3 /* ProductIdentifiers.swift */; };
 		9AA966C30AB0D8438F98CEB8 /* RoastTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BDEDB80CB9A81667318B218 /* RoastTemplate.swift */; };
+		A2152ADF8A126C14349C7450 /* SlapAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F736FBB5FE1C36AE5B14633 /* SlapAnimationView.swift */; };
 		AA0884F3BC40FFC9C8AC9607 /* TimeOfDayDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201D0EA6EFC1AB1F74FA4E5D /* TimeOfDayDetector.swift */; };
 		ADA1258BBB8B5FE359F34CEE /* EntitlementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB08813283AB6FA67974B4E0 /* EntitlementManager.swift */; };
 		B16D5B8A193F6A6CFF9A0613 /* RoastCooldownTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F6A61AD29F9DDFD9AA9C8A /* RoastCooldownTracker.swift */; };
@@ -44,6 +53,7 @@
 		D9AAED4E8DC60AF14E68D65B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12B4B7B30181430A5A1FCB82 /* AppState.swift */; };
 		DA30EF497BF66C237F0318C9 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA02D1EC626473B027D56BDE /* SettingsStore.swift */; };
 		DD99C7BA77FBAF20B3B35297 /* UserStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675FFD5CA556A54DEEE43D37 /* UserStats.swift */; };
+		DE42B5D3917D7ED96100018B /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = E2FD3E23059CB798FA5D13B6 /* Sounds */; };
 		DFA19A64AC53F924344B182A /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF30272CC10DE7074C471CF2 /* OnboardingView.swift */; };
 		E02AF58E670B0BC9515A4861 /* MoodEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10EFC8B386DD003C98F2BA6D /* MoodEngine.swift */; };
 		EEF111B1F50F7449C31A6A04 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAA773191E3D1797A5D705D /* Constants.swift */; };
@@ -63,24 +73,31 @@
 		186E38A836FA4C3ADDEAD5CE /* SummaryShareHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryShareHelper.swift; sourceTree = "<group>"; };
 		201D0EA6EFC1AB1F74FA4E5D /* TimeOfDayDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeOfDayDetector.swift; sourceTree = "<group>"; };
 		237AB8A5032A73070937DB19 /* LidDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LidDetector.swift; sourceTree = "<group>"; };
+		28CC31A371F7808F02A5CE32 /* SlapPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlapPresenter.swift; sourceTree = "<group>"; };
 		2B6B06B217D79D97570722B7 /* RoastHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastHistory.swift; sourceTree = "<group>"; };
 		2E51F274515A877D4EB33C49 /* RoastBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastBubble.swift; sourceTree = "<group>"; };
+		336E4DCE2440E5914688639A /* SlapWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlapWindow.swift; sourceTree = "<group>"; };
 		3578C0FACDBD4BCE6938F0A8 /* BehaviorDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviorDetector.swift; sourceTree = "<group>"; };
 		372FB6B53D1F0B92358F5D67 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
 		384C3A8579A07694C8026266 /* StoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreManager.swift; sourceTree = "<group>"; };
 		38B35251CB604B1CED9835B5 /* IdleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdleDetector.swift; sourceTree = "<group>"; };
 		38E714ECDC40E0710486EDE9 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		42457EA5580850E1B8ACCC1D /* SlapTargets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = SlapTargets; path = JudgyMac/Resources/SlapTargets; sourceTree = SOURCE_ROOT; };
+		46D786061E93EA29E7F3A893 /* AccessibilityHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityHelper.swift; sourceTree = "<group>"; };
 		4A3F4279DEAB034963BF3879 /* CPUMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUMonitor.swift; sourceTree = "<group>"; };
+		4F736FBB5FE1C36AE5B14633 /* SlapAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlapAnimationView.swift; sourceTree = "<group>"; };
 		5BDEDB80CB9A81667318B218 /* RoastTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastTemplate.swift; sourceTree = "<group>"; };
 		5EA8F9880213B6271E776347 /* StatsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsStore.swift; sourceTree = "<group>"; };
 		6191C983FB84F61B13E6C87F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		65F45A53EAB9A5FF2172C637 /* RoastEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastEngine.swift; sourceTree = "<group>"; };
+		66BDE62CC433E43448BCD092 /* PressureTrackingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PressureTrackingView.swift; sourceTree = "<group>"; };
 		675FFD5CA556A54DEEE43D37 /* UserStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStats.swift; sourceTree = "<group>"; };
 		6AEF41255395933677FDF0E5 /* PersonalityPack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalityPack.swift; sourceTree = "<group>"; };
 		6B27FE2482465FBC17BC4011 /* Emoji */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Emoji; path = JudgyMac/Resources/Emoji; sourceTree = SOURCE_ROOT; };
 		7162979E25841246E79E8578 /* DetectionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionCoordinator.swift; sourceTree = "<group>"; };
 		9BE02200D5870AF01016DA0E /* JudgyMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JudgyMacApp.swift; sourceTree = "<group>"; };
 		9C1CAAC9FE2B10A28F010DC1 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		9D85B928D19EC03A8895EBC4 /* SlapCharacter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlapCharacter.swift; sourceTree = "<group>"; };
 		A5E7CEB8EA7BCC2E987AEE93 /* JudgyMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JudgyMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A66B9C7466A2F6F286959A58 /* Mood.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mood.swift; sourceTree = "<group>"; };
 		A9100DF1CA31D047308E4216 /* RoastEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastEntry.swift; sourceTree = "<group>"; };
@@ -89,12 +106,15 @@
 		BCC34BF823FCBCCDCA5C2A0C /* DailySummaryGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailySummaryGenerator.swift; sourceTree = "<group>"; };
 		BF25446265E393933579BE1C /* BehaviorEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviorEvent.swift; sourceTree = "<group>"; };
 		BF30272CC10DE7074C471CF2 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		C0AFD822028086438C8EE649 /* SlapDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlapDetector.swift; sourceTree = "<group>"; };
 		C3043E55752255EA6D4FCA99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C863C21F0DA4E197BDFAFA43 /* SoundPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPlayer.swift; sourceTree = "<group>"; };
 		CA02D1EC626473B027D56BDE /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		D0FE6AF81934ED2393BB02AB /* JudgyMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JudgyMac.entitlements; sourceTree = "<group>"; };
 		D55EE2BD5868466FD569BEE3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		DE37C414A6717B82D99B4629 /* FluentEmoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluentEmoji.swift; sourceTree = "<group>"; };
 		E18F5D092B33FACE9B7C389F /* ThermalDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThermalDetector.swift; sourceTree = "<group>"; };
+		E2FD3E23059CB798FA5D13B6 /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sounds; path = JudgyMac/Resources/Sounds; sourceTree = SOURCE_ROOT; };
 		EBF248A6E63A9EF1DCEBB5FD /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		EEAA773191E3D1797A5D705D /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F0F6A61AD29F9DDFD9AA9C8A /* RoastCooldownTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoastCooldownTracker.swift; sourceTree = "<group>"; };
@@ -130,6 +150,7 @@
 				342CC586799C35F21D47E0A1 /* Persistence */,
 				F0DC3B6FAE8F0B2CB918E207 /* Roast */,
 				93E51933731235A43537317C /* Settings */,
+				5CA76CABEADCA94E2FC899C7 /* Slap */,
 				D3CB39BE26A4517D7F657FB7 /* Store */,
 				581DA603F9C604289C095278 /* Summary */,
 				BA276C28AB344275EF37E613 /* Utilities */,
@@ -164,6 +185,7 @@
 				BF25446265E393933579BE1C /* BehaviorEvent.swift */,
 				A66B9C7466A2F6F286959A58 /* Mood.swift */,
 				A9100DF1CA31D047308E4216 /* RoastEntry.swift */,
+				9D85B928D19EC03A8895EBC4 /* SlapCharacter.swift */,
 				675FFD5CA556A54DEEE43D37 /* UserStats.swift */,
 			);
 			path = Models;
@@ -177,6 +199,16 @@
 				186E38A836FA4C3ADDEAD5CE /* SummaryShareHelper.swift */,
 			);
 			path = Summary;
+			sourceTree = "<group>";
+		};
+		5CA76CABEADCA94E2FC899C7 /* Slap */ = {
+			isa = PBXGroup;
+			children = (
+				4F736FBB5FE1C36AE5B14633 /* SlapAnimationView.swift */,
+				28CC31A371F7808F02A5CE32 /* SlapPresenter.swift */,
+				336E4DCE2440E5914688639A /* SlapWindow.swift */,
+			);
+			path = Slap;
 			sourceTree = "<group>";
 		};
 		93E51933731235A43537317C /* Settings */ = {
@@ -193,6 +225,8 @@
 			children = (
 				6B27FE2482465FBC17BC4011 /* Emoji */,
 				FCE69F46BDD51CABB4A52FCA /* Roasts */,
+				42457EA5580850E1B8ACCC1D /* SlapTargets */,
+				E2FD3E23059CB798FA5D13B6 /* Sounds */,
 				1AFD3F9AE3079600C37CAB10 /* JudgyMac */,
 				E87CF9EF3E6E547CCB6E3FEB /* Products */,
 			);
@@ -205,6 +239,8 @@
 				7162979E25841246E79E8578 /* DetectionCoordinator.swift */,
 				38B35251CB604B1CED9835B5 /* IdleDetector.swift */,
 				237AB8A5032A73070937DB19 /* LidDetector.swift */,
+				66BDE62CC433E43448BCD092 /* PressureTrackingView.swift */,
+				C0AFD822028086438C8EE649 /* SlapDetector.swift */,
 				E18F5D092B33FACE9B7C389F /* ThermalDetector.swift */,
 				201D0EA6EFC1AB1F74FA4E5D /* TimeOfDayDetector.swift */,
 				B1C8F6D8E19237AA5C7E14A7 /* Protocols */,
@@ -223,7 +259,9 @@
 		BA276C28AB344275EF37E613 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				46D786061E93EA29E7F3A893 /* AccessibilityHelper.swift */,
 				EEAA773191E3D1797A5D705D /* Constants.swift */,
+				C863C21F0DA4E197BDFAFA43 /* SoundPlayer.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -340,6 +378,8 @@
 				94D48CD67AA617B676C3ECF5 /* Emoji in Resources */,
 				EF0768F2BBF8B1CFBF4E3F80 /* JudgyMac.storekit in Resources */,
 				636FCD6617EBBF3071C0C201 /* Roasts in Resources */,
+				076DEE6EB6CDAACC7083EB7E /* SlapTargets in Resources */,
+				DE42B5D3917D7ED96100018B /* Sounds in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,6 +390,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				275B2626CE3BBA292D4419FA /* AccessibilityHelper.swift in Sources */,
 				9409005EFC052EF8F77BD804 /* AppDelegate.swift in Sources */,
 				D9AAED4E8DC60AF14E68D65B /* AppState.swift in Sources */,
 				FFAEEDD746E4E8D242714A0B /* BehaviorDetector.swift in Sources */,
@@ -371,6 +412,7 @@
 				DFA19A64AC53F924344B182A /* OnboardingView.swift in Sources */,
 				118E2439288F4D9BFC0136F9 /* PaywallView.swift in Sources */,
 				8E932A2EF78C43994D8FB1AF /* PersonalityPack.swift in Sources */,
+				94476549918F8840D875661D /* PressureTrackingView.swift in Sources */,
 				98EFB9A3865F4938F6CDD2D4 /* ProductIdentifiers.swift in Sources */,
 				3265259BB2F0F6826C1DED94 /* RoastBubble.swift in Sources */,
 				B16D5B8A193F6A6CFF9A0613 /* RoastCooldownTracker.swift in Sources */,
@@ -382,6 +424,12 @@
 				DA30EF497BF66C237F0318C9 /* SettingsStore.swift in Sources */,
 				14C70E038FC91B16A70DFE95 /* SettingsView.swift in Sources */,
 				1C76E6CAD2E2742343BD1A5A /* SettingsWindowController.swift in Sources */,
+				A2152ADF8A126C14349C7450 /* SlapAnimationView.swift in Sources */,
+				1C4A4E0B75FD831179EC2832 /* SlapCharacter.swift in Sources */,
+				1E6CE19518AC9BCFA4E257B3 /* SlapDetector.swift in Sources */,
+				267D85BFE780078C1D05B56B /* SlapPresenter.swift in Sources */,
+				92907AEFB63A2C6EFF3EEF23 /* SlapWindow.swift in Sources */,
+				37D5F54E16C82B0687704C6E /* SoundPlayer.swift in Sources */,
 				69B30361906EE9A1887BD44C /* StatsStore.swift in Sources */,
 				0D35ACC341554D0B4B625AD2 /* StoreManager.swift in Sources */,
 				9513A82AA2118F4EAA68AEDA /* SummaryCardView.swift in Sources */,

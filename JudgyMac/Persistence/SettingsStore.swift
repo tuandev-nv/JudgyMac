@@ -11,6 +11,8 @@ enum SettingsStore {
         static let isOnboarded = "com.judgymac.onboarded"
         static let isFullVersion = "com.judgymac.fullVersion"
 
+        static let selectedSlapCharacter = "com.judgymac.slapCharacter"
+
         // Stats
         static let statsDate = "com.judgymac.stats.date"
         static let statsLidOpens = "com.judgymac.stats.lidOpens"
@@ -29,6 +31,7 @@ enum SettingsStore {
         defaults.set(state.selectedPersonality, forKey: Keys.selectedPersonality)
         defaults.set(state.isOnboarded, forKey: Keys.isOnboarded)
         defaults.set(state.isFullVersion, forKey: Keys.isFullVersion)
+        defaults.set(state.selectedSlapCharacter, forKey: Keys.selectedSlapCharacter)
 
         let triggers = state.enabledTriggers.map(\.rawValue)
         defaults.set(triggers, forKey: Keys.enabledTriggers)
@@ -67,6 +70,10 @@ enum SettingsStore {
 
         state.isOnboarded = defaults.bool(forKey: Keys.isOnboarded)
         state.isFullVersion = defaults.bool(forKey: Keys.isFullVersion)
+
+        if let slapChar = defaults.string(forKey: Keys.selectedSlapCharacter) {
+            state.selectedSlapCharacter = slapChar
+        }
 
         if let triggers = defaults.stringArray(forKey: Keys.enabledTriggers) {
             state.enabledTriggers = Set(triggers.compactMap { TriggerType(rawValue: $0) })

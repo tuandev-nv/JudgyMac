@@ -11,12 +11,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     let _appState = AppState()
     private var coordinator: DetectionCoordinator?
     private var presenter: RoastPresenter?
+    private var slapPresenter: SlapPresenter?
 
     // Animated menu bar icon
     private let cpuMonitor = CPUMonitor()
     private var animationTimer: Timer?
     private var animationFrame = 0
     private var currentMood: Mood = .neutral
+    private var currentAnimationInterval: TimeInterval = 2.5
 
     // MARK: - App Lifecycle
 
@@ -31,6 +33,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         setupStatusItem()
         setupPopover()
         startEngine()
+
+        #if DEBUG
+        // Ctrl+Shift+S → trigger slap (dev shortcut, bypass popover)
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            if event.modifierFlags.contains([.control, .shift]),
+               event.charactersIgnoringModifiers == "s" {
+                let slapEvent = BehaviorEvent.slap(pressure: 0.95)
+                self?._appState.handleEvent(slapEvent)
+                NotificationCenter.default.post(
+                    name: .behaviorEventDetected,
+                    object: nil,
+                    userInfo: ["event": slapEvent]
+                )
+                return nil // Consume event
+            }
+            return event
+        }
+        #endif
 
         // Auto-save every 30 seconds
         saveTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
@@ -62,7 +82,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     }
 
     private func startMenuBarAnimation() {
-        animationTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { [weak self] _ in
+        // Respect Reduce Motion — use static icon, only update mood (no frame cycling)
+        let interval: TimeInterval = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? 5.0 : 1.5
+        animationTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             guard let self else { return }
             Task { @MainActor in
                 self.tickAnimation()
@@ -79,30 +101,51 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         _appState.cpuUsage = cpu
 
         // Faster animation = higher CPU
-        let interval: TimeInterval = switch cpu {
+        let newInterval: TimeInterval = switch cpu {
         case 0.8...: 0.3   // Very fast — panic
         case 0.5..<0.8: 0.6 // Fast — stressed
         case 0.2..<0.5: 1.2 // Normal
         default: 2.5        // Slow — chill
         }
-        animationTimer?.invalidate()
-        animationTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            Task { @MainActor in
-                self.tickAnimation()
+
+        // Only recreate timer when interval bracket changes
+        if newInterval != currentAnimationInterval {
+            currentAnimationInterval = newInterval
+            animationTimer?.invalidate()
+            animationTimer = Timer.scheduledTimer(withTimeInterval: newInterval, repeats: true) { [weak self] _ in
+                guard let self else { return }
+                Task { @MainActor in
+                    self.tickAnimation()
+                }
             }
         }
 
-        // Advance frame
-        animationFrame = (animationFrame + 1) % 4
+        // Advance frame (static on Reduce Motion — always frame 0)
+        if NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
+            animationFrame = 0
+        } else {
+            animationFrame = (animationFrame + 1) % 4
+        }
         updateMenuBarIcon()
     }
 
     private func updateMenuBarIcon() {
         let faceName = FluentEmoji.face(for: currentMood, frame: animationFrame)
         if let image = FluentEmoji.menuBarImage(named: faceName) {
+            image.accessibilityDescription = "JudgyMac — \(currentMood.displayName)"
             statusItem.button?.image = image
         }
+
+        // Stats text next to icon
+        let cpu = Int(_appState.cpuUsage * 100)
+        let roasts = _appState.todayStats.roastCount
+        let statsText = " \(roasts)  CPU \(cpu)%"
+
+        let attrs: [NSAttributedString.Key: Any] = [
+            .font: NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .medium),
+            .foregroundColor: NSColor.controlTextColor,
+        ]
+        statusItem.button?.attributedTitle = NSAttributedString(string: statsText, attributes: attrs)
     }
 
     // MARK: - Popover
@@ -178,11 +221,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         p.requestPermission()
         presenter = p
 
+        slapPresenter = SlapPresenter(appState: _appState)
+
         let coord = DetectionCoordinator(appState: _appState)
         coord.start()
         coordinator = coord
 
+        #if DEBUG
         print("🤨 [JudgyMac] App started. Detectors running.")
+        #endif
     }
 
     // MARK: - Update Menu Bar Icon
@@ -239,7 +286,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
             } else {
                 try SMAppService.mainApp.unregister()
             }
-        } catch {}
+        } catch {
+            #if DEBUG
+            print("🤨 [LaunchAtLogin] Failed: \(error.localizedDescription)")
+            #endif
+        }
     }
 
     static var isLaunchAtLoginEnabled: Bool {
@@ -250,4 +301,5 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
 extension Notification.Name {
     static let snoozeRoasts = Notification.Name("com.judgymac.snoozeRoasts")
     static let moreLikeThis = Notification.Name("com.judgymac.moreLikeThis")
+
 }

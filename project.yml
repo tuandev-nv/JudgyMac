@@ -34,6 +34,12 @@ targets:
       - path: JudgyMac/Resources/Emoji
         type: folder
         buildPhase: resources
+      - path: JudgyMac/Resources/Sounds
+        type: folder
+        buildPhase: resources
+      - path: JudgyMac/Resources/SlapTargets
+        type: folder
+        buildPhase: resources
     info:
       path: JudgyMac/Info.plist
       properties:

@@ -3,6 +3,11 @@ import SwiftUI
 
 /// Maps moods to Fluent Emoji 3D assets.
 enum FluentEmoji {
+    // Image caches — avoid disk reads on every animation frame
+    // NSCache is thread-safe internally, safe to share across isolation domains
+    private nonisolated(unsafe) static let menuBarCache = NSCache<NSString, NSImage>()
+    private nonisolated(unsafe) static let image3DCache = NSCache<NSString, NSImage>()
+
     /// 4 faces per mood — cycled for animation
     static let faces: [Mood: [String]] = [
         .neutral: [
@@ -54,20 +59,28 @@ enum FluentEmoji {
         return moodFaces[frame % moodFaces.count]
     }
 
-    /// Load 3D image (256x256, for toast/popover)
+    /// Load 3D image (256x256, for toast/popover). Cached after first load.
     static func image3D(named name: String) -> NSImage? {
+        let key = name as NSString
+        if let cached = image3DCache.object(forKey: key) { return cached }
+
         let url = Bundle.main.resourceURL?
             .appendingPathComponent("Emoji/3D/\(name).png")
         guard let url, let image = NSImage(contentsOf: url) else { return nil }
+        image3DCache.setObject(image, forKey: key)
         return image
     }
 
-    /// Load menu bar image (36x36, for status item)
+    /// Load menu bar image (18x18, for status item). Cached after first load.
     static func menuBarImage(named name: String) -> NSImage? {
+        let key = name as NSString
+        if let cached = menuBarCache.object(forKey: key) { return cached }
+
         let url = Bundle.main.resourceURL?
             .appendingPathComponent("Emoji/MenuBar/\(name).png")
         guard let url, let image = NSImage(contentsOf: url) else { return nil }
         image.size = NSSize(width: 18, height: 18)
+        menuBarCache.setObject(image, forKey: key)
         return image
     }
 

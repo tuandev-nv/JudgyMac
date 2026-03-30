@@ -19,11 +19,15 @@ final class DetectionCoordinator {
         let lidDetector = LidDetector()
         detectors[.lidOpen] = lidDetector
         detectors[.lidReopen] = lidDetector
-        detectors[.lateNight] = lidDetector
-        detectors[.earlyMorning] = lidDetector
+
+        // TimeOfDayDetector polls every 30min — fires even without lid open/close
+        let timeDetector = TimeOfDayDetector()
+        detectors[.lateNight] = timeDetector
+        detectors[.earlyMorning] = timeDetector
 
         detectors[.idle] = IdleDetector()
         detectors[.thermal] = ThermalDetector()
+        detectors[.slap] = SlapDetector()
     }
 
     // MARK: - Start / Stop
@@ -31,7 +35,9 @@ final class DetectionCoordinator {
     func start() {
         guard !isRunning else { return }
         isRunning = true
+        #if DEBUG
         print("🤨 [Coordinator] Starting detectors... Enabled triggers: \(appState.enabledTriggers.map(\.rawValue))")
+        #endif
 
         // Collect unique detectors (some triggers share the same detector)
         var started: Set<ObjectIdentifier> = []

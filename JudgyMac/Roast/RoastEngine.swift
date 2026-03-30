@@ -11,6 +11,7 @@ final class RoastEngine {
     init(appState: AppState) {
         self.appState = appState
         loadAllPacks()
+
     }
 
     // MARK: - Public
@@ -18,21 +19,13 @@ final class RoastEngine {
     func generateRoast(for event: BehaviorEvent) -> RoastEntry? {
         let personalityId = appState.selectedPersonality
 
-        guard let pack = packs[personalityId] else {
-            print("🤨 [RoastEngine] ❌ Pack not found: \(personalityId)")
-            return nil
-        }
+        guard let pack = packs[personalityId] else { return nil }
 
         let allForTrigger = pack.templates(for: event.type)
         let afterIntensity = allForTrigger.filter { $0.intensity <= appState.intensity }
         let candidates = afterIntensity.filter { cooldown.canRoast(templateId: $0.id, triggerType: event.type, isFullVersion: appState.isFullVersion) }
 
-        print("🤨 [RoastEngine] Trigger: \(event.type.rawValue), Pack: \(personalityId), All: \(allForTrigger.count), AfterIntensity: \(afterIntensity.count), AfterCooldown: \(candidates.count)")
-
-        guard !candidates.isEmpty else {
-            print("🤨 [RoastEngine] ❌ No candidates left")
-            return nil
-        }
+        guard !candidates.isEmpty else { return nil }
 
         // Weighted random selection
         let selected = weightedRandom(from: candidates)
@@ -57,15 +50,10 @@ final class RoastEngine {
     // MARK: - Template Loading
 
     private func loadAllPacks() {
-        print("🤨 [RoastEngine] Loading packs... Bundle: \(Bundle.main.resourceURL?.path ?? "nil")")
         for catalog in PersonalityPack.catalog {
             var pack = catalog
             if let data = loadJSON(personality: pack.id, language: pack.language) {
                 pack.templates = data.templates
-                let total = data.templates.values.reduce(0) { $0 + $1.count }
-                print("🤨 [RoastEngine] ✅ Loaded \(pack.id): \(total) templates")
-            } else {
-                print("🤨 [RoastEngine] ❌ Failed to load \(pack.id) (\(pack.language))")
             }
             packs[pack.id] = pack
         }

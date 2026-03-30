@@ -1,0 +1,37 @@
+{
+  "id": "chibi-girl",
+  "displayName": "Chibi Girl",
+  "category": "face",
+  "animationStyle": "shake",
+  "slapSound": "slap_normal",
+  "faces": {
+    "normal": "normal",
+    "hit": "hit_light",
+    "damaged1": "hit_light",
+    "damaged2": "hit_medium",
+    "damaged3": "hit_heavy",
+    "ko": "hit_extreme"
+  },
+  "reactions": [
+    {
+      "minHits": 1,
+      "texts": ["OW!", "Ê!", "UI!", "HEY!"],
+      "voices": ["umph"]
+    },
+    {
+      "minHits": 4,
+      "texts": ["STOP IT!", "ĐAU QUÁ!", "ARGH!", "ENOUGH!"],
+      "voices": ["umph"]
+    },
+    {
+      "minHits": 8,
+      "texts": ["MERCY! 😭", "TRỜI ƠI!", "PLEASE!", "I'M SORRY!"],
+      "voices": ["umph"]
+    },
+    {
+      "minHits": 16,
+      "texts": ["💀 K.O!", "GG!", "Xin hàng...", "☠️ No more"],
+      "voices": ["slap_heavy"]
+    }
+  ]
+}
