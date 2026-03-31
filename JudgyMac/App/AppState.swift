@@ -20,6 +20,9 @@ final class AppState {
 
     // MARK: - System Stats
     var cpuUsage: Double = 0
+    var ramUsage: Double = 0
+    var gpuUsage: Double = 0
+    var diskUsage: Double = 0
 
     // MARK: - Purchase
     var isFullVersion: Bool = true

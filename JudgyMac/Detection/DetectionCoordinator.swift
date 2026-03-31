@@ -26,6 +26,7 @@ final class DetectionCoordinator {
         detectors[.earlyMorning] = timeDetector
 
         detectors[.idle] = IdleDetector()
+        detectors[.screenTime] = ScreenTimeDetector()
         detectors[.thermal] = ThermalDetector()
         detectors[.slap] = SlapDetector()
     }

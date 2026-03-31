@@ -19,6 +19,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private var animationFrame = 0
     private var currentMood: Mood = .neutral
     private var currentAnimationInterval: TimeInterval = 2.5
+    private var systemStatsTick = 0  // throttle heavy stats polling
 
     // MARK: - App Lifecycle
 
@@ -33,6 +34,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         setupStatusItem()
         setupPopover()
         startEngine()
+
+        // Pre-warm slap window so first slap is instant
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            guard let self else { return }
+            SlapWindow.shared.warmUp(pack: self._appState.currentPack)
+        }
 
         #if DEBUG
         // Ctrl+Shift+S → trigger slap (dev shortcut, bypass popover)
@@ -96,9 +103,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         // Update mood from app state
         currentMood = _appState.currentMood
 
-        // Read CPU and adjust animation speed
+        // CPU every tick, heavy stats every ~5s
         let cpu = cpuMonitor.currentUsage()
         _appState.cpuUsage = cpu
+        systemStatsTick += 1
+        if systemStatsTick % 5 == 0 {
+            _appState.ramUsage = currentRAMUsage()
+            _appState.gpuUsage = currentGPUUsage()
+            _appState.diskUsage = currentDiskUsage()
+        }
 
         // Faster animation = higher CPU
         let newInterval: TimeInterval = switch cpu {
@@ -131,21 +144,129 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
 
     private func updateMenuBarIcon() {
         let faceName = FluentEmoji.face(for: currentMood, frame: animationFrame)
-        if let image = FluentEmoji.menuBarImage(named: faceName) {
-            image.accessibilityDescription = "JudgyMac — \(currentMood.displayName)"
-            statusItem.button?.image = image
+        let emojiImage = FluentEmoji.menuBarImage(named: faceName)
+
+        let cpu = Int(_appState.cpuUsage * 100)
+        let gpu = Int(_appState.gpuUsage * 100)
+        let ram = Int(_appState.ramUsage * 100)
+        let disk = Int(_appState.diskUsage * 100)
+
+        let stats = [
+            ("CPU", "\(cpu)%"),
+            ("GPU", "\(gpu)%"),
+            ("RAM", "\(ram)%"),
+        ]
+
+        let combined = renderMenuBarImage(emoji: emojiImage, stats: stats)
+        combined.accessibilityDescription = "JudgyMac — \(currentMood.displayName)"
+        statusItem.button?.image = combined
+        statusItem.button?.title = ""
+    }
+
+    /// Renders emoji + stat pills into a single menu bar image.
+    private func renderMenuBarImage(emoji: NSImage?, stats: [(String, String)]) -> NSImage {
+        let barHeight: CGFloat = 22
+        let emojiSize: CGFloat = 18
+        let colGap: CGFloat = 8       // space between stat columns
+        let gapAfterEmoji: CGFloat = 5
+        let hPad: CGFloat = 8         // horizontal padding inside bg
+        let vPad: CGFloat = 1
+        let labelValueGap: CGFloat = -3
+
+        let labelFont = NSFont.systemFont(ofSize: 7, weight: .semibold)
+        let valueFont = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .bold)
+
+        let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+        // Warm gradient like the settings popover
+        let gradStart = isDark
+            ? NSColor(red: 0.35, green: 0.25, blue: 0.18, alpha: 1)
+            : NSColor(red: 1.0, green: 0.92, blue: 0.82, alpha: 1)
+        let gradEnd = isDark
+            ? NSColor(red: 0.25, green: 0.18, blue: 0.30, alpha: 1)
+            : NSColor(red: 0.95, green: 0.85, blue: 0.92, alpha: 1)
+        let borderColor = isDark
+            ? NSColor(white: 1, alpha: 0.12)
+            : NSColor(white: 0, alpha: 0.08)
+        let labelColor = isDark
+            ? NSColor(white: 1, alpha: 0.55)
+            : NSColor(white: 0, alpha: 0.4)
+        let valueColor = isDark
+            ? NSColor(white: 1, alpha: 0.95)
+            : NSColor(white: 0, alpha: 0.8)
+
+        // Measure column widths
+        var colWidths: [CGFloat] = []
+        for (label, value) in stats {
+            let lw = (label as NSString).size(withAttributes: [.font: labelFont]).width
+            let vw = (value as NSString).size(withAttributes: [.font: valueFont]).width
+            colWidths.append(max(lw, vw))
         }
 
-        // Stats text next to icon
-        let cpu = Int(_appState.cpuUsage * 100)
-        let roasts = _appState.todayStats.roastCount
-        let statsText = " \(roasts)  CPU \(cpu)%"
+        let labelHeight = ("X" as NSString).size(withAttributes: [.font: labelFont]).height
+        let valueHeight = ("0" as NSString).size(withAttributes: [.font: valueFont]).height
+        let contentHeight = labelHeight + labelValueGap + valueHeight
 
-        let attrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .medium),
-            .foregroundColor: NSColor.controlTextColor,
-        ]
-        statusItem.button?.attributedTitle = NSAttributedString(string: statsText, attributes: attrs)
+        let statsWidth = colWidths.reduce(0, +) + CGFloat(stats.count - 1) * colGap
+        let bgWidth = statsWidth + hPad * 2
+        let bgHeight = contentHeight + vPad * 2
+        let totalWidth = emojiSize + gapAfterEmoji + bgWidth + 2
+
+        let image = NSImage(size: NSSize(width: totalWidth, height: barHeight))
+        image.lockFocus()
+
+        // Emoji
+        if let emoji {
+            emoji.draw(in: NSRect(x: 0, y: (barHeight - emojiSize) / 2,
+                                  width: emojiSize, height: emojiSize))
+        }
+
+        // Background pill with warm gradient
+        let bgX = emojiSize + gapAfterEmoji
+        let bgY = (barHeight - bgHeight) / 2
+        let bgRect = NSRect(x: bgX, y: bgY, width: bgWidth, height: bgHeight)
+        let bgPath = NSBezierPath(roundedRect: bgRect, xRadius: 5, yRadius: 5)
+
+        // Draw gradient
+        NSGraphicsContext.saveGraphicsState()
+        bgPath.addClip()
+        let gradient = NSGradient(starting: gradStart, ending: gradEnd)
+        gradient?.draw(in: bgRect, angle: 0) // left to right
+        NSGraphicsContext.restoreGraphicsState()
+
+        borderColor.setStroke()
+        bgPath.lineWidth = 0.5
+        bgPath.stroke()
+
+        // Stat columns
+        var x = bgX + hPad
+        let contentY = bgY + vPad
+
+        for (i, (label, value)) in stats.enumerated() {
+            let colW = colWidths[i]
+
+            // Label (top, left-aligned)
+            let labelAttrs: [NSAttributedString.Key: Any] = [.font: labelFont, .foregroundColor: labelColor]
+            (label as NSString).draw(
+                at: NSPoint(x: x,
+                            y: contentY + valueHeight + labelValueGap),
+                withAttributes: labelAttrs
+            )
+
+            // Value (bottom)
+            let valueAttrs: [NSAttributedString.Key: Any] = [.font: valueFont, .foregroundColor: valueColor]
+            let valueSize = (value as NSString).size(withAttributes: valueAttrs)
+            (value as NSString).draw(
+                at: NSPoint(x: x + (colW - valueSize.width) / 2,
+                            y: contentY),
+                withAttributes: valueAttrs
+            )
+
+            x += colW + colGap
+        }
+
+        image.unlockFocus()
+        image.isTemplate = false
+        return image
     }
 
     // MARK: - Popover

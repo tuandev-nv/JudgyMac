@@ -8,7 +8,7 @@ enum Constants {
     enum Roast {
         static let freeRoastsPerDay = 3
         static let fullRoastsPerDay = 50
-        static let cooldownSeconds: TimeInterval = 300
+        static let cooldownSeconds: TimeInterval = 120  // 2 min (was 5 min)
         static let templateRepeatCooldownHours = 24
         static let maxHistoryEntries = 100
     }
@@ -21,7 +21,7 @@ enum Constants {
 
     enum Detection {
         static let idlePollIntervalSeconds: TimeInterval = 60
-        static let idleThresholdMinutes = 15
+        static let idleThresholdMinutes = 10
         static let aggressiveTypingWPMThreshold = 100
         static let deleteRatioThreshold = 0.4
         static let lidReopenThresholdSeconds = 30

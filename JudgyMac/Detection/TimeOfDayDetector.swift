@@ -16,15 +16,15 @@ final class TimeOfDayDetector: BehaviorDetector, @unchecked Sendable {
         self.onEvent = onEvent
         isRunning = true
 
-        // First check after 10 minutes
+        // First check after 5 minutes
         timer = Timer.scheduledTimer(
-            withTimeInterval: 600,
+            withTimeInterval: 300,
             repeats: false
         ) { [weak self] _ in
             self?.checkTimeOfDay()
-            // Then every 45 minutes
+            // Then every 15 minutes
             self?.timer = Timer.scheduledTimer(
-                withTimeInterval: 2700,
+                withTimeInterval: 900,
                 repeats: true
             ) { [weak self] _ in
                 self?.checkTimeOfDay()

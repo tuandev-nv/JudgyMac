@@ -44,26 +44,31 @@ struct TriggersSettingsTab: View {
     @Environment(AppState.self) private var appState
     var body: some View {
         Form {
-            Section("Behavior Triggers") {
+            Section {
                 ForEach(TriggerType.allCases, id: \.self) { trigger in
                     Toggle(isOn: triggerBinding(for: trigger)) {
-                        HStack(spacing: 10) {
-                            Image(systemName: trigger.icon)
-                                .foregroundStyle(.purple)
-                                .frame(width: 20)
-                            Text(trigger.displayName)
+                        VStack(alignment: .leading, spacing: 3) {
+                            HStack(spacing: 8) {
+                                Image(systemName: trigger.icon)
+                                    .foregroundStyle(.purple)
+                                    .frame(width: 18)
+                                Text(trigger.displayName)
+                                    .font(.system(size: 13, weight: .medium))
+                            }
+                            Text(trigger.triggerDescription)
+                                .font(.system(size: 11))
+                                .foregroundStyle(.secondary)
+                                .padding(.leading, 26)
                         }
+                        .padding(.vertical, 2)
                     }
                 }
-            }
-
-            Section("Cooldowns") {
-                LabeledContent("Between same trigger") {
-                    Text("5 minutes").foregroundStyle(.secondary)
-                }
-                LabeledContent("Same roast repeat") {
-                    Text("24 hours").foregroundStyle(.secondary)
-                }
+            } header: {
+                Text("Behavior Triggers")
+            } footer: {
+                Text("Each trigger has a 2-minute cooldown to avoid spam.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.tertiary)
             }
         }
         .formStyle(.grouped)

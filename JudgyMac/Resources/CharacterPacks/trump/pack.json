@@ -135,6 +135,18 @@
       {"id": "roast_74", "text": "I've survived two impeachments. You think a slap scares me? Please. Tremendous resilience.", "variables": [], "weight": 1.0, "voice": "roast_74"},
       {"id": "roast_75", "text": "China would never slap me. They respect me too much. You? No respect. Zero.", "variables": [], "weight": 1.0, "voice": "roast_75"},
       {"id": "roast_76", "text": "Covfefe! That's what that slap felt like. Nobody knows what it means but it's provocative.", "variables": [], "weight": 1.0, "voice": "roast_76"}
+    ],
+    "screen_time": [
+      {"id": "roast_st1", "text": "{minutes} minutes straight. Even my rallies have intermissions. Take a break. Executive order.", "variables": ["minutes"], "weight": 1.0, "voice": "roast_st1"},
+      {"id": "roast_st2", "text": "{minutes} minutes of screen time. Your eyes are more tired than my lawyers. And they are VERY tired.", "variables": ["minutes"], "weight": 1.0, "voice": "roast_st2"},
+      {"id": "roast_st3", "text": "You've been staring at this screen for {minutes} minutes. That's longer than any congressional hearing. GO OUTSIDE.", "variables": ["minutes"], "weight": 1.0, "voice": "roast_st3"},
+      {"id": "roast_st4", "text": "{minutes} minutes without a break. I take breaks. Beautiful breaks. The best breaks. You should try it.", "variables": ["minutes"], "weight": 1.0, "voice": "roast_st4"},
+      {"id": "roast_st5", "text": "Stand up. Walk around. Touch grass. I would, but I'm busy making deals. What's YOUR excuse? {minutes} minutes!", "variables": ["minutes"], "weight": 1.0, "voice": "roast_st5"},
+      {"id": "roast_st6", "text": "{minutes} minutes. Your posture right now is worse than my poll numbers in California. And that's BAD.", "variables": ["minutes"], "weight": 1.0, "voice": "roast_st6"},
+      {"id": "roast_st7", "text": "Nobody sits at a computer longer than you. NOBODY. It's not a compliment. Get up. NOW.", "variables": ["minutes"], "weight": 1.0, "voice": "roast_st7"},
+      {"id": "roast_st8", "text": "{minutes} minutes. Even Sleepy Joe takes walks. You're being out-walked by SLEEPY JOE. Think about that.", "variables": ["minutes"], "weight": 1.0, "voice": "roast_st8"},
+      {"id": "roast_st9", "text": "I'm declaring a state of emergency on your screen time. {minutes} minutes is a NATIONAL CRISIS.", "variables": ["minutes"], "weight": 1.0, "voice": "roast_st9"},
+      {"id": "roast_st10", "text": "{minutes} minutes. Your back is gonna file for bankruptcy. Chapter 11. I know Chapter 11 very well.", "variables": ["minutes"], "weight": 1.0, "voice": "roast_st10"}
     ]
   }
 }

@@ -60,6 +60,22 @@ final class SlapWindow {
 
     // MARK: - Slap
 
+    /// Pre-warm the hosting controller for the given pack so first slap is instant.
+    func warmUp(pack: CharacterPack) {
+        guard currentPackId != pack.id || hostingController == nil else { return }
+        let view = SlapAnimationView(
+            state: slapState,
+            pack: pack,
+            onClose: { [weak self] in self?.dismiss() }
+        )
+        hostingController = NSHostingController(rootView: AnyView(view))
+        panel.contentViewController = hostingController
+        currentPackId = pack.id
+        #if DEBUG
+        print("👋 [SlapWindow] Pre-warmed for pack '\(pack.id)'")
+        #endif
+    }
+
     func slap(pack: CharacterPack) {
         // KO — ignore all slaps during cooldown
         if slapState.isKnockedOut {
@@ -100,17 +116,9 @@ final class SlapWindow {
         print("👋 [SlapWindow] Hit #\(slapState.hitCount)")
         #endif
 
-        // Create/update hosting controller if pack changed or first time
-        let needsNewView = currentPackId != pack.id || hostingController == nil
-        if needsNewView {
-            let view = SlapAnimationView(
-                state: slapState,
-                pack: pack,
-                onClose: { [weak self] in self?.dismiss() }
-            )
-            hostingController = NSHostingController(rootView: AnyView(view))
-            panel.contentViewController = hostingController
-            currentPackId = pack.id
+        // Create hosting controller if needed (should already be pre-warmed)
+        if currentPackId != pack.id || hostingController == nil {
+            warmUp(pack: pack)
         }
 
         if !panel.isVisible {

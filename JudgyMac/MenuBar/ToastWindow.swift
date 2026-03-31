@@ -261,7 +261,7 @@ final class ToastWindow {
         // Rotation animation (shared)
         let spin = CABasicAnimation(keyPath: "transform.rotation.z")
         spin.fromValue = 0; spin.toValue = Double.pi * 2
-        spin.duration = 4.0; spin.repeatCount = .infinity
+        spin.duration = 2.5; spin.repeatCount = .infinity
         spin.timingFunction = CAMediaTimingFunction(name: .linear)
 
         // Large square gradient centered on toast — rotates around its own center
@@ -283,20 +283,20 @@ final class ToastWindow {
             return grad
         }
 
-        // --- Layer 1: Soft glow (shadow-based, no CIFilter) ---
+        // --- Layer 1: Vivid glow (shadow-based, no CIFilter) ---
         let bigClip = CALayer()
         bigClip.frame = containerBounds
         let bigMask = CAShapeLayer()
         bigMask.path = borderPath
         bigMask.fillColor = .clear
         bigMask.strokeColor = NSColor.white.cgColor
-        bigMask.lineWidth = 3
+        bigMask.lineWidth = 4
         bigClip.mask = bigMask
         bigClip.addSublayer(makeSpinningGradient())
-        bigClip.opacity = 0.2
+        bigClip.opacity = 0.35
         bigClip.shadowColor = NSColor.white.cgColor
-        bigClip.shadowRadius = 6
-        bigClip.shadowOpacity = 0.4
+        bigClip.shadowRadius = 12
+        bigClip.shadowOpacity = 0.7
         bigClip.shadowOffset = .zero
 
         // --- Layer 2: Thin sharp border ---
@@ -306,7 +306,7 @@ final class ToastWindow {
         sharpMask.path = borderPath
         sharpMask.fillColor = .clear
         sharpMask.strokeColor = NSColor.white.cgColor
-        sharpMask.lineWidth = 0.75
+        sharpMask.lineWidth = 1.0
         sharpClip.mask = sharpMask
         sharpClip.addSublayer(makeSpinningGradient())
 
@@ -338,10 +338,12 @@ final class ToastWindow {
 
     // MARK: - Shimmer Sweep
 
-    /// Light streak: left→right, pause, then right→left.
-    private func addShimmerSweep(to parentLayer: CALayer, toastRect: CGRect) {
-        let shimmerWidth = toastRect.width * 0.35
+    private enum ShimmerDirection: CaseIterable {
+        case leftToRight, rightToLeft, topToBottom, bottomToTop
+    }
 
+    /// Two random-direction shimmer passes with varying pause.
+    private func addShimmerSweep(to parentLayer: CALayer, toastRect: CGRect) {
         let clipMask = CAShapeLayer()
         clipMask.path = CGPath(roundedRect: toastRect,
                                cornerWidth: cornerRadius, cornerHeight: cornerRadius,
@@ -352,60 +354,94 @@ final class ToastWindow {
         shimmerContainer.mask = clipMask
         parentLayer.addSublayer(shimmerContainer)
 
-        func makeShimmer() -> CAGradientLayer {
-            let s = CAGradientLayer()
-            s.colors = [
-                NSColor.clear.cgColor,
-                NSColor.white.withAlphaComponent(0.05).cgColor,
-                NSColor.white.withAlphaComponent(0.12).cgColor,
-                NSColor.white.withAlphaComponent(0.05).cgColor,
-                NSColor.clear.cgColor,
-            ]
-            s.locations = [0, 0.3, 0.5, 0.7, 1.0]
-            s.startPoint = CGPoint(x: 0, y: 0.3)
-            s.endPoint = CGPoint(x: 1, y: 0.7)
-            s.frame = CGRect(x: 0, y: toastRect.minY,
-                             width: shimmerWidth, height: toastRect.height)
-            return s
+        // Pick 2 random non-repeating directions
+        var dirs = ShimmerDirection.allCases.shuffled()
+        let dir1 = dirs[0]
+        let dir2 = dirs[1]
+
+        runShimmerPass(in: shimmerContainer, toastRect: toastRect, direction: dir1) {
+            let pause = Double.random(in: 0.8...1.5)
+            DispatchQueue.main.asyncAfter(deadline: .now() + pause) {
+                self.runShimmerPass(in: shimmerContainer, toastRect: toastRect, direction: dir2) {
+                    shimmerContainer.removeFromSuperlayer()
+                }
+            }
+        }
+    }
+
+    private func runShimmerPass(in container: CALayer, toastRect: CGRect,
+                                direction: ShimmerDirection, completion: @escaping () -> Void) {
+        let isHorizontal = (direction == .leftToRight || direction == .rightToLeft)
+        let shimmerThickness = isHorizontal ? toastRect.width * 0.35 : toastRect.height * 0.5
+
+        let shimmer = CAGradientLayer()
+        shimmer.colors = [
+            NSColor.clear.cgColor,
+            NSColor.white.withAlphaComponent(0.05).cgColor,
+            NSColor.white.withAlphaComponent(0.12).cgColor,
+            NSColor.white.withAlphaComponent(0.05).cgColor,
+            NSColor.clear.cgColor,
+        ]
+        shimmer.locations = [0, 0.3, 0.5, 0.7, 1.0]
+
+        let keyPath: String
+        let fromValue: CGFloat
+        let toValue: CGFloat
+
+        switch direction {
+        case .leftToRight:
+            shimmer.startPoint = CGPoint(x: 0, y: 0.3)
+            shimmer.endPoint = CGPoint(x: 1, y: 0.7)
+            shimmer.frame = CGRect(x: 0, y: toastRect.minY,
+                                   width: shimmerThickness, height: toastRect.height)
+            keyPath = "position.x"
+            fromValue = toastRect.minX - shimmerThickness / 2
+            toValue = toastRect.maxX + shimmerThickness / 2
+
+        case .rightToLeft:
+            shimmer.startPoint = CGPoint(x: 1, y: 0.3)
+            shimmer.endPoint = CGPoint(x: 0, y: 0.7)
+            shimmer.frame = CGRect(x: 0, y: toastRect.minY,
+                                   width: shimmerThickness, height: toastRect.height)
+            keyPath = "position.x"
+            fromValue = toastRect.maxX + shimmerThickness / 2
+            toValue = toastRect.minX - shimmerThickness / 2
+
+        case .topToBottom:
+            shimmer.startPoint = CGPoint(x: 0.3, y: 0)
+            shimmer.endPoint = CGPoint(x: 0.7, y: 1)
+            shimmer.frame = CGRect(x: toastRect.minX, y: 0,
+                                   width: toastRect.width, height: shimmerThickness)
+            keyPath = "position.y"
+            fromValue = toastRect.maxY + shimmerThickness / 2
+            toValue = toastRect.minY - shimmerThickness / 2
+
+        case .bottomToTop:
+            shimmer.startPoint = CGPoint(x: 0.3, y: 1)
+            shimmer.endPoint = CGPoint(x: 0.7, y: 0)
+            shimmer.frame = CGRect(x: toastRect.minX, y: 0,
+                                   width: toastRect.width, height: shimmerThickness)
+            keyPath = "position.y"
+            fromValue = toastRect.minY - shimmerThickness / 2
+            toValue = toastRect.maxY + shimmerThickness / 2
         }
 
-        let leftX = toastRect.minX - shimmerWidth / 2
-        let rightX = toastRect.maxX + shimmerWidth / 2
+        container.addSublayer(shimmer)
 
-        // Pass 1: left → right
-        let shimmer1 = makeShimmer()
-        shimmerContainer.addSublayer(shimmer1)
-
-        let slide1 = CABasicAnimation(keyPath: "position.x")
-        slide1.fromValue = leftX; slide1.toValue = rightX
-        slide1.duration = 0.8
-        slide1.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-        slide1.fillMode = .forwards; slide1.isRemovedOnCompletion = false
+        let slide = CABasicAnimation(keyPath: keyPath)
+        slide.fromValue = fromValue
+        slide.toValue = toValue
+        slide.duration = Double.random(in: 1.2...1.8)
+        slide.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        slide.fillMode = .forwards
+        slide.isRemovedOnCompletion = false
 
         CATransaction.begin()
         CATransaction.setCompletionBlock {
-            shimmer1.removeFromSuperlayer()
-
-            // Pass 2: right → left after short pause
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                let shimmer2 = makeShimmer()
-                shimmerContainer.addSublayer(shimmer2)
-
-                let slide2 = CABasicAnimation(keyPath: "position.x")
-                slide2.fromValue = rightX; slide2.toValue = leftX
-                slide2.duration = 0.8
-                slide2.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-                slide2.fillMode = .forwards; slide2.isRemovedOnCompletion = false
-
-                CATransaction.begin()
-                CATransaction.setCompletionBlock {
-                    shimmerContainer.removeFromSuperlayer()
-                }
-                shimmer2.add(slide2, forKey: "sweep")
-                CATransaction.commit()
-            }
+            shimmer.removeFromSuperlayer()
+            completion()
         }
-        shimmer1.add(slide1, forKey: "sweep")
+        shimmer.add(slide, forKey: "sweep")
         CATransaction.commit()
     }
 

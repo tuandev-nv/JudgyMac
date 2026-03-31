@@ -7,6 +7,7 @@ enum TriggerType: String, CaseIterable, Codable, Sendable {
     case earlyMorning = "early_morning"
     case thermal = "thermal"
     case idle = "idle"
+    case screenTime = "screen_time"
     case slap = "slap"
 
     var displayName: String {
@@ -17,7 +18,21 @@ enum TriggerType: String, CaseIterable, Codable, Sendable {
         case .earlyMorning:  return "Early Morning"
         case .thermal:       return "Overheating"
         case .idle:          return "Too Idle"
+        case .screenTime:    return "Screen Time"
         case .slap:          return "Slap"
+        }
+    }
+
+    var triggerDescription: String {
+        switch self {
+        case .lidOpen:       return "Roast when you open your laptop"
+        case .lidReopen:     return "Roast when you close and reopen within 30 seconds"
+        case .lateNight:     return "Roast when using Mac between midnight and 5 AM"
+        case .earlyMorning:  return "Roast when using Mac between 5 AM and 7 AM"
+        case .thermal:       return "Roast when your Mac overheats"
+        case .idle:          return "Roast after 10 minutes of inactivity"
+        case .screenTime:    return "Remind to take a break every 45 minutes"
+        case .slap:          return "⌘ + ⇧ + Click to slap the character"
         }
     }
 
@@ -29,6 +44,7 @@ enum TriggerType: String, CaseIterable, Codable, Sendable {
         case .earlyMorning:  return "sunrise.fill"
         case .thermal:       return "flame.fill"
         case .idle:          return "zzz"
+        case .screenTime:    return "eye.fill"
         case .slap:          return "hand.raised.fill"
         }
     }
@@ -69,6 +85,10 @@ struct BehaviorEvent: Sendable {
 
     static func idle(minutes: Int) -> BehaviorEvent {
         BehaviorEvent(type: .idle, metadata: ["idle_minutes": "\(minutes)"])
+    }
+
+    static func screenTime(minutes: Int) -> BehaviorEvent {
+        BehaviorEvent(type: .screenTime, metadata: ["minutes": "\(minutes)"])
     }
 
     static func slap(pressure: Double) -> BehaviorEvent {

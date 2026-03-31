@@ -19,9 +19,10 @@ enum MoodEngine {
             return .raging
 
         case .idle:
-            let minutes = Int(event.metadata["idle_minutes"] ?? "0") ?? 0
-            if minutes > 30 { return .sleeping }
             return .sleeping
+
+        case .screenTime:
+            return .judging
 
         case .slap:
             return .raging
