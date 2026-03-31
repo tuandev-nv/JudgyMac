@@ -53,7 +53,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
                     object: nil,
                     userInfo: ["event": slapEvent]
                 )
-                return nil // Consume event
+                return nil
+            }
+            // Ctrl+Shift+T → trigger screen time roast (dev shortcut)
+            if event.modifierFlags.contains([.control, .shift]),
+               event.charactersIgnoringModifiers == "t" {
+                let stEvent = BehaviorEvent.screenTime(minutes: 45)
+                self?._appState.handleEvent(stEvent)
+                NotificationCenter.default.post(
+                    name: .behaviorEventDetected,
+                    object: nil,
+                    userInfo: ["event": stEvent]
+                )
+                return nil
             }
             return event
         }

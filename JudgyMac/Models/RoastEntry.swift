@@ -12,14 +12,15 @@ struct RoastEntry: Identifiable, Sendable {
         text: String,
         personality: String,
         triggerType: TriggerType,
-        mood: Mood
+        mood: Mood,
+        timestamp: Date = Date()
     ) {
         self.id = UUID()
         self.text = text
         self.personality = personality
         self.triggerType = triggerType
         self.mood = mood
-        self.timestamp = Date()
+        self.timestamp = timestamp
     }
 
     var shareText: String {

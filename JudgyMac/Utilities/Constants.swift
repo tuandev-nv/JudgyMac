@@ -15,8 +15,26 @@ enum Constants {
 
     enum Slap {
         static let pressureThreshold: Double = 0.8
-        static let dismissIdleSeconds: TimeInterval = 1.5
         static let windowSize: CGFloat = 750
+
+        // Base tempo — all slap timing scales from this (seconds)
+        // Increase this single value to slow everything down proportionally
+        static let baseTempo: TimeInterval = 0.5
+
+        /// Min interval between slaps (2 slaps/sec)
+        static let debounceSeconds: TimeInterval = baseTempo
+
+        /// Idle time before slap window dismisses
+        static let dismissIdleSeconds: TimeInterval = baseTempo * 5   // 2.5s
+
+        /// Comic text hold time before fading
+        static let comicHoldSeconds: TimeInterval = baseTempo * 2.5   // 1.25s
+
+        /// Comic text total lifetime (hold + fade)
+        static let comicLifetimeSeconds: TimeInterval = baseTempo * 4  // 2.0s
+
+        /// Comic text fade duration
+        static let comicFadeSeconds: TimeInterval = baseTempo * 1.5   // 0.75s
     }
 
     enum Detection {

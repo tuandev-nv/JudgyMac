@@ -24,22 +24,58 @@
     "reactions": [
       {
         "minHits": 1,
-        "texts": ["FAKE SLAP!", "NOT NICE!", "This is VERY unfair!", "Nobody slaps like this. NOBODY."]
+        "texts": [
+          {"text": "NOT NICE!", "voice": "slap_voice_1"},
+          {"text": "Excuse me. EXCUSE ME.", "voice": "slap_voice_2"},
+          {"text": "That's not nice. That I can tell you.", "voice": "slap_voice_3"},
+          {"text": "Wrong. WRONG.", "voice": "slap_voice_4"},
+          {"text": "Such a nasty woman.", "voice": "slap_voice_5"},
+          {"text": "Be quiet.", "voice": "slap_voice_6"},
+          {"text": "You're a real beauty.", "voice": "slap_voice_7"},
+          {"text": "Give me a break.", "voice": "slap_voice_8"}
+        ]
       },
       {
         "minHits": 4,
-        "texts": ["STOP THE SLAP!", "This is a WITCH HUNT!", "TREMENDOUS pain, believe me!", "I will SUE you! SAD!"]
+        "texts": [
+          {"text": "This is a WITCH HUNT!", "voice": "slap_voice_9"},
+          {"text": "No collusion! No obstruction!", "voice": "slap_voice_10"},
+          {"text": "I've been treated very unfairly.", "voice": "slap_voice_11"},
+          {"text": "FAKE NEWS!", "voice": "slap_voice_12"},
+          {"text": "You are FAKE NEWS.", "voice": "slap_voice_13"},
+          {"text": "Sit down. SIT DOWN.", "voice": "slap_voice_14"},
+          {"text": "I think it's a disgrace.", "voice": "slap_voice_15"},
+          {"text": "Nobody has more respect for women than I do.", "voice": "slap_voice_16"}
+        ]
       },
       {
         "minHits": 8,
-        "texts": ["I'm calling my LAWYERS!", "This is the biggest HOAX!", "I've never been treated so badly!", "MAKE IT STOP!"]
+        "texts": [
+          {"text": "I know words. I have the best words.", "voice": "slap_voice_17"},
+          {"text": "I'm like, really smart.", "voice": "slap_voice_18"},
+          {"text": "I'm a very stable genius.", "voice": "slap_voice_19"},
+          {"text": "I alone can fix it.", "voice": "slap_voice_20"},
+          {"text": "They're not sending their best.", "voice": "slap_voice_21"},
+          {"text": "I could stand in the middle of Fifth Avenue and shoot somebody.", "voice": "slap_voice_22"},
+          {"text": "I've survived two impeachments.", "voice": "slap_voice_23"},
+          {"text": "I will be the greatest jobs president GOD EVER CREATED.", "voice": "slap_voice_24"}
+        ]
       },
       {
         "minHits": 16,
-        "texts": ["I'm a very stable genius... lying down...", "Covfefe...", "You're FIRED... at slapping...", "I'll be back. BIGLY."]
+        "texts": [
+          {"text": "Despite the negative press... covfefe... 😵", "voice": "slap_voice_25"},
+          {"text": "Person... Woman... Man... Camera... PAIN...", "voice": "slap_voice_26"},
+          {"text": "I will be back. In some form.", "voice": "slap_voice_27"},
+          {"text": "Frankly... we did win this... fight...", "voice": "slap_voice_28"},
+          {"text": "I'd like to punch him in the face... oh wait...", "voice": "slap_voice_29"},
+          {"text": "We love you. You're very special.", "voice": "slap_voice_30"},
+          {"text": "I'm not a loser. I've never been a loser.", "voice": "slap_voice_31"},
+          {"text": "It's been a wild ride.", "voice": "slap_voice_32"}
+        ]
       }
     ],
-    "slapVoiceCount": 7,
+    "slapVoiceCount": 32,
     "rageReaction": {
       "text": "ENOUGH! You think you can just SLAP the greatest president? I will BUILD A WALL around this trackpad! BELIEVE ME!",
       "voice": "slap_voice_rage"

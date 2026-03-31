@@ -62,15 +62,27 @@ enum SettingsStore {
         // Migration: clear legacy keys
         migrateLegacyKeys()
 
-        if let pack = defaults.string(forKey: Keys.selectedCharacterPack) {
+        if let pack = defaults.string(forKey: Keys.selectedCharacterPack),
+           CharacterPackCatalog.pack(for: pack) != nil {
             state.selectedCharacterPack = pack
         }
 
         state.isOnboarded = defaults.bool(forKey: Keys.isOnboarded)
-        state.isFullVersion = defaults.bool(forKey: Keys.isFullVersion)
+
+        // isFullVersion defaults to true — only override if explicitly saved as false
+        if defaults.object(forKey: Keys.isFullVersion) != nil {
+            state.isFullVersion = defaults.bool(forKey: Keys.isFullVersion)
+        }
 
         if let triggers = defaults.stringArray(forKey: Keys.enabledTriggers) {
-            state.enabledTriggers = Set(triggers.compactMap { TriggerType(rawValue: $0) })
+            var loaded = Set(triggers.compactMap { TriggerType(rawValue: $0) })
+            // Auto-enable new trigger types that didn't exist when settings were saved
+            let allKnown = Set(TriggerType.allCases)
+            let savedRawValues = Set(triggers)
+            for trigger in allKnown where !savedRawValues.contains(trigger.rawValue) {
+                loaded.insert(trigger)
+            }
+            state.enabledTriggers = loaded
         }
 
         // Stats — only load if same day
@@ -92,7 +104,8 @@ enum SettingsStore {
                       let moodRaw = dict["mood"] as? String,
                       let trigger = TriggerType(rawValue: triggerRaw),
                       let mood = Mood(rawValue: moodRaw) else { return nil }
-                return RoastEntry(text: text, personality: personality, triggerType: trigger, mood: mood)
+                let ts = (dict["timestamp"] as? Double).map { Date(timeIntervalSince1970: $0) } ?? Date()
+                return RoastEntry(text: text, personality: personality, triggerType: trigger, mood: mood, timestamp: ts)
             }
         }
     }

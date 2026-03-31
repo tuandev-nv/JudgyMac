@@ -175,35 +175,37 @@ struct SlapAnimationView: View {
 
     @ViewBuilder
     private func comicTextView(_ comic: ComicText) -> some View {
-        ZStack {
+        let fontSize: CGFloat = comic.hasBurst ? 28 : 36
+        let burstW = min(CGFloat(comic.text.count) * 24 + 40, 600)
+        let burstH: CGFloat = comic.text.count > 25 ? 90 : 65
+
+        return ZStack {
             if comic.hasBurst {
-                // Explosion burst background
                 ComicBurstShape()
                     .fill(comic.color.opacity(0.9))
                     .overlay(
                         ComicBurstShape()
                             .stroke(.black, lineWidth: 3)
                     )
-                    .frame(
-                        width: CGFloat(comic.text.count) * 24 + 40,
-                        height: 65
-                    )
+                    .frame(width: burstW, height: burstH)
             }
 
-            // Text with outline
             ZStack {
                 Text(comic.text)
-                    .font(.system(size: comic.hasBurst ? 28 : 36, weight: .black, design: .rounded))
+                    .font(.system(size: fontSize, weight: .black, design: .rounded))
                     .foregroundStyle(.black)
                     .offset(x: 2, y: 2)
                 Text(comic.text)
-                    .font(.system(size: comic.hasBurst ? 28 : 36, weight: .black, design: .rounded))
+                    .font(.system(size: fontSize, weight: .black, design: .rounded))
                     .foregroundStyle(.black)
                     .offset(x: -2, y: -2)
                 Text(comic.text)
-                    .font(.system(size: comic.hasBurst ? 28 : 36, weight: .black, design: .rounded))
+                    .font(.system(size: fontSize, weight: .black, design: .rounded))
                     .foregroundStyle(comic.hasBurst ? .white : comic.color)
             }
+            .multilineTextAlignment(.center)
+            .lineLimit(3)
+            .frame(maxWidth: burstW - 20)
         }
         .scaleEffect(comic.scale)
         .rotationEffect(.degrees(comic.rotation))
@@ -296,14 +298,13 @@ struct SlapAnimationView: View {
     // MARK: - Comic Text Spawn
 
     private func addComicText(level: Int) {
-        // Pick ONE word — either impact sound or reaction (random)
+        // If reaction text set (with voice) → always use it to stay synced
+        // Otherwise random impact word
         let word: String
-        let useImpact = Bool.random()
-
-        if useImpact {
+        if let reactionText = state.currentReactionText {
+            word = reactionText
+        } else if Bool.random() {
             word = Self.impactWords.randomElement()!
-        } else if let reaction = pack.reaction(forHitCount: state.hitCount) {
-            word = reaction.texts.randomElement() ?? "OW!"
         } else {
             let idx = min(level, Self.fallbackWords.count - 1)
             word = Self.fallbackWords[idx].randomElement()!
@@ -350,14 +351,18 @@ struct SlapAnimationView: View {
         }
 
         // Hold, then drift + fade
-        withAnimation(.easeOut(duration: 0.5).delay(0.7)) {
+        let hold = Constants.Slap.comicHoldSeconds
+        let fade = Constants.Slap.comicFadeSeconds
+        let lifetime = Constants.Slap.comicLifetimeSeconds
+
+        withAnimation(.easeOut(duration: fade).delay(hold)) {
             if let idx = comicTexts.firstIndex(where: { $0.id == comicId }) {
                 comicTexts[idx].y -= 30
                 comicTexts[idx].opacity = 0
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + lifetime) {
             comicTexts.removeAll { $0.id == comicId }
         }
     }

@@ -174,7 +174,8 @@ struct AboutSettingsTab: View {
                     VStack(spacing: 8) {
                         Text("🤨").font(.system(size: 48))
                         Text("JudgyMac").font(.title2.bold())
-                        Text("Version 1.0.0 (1)").foregroundStyle(.secondary)
+                        Text("Version \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0")")
+                            .foregroundStyle(.secondary)
                     }
                     Spacer()
                 }

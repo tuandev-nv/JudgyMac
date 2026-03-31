@@ -135,9 +135,9 @@ final class SlapDetector: BehaviorDetector, @unchecked Sendable {
             return
         }
 
-        // Max 3 slaps per second
+        // Rate limit slaps
         let now = Date()
-        if let last = lastSlapTime, now.timeIntervalSince(last) < 0.33 {
+        if let last = lastSlapTime, now.timeIntervalSince(last) < Constants.Slap.debounceSeconds {
             return
         }
         lastSlapTime = now

@@ -14,8 +14,7 @@ final class SlapWindow {
     private var dismissTask: Task<Void, Never>?
     private var isDismissing = false
     private var currentPackId: String?
-    private var slapVoiceQueue: [Int] = []
-    private let slapVoiceChance = 0.5  // 50% chance to play voice each slap
+    private var reactionQueue: [CharacterPack.ReactionLine] = []
 
     // MARK: - Pre-create panel (called once)
 
@@ -132,9 +131,10 @@ final class SlapWindow {
             self.slapState.impactTrigger += 1
         }
 
-        // Play slap impact always + random voice (50% chance, round-robin shuffle)
-        let voicePath = nextSlapVoice(pack: pack)
-        SoundPlayer.playSlapCombo(slapSound: pack.slapSoundPath, voiceSound: voicePath)
+        // Pick ONE reaction line → use both text and voice
+        let pickedLine = pickReactionLine(pack: pack)
+        slapState.currentReactionText = pickedLine?.text
+        SoundPlayer.playSlapCombo(slapSound: pack.slapSoundPath, voiceSound: pickedLine?.voicePath)
 
         restartDismissTimer()
     }
@@ -170,23 +170,14 @@ final class SlapWindow {
         slapState.reset()
     }
 
-    // MARK: - Slap Voice (round-robin shuffle, 50% chance)
+    // MARK: - Reaction Line Picker (round-robin shuffle ALL lines)
 
-    /// Returns a voice path or nil. Round-robin ensures all voices play once before reshuffling.
-    private func nextSlapVoice(pack: CharacterPack) -> String? {
-        let voiceCount = pack.slapVoiceCount
-        guard voiceCount > 0 else { return nil }
-
-        // 50% chance to skip voice entirely
-        guard Double.random(in: 0...1) < slapVoiceChance else { return nil }
-
-        // Refill queue when empty (shuffle 1...voiceCount)
-        if slapVoiceQueue.isEmpty {
-            slapVoiceQueue = Array(1...voiceCount).shuffled()
+    /// Shuffles all reaction lines from all tiers. Each line appears once before reshuffling.
+    private func pickReactionLine(pack: CharacterPack) -> CharacterPack.ReactionLine? {
+        if reactionQueue.isEmpty {
+            reactionQueue = pack.reactions.flatMap(\.lines).shuffled()
         }
-
-        let index = slapVoiceQueue.removeFirst()
-        return "\(pack.folderPath)/slap_voices/slap_voice_\(index)"
+        return reactionQueue.isEmpty ? nil : reactionQueue.removeFirst()
     }
 
     // MARK: - Dismiss Timer
@@ -214,6 +205,7 @@ final class SlapState {
     var hitCount: Int = 0
     var impactTrigger: Int = 0
     var isKnockedOut: Bool = false
+    var currentReactionText: String?  // Set by SlapWindow, used by SlapAnimationView
 
     var deformationLevel: Int {
         switch hitCount {
@@ -233,5 +225,6 @@ final class SlapState {
         hitCount = 0
         impactTrigger = 0
         isKnockedOut = false
+        currentReactionText = nil
     }
 }

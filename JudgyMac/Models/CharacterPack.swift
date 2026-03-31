@@ -36,10 +36,14 @@ struct CharacterPack: Identifiable, Sendable {
         let rage: String?
     }
 
+    struct ReactionLine: Sendable {
+        let text: String
+        let voicePath: String?
+    }
+
     struct Reaction: Sendable {
         let minHits: Int
-        let texts: [String]
-        let voicePath: String?
+        let lines: [ReactionLine]
     }
 
     struct RageReaction: Sendable {
@@ -149,10 +153,14 @@ private struct PackJSON: Codable {
             let rage: String?
         }
 
+        struct ReactionLineJSON: Codable {
+            let text: String
+            let voice: String?
+        }
+
         struct ReactionJSON: Codable {
             let minHits: Int
-            let texts: [String]
-            let voice: String?
+            let texts: [ReactionLineJSON]
         }
 
         struct RageJSON: Codable {
@@ -244,11 +252,15 @@ enum CharacterPackCatalog {
                     ko: "\(folderPath)/\(faces.ko)",
                     rage: faces.rage.map { "\(folderPath)/\($0)" }
                 ),
-                reactions: json.slap.reactions.map {
+                reactions: json.slap.reactions.map { r in
                     CharacterPack.Reaction(
-                        minHits: $0.minHits,
-                        texts: $0.texts,
-                        voicePath: $0.voice.map { "\(folderPath)/slap_voices/\($0)" }
+                        minHits: r.minHits,
+                        lines: r.texts.map { line in
+                            CharacterPack.ReactionLine(
+                                text: line.text,
+                                voicePath: line.voice.map { "\(folderPath)/slap_voices/\($0)" }
+                            )
+                        }
                     )
                 },
                 rageReaction: json.slap.rageReaction.map {
@@ -292,10 +304,10 @@ enum CharacterPackCatalog {
             rage: nil
         ),
         reactions: [
-            .init(minHits: 1, texts: ["OW!", "HEY!"], voicePath: nil),
-            .init(minHits: 4, texts: ["STOP!", "ENOUGH!"], voicePath: nil),
-            .init(minHits: 8, texts: ["MERCY!", "PLEASE!"], voicePath: nil),
-            .init(minHits: 16, texts: ["💀", "K.O!"], voicePath: nil),
+            .init(minHits: 1, lines: [.init(text: "OW!", voicePath: nil), .init(text: "HEY!", voicePath: nil)]),
+            .init(minHits: 4, lines: [.init(text: "STOP!", voicePath: nil), .init(text: "ENOUGH!", voicePath: nil)]),
+            .init(minHits: 8, lines: [.init(text: "MERCY!", voicePath: nil), .init(text: "PLEASE!", voicePath: nil)]),
+            .init(minHits: 16, lines: [.init(text: "💀", voicePath: nil), .init(text: "K.O!", voicePath: nil)]),
         ],
         rageReaction: nil,
         roastTemplates: [:]
