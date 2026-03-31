@@ -1,13 +1,18 @@
 import AppKit
 import SwiftUI
 
-/// Custom floating toast — dark, bold, screenshot-worthy.
-/// Hover pauses auto-dismiss. Close button always visible.
+/// Dark glass floating toast with bubble-pop animation + rainbow glow border.
 @MainActor
 final class ToastWindow {
     private var window: NSPanel?
     private var dismissTask: Task<Void, Never>?
     private var isHovered = false
+    private var glowBorderLayer: CALayer?
+
+    /// Extra space: glow rendering + entrance animation headroom
+    private let glowInset: CGFloat = 60
+    private let toastWidth: CGFloat = 420
+    private let cornerRadius: CGFloat = 32
 
     static let shared = ToastWindow()
     private init() {}
@@ -15,20 +20,30 @@ final class ToastWindow {
     func show(roast: RoastEntry) {
         dismiss()
 
+        let revealState = ContentRevealState()
         let toastView = ToastView(
             roast: roast,
+            revealState: revealState,
             onClose: { [weak self] in self?.dismiss() },
             onHover: { [weak self] hovering in self?.isHovered = hovering }
         )
-        let hostingController = NSHostingController(rootView: toastView)
+
+        let hostingView = NSHostingView(rootView: toastView)
+        hostingView.wantsLayer = true
+
+        let fittingSize = hostingView.fittingSize
+        let toastHeight = fittingSize.height
+
+        let topInset: CGFloat = 6  // Minimal top gap
+        let panelWidth = toastWidth + glowInset * 2
+        let panelHeight = toastHeight + topInset + glowInset
 
         let panel = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 420, height: 1),
+            contentRect: NSRect(x: 0, y: 0, width: panelWidth, height: panelHeight),
             styleMask: [.nonactivatingPanel, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
-        panel.contentViewController = hostingController
         panel.isOpaque = false
         panel.backgroundColor = .clear
         panel.hasShadow = false
@@ -38,34 +53,369 @@ final class ToastWindow {
         panel.titleVisibility = .hidden
         panel.isMovableByWindowBackground = false
 
-        let fittingSize = hostingController.view.fittingSize
-        panel.setContentSize(NSSize(width: 420, height: fittingSize.height))
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: panelWidth, height: panelHeight))
+        container.wantsLayer = true
+        container.layer?.backgroundColor = .clear
+        panel.contentView = container
+
+        let toastFrame = NSRect(x: glowInset, y: glowInset, width: toastWidth, height: toastHeight)
+
+        // Hosting view
+        hostingView.frame = toastFrame
+        hostingView.layer?.backgroundColor = NSColor(white: 0.06, alpha: 1).cgColor
+        hostingView.layer?.isOpaque = false
+
+        let mask = CAShapeLayer()
+        mask.path = CGPath(
+            roundedRect: CGRect(x: 0, y: 0, width: toastWidth, height: toastHeight),
+            cornerWidth: cornerRadius, cornerHeight: cornerRadius, transform: nil
+        )
+        hostingView.layer?.mask = mask
+
+        // Walk all subviews and force clear backgrounds to prevent gray flash
+        DispatchQueue.main.async {
+            func clearBg(_ view: NSView) {
+                view.wantsLayer = true
+                view.layer?.backgroundColor = .clear
+                view.layer?.isOpaque = false
+                for sub in view.subviews { clearBg(sub) }
+            }
+            for sub in hostingView.subviews { clearBg(sub) }
+        }
+
+        container.addSubview(hostingView)
 
         if let screen = NSScreen.main {
             let screenFrame = screen.visibleFrame
-            let x = screenFrame.midX - 210
-            let y = screenFrame.maxY - fittingSize.height - 40
+            let x = screenFrame.midX - panelWidth / 2
+            // Toast hugs top — just below menu bar
+            let y = screenFrame.maxY - panelHeight
             panel.setFrameOrigin(NSPoint(x: x, y: y))
         }
 
         window = panel
-
-        // Show immediately — all animation is handled by SwiftUI inside ToastView
-        panel.alphaValue = 1
+        panel.alphaValue = 0
         panel.orderFrontRegardless()
 
-        // Auto-dismiss after 10s (paused while hovered)
+        runEntrance(panel: panel, revealState: revealState,
+                    toastRect: hostingView.frame)
         startDismissCountdown()
     }
+
+    // MARK: - Entrance Styles
+
+    private enum EntranceStyle: CaseIterable {
+        case center, fromLeft, fromRight, fromTop
+    }
+
+    private func runEntrance(panel: NSPanel, revealState: ContentRevealState,
+                             toastRect: CGRect) {
+        guard let container = panel.contentView, let layer = container.layer else { return }
+        layer.masksToBounds = false
+
+        let bounds = container.bounds
+        layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        layer.position = CGPoint(x: bounds.midX, y: bounds.midY)
+
+        let style = EntranceStyle.allCases.randomElement() ?? .center
+        panel.alphaValue = 1
+
+        switch style {
+        case .center:    animateCenter(layer: layer)
+        case .fromLeft:  animateSlide(layer: layer, bounds: bounds, fromRight: false)
+        case .fromRight: animateSlide(layer: layer, bounds: bounds, fromRight: true)
+        case .fromTop:   animateDrop(layer: layer, bounds: bounds)
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { revealState.showEmoji() }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { revealState.showText() }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.95) { revealState.showMeta() }
+
+        // Rainbow glow border
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
+            guard let self else { return }
+            self.addRainbowGlow(to: layer, toastRect: toastRect)
+        }
+
+        // Shimmer sweep across toast surface
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self, let hostingLayer = layer.sublayers?.first(where: { $0 is CALayer && $0.sublayers == nil }) ?? layer.sublayers?.first else { return }
+            self.addShimmerSweep(to: layer, toastRect: toastRect)
+        }
+    }
+
+    // MARK: - Center Pop
+
+    private func animateCenter(layer: CALayer) {
+        layer.transform = CATransform3DMakeScale(0.01, 0.01, 1)
+        let scale = CASpringAnimation(keyPath: "transform.scale")
+        scale.fromValue = 0.01; scale.toValue = 1.0
+        scale.mass = 0.8; scale.stiffness = 140; scale.damping = 7; scale.initialVelocity = 18
+        scale.duration = scale.settlingDuration
+        scale.fillMode = .forwards; scale.isRemovedOnCompletion = false
+        let group = CAAnimationGroup()
+        group.animations = [scale, makeWobble(delay: 0.3)]
+        group.duration = max(scale.settlingDuration, 1.3)
+        group.fillMode = .forwards; group.isRemovedOnCompletion = false
+        commitEntrance(group, to: layer)
+    }
+
+    // MARK: - Slide Left/Right
+
+    private func animateSlide(layer: CALayer, bounds: CGRect, fromRight: Bool) {
+        let offX: CGFloat = fromRight ? bounds.width * 1.2 : -bounds.width * 1.2
+        layer.transform = CATransform3DConcat(
+            CATransform3DMakeScale(0.6, 0.6, 1),
+            CATransform3DMakeTranslation(offX, 0, 0)
+        )
+        let slide = CASpringAnimation(keyPath: "transform.translation.x")
+        slide.fromValue = offX; slide.toValue = 0
+        slide.mass = 0.9; slide.stiffness = 120; slide.damping = 10; slide.initialVelocity = 12
+        slide.duration = slide.settlingDuration
+        slide.fillMode = .forwards; slide.isRemovedOnCompletion = false
+        let scale = CASpringAnimation(keyPath: "transform.scale")
+        scale.fromValue = 0.6; scale.toValue = 1.0
+        scale.mass = 0.8; scale.stiffness = 130; scale.damping = 9; scale.initialVelocity = 10
+        scale.duration = scale.settlingDuration
+        scale.fillMode = .forwards; scale.isRemovedOnCompletion = false
+        let tilt = CAKeyframeAnimation(keyPath: "transform.rotation.z")
+        let d: Double = fromRight ? -1 : 1
+        tilt.values = [0.08 * d, -0.04 * d, 0.02 * d, 0]
+        tilt.keyTimes = [0, 0.4, 0.7, 1.0]; tilt.duration = 0.8
+        tilt.beginTime = CACurrentMediaTime() + 0.15
+        tilt.fillMode = .forwards; tilt.isRemovedOnCompletion = false
+        let group = CAAnimationGroup()
+        group.animations = [slide, scale, tilt]
+        group.duration = max(slide.settlingDuration, scale.settlingDuration) + 0.2
+        group.fillMode = .forwards; group.isRemovedOnCompletion = false
+        commitEntrance(group, to: layer)
+    }
+
+    // MARK: - Drop from Top
+
+    private func animateDrop(layer: CALayer, bounds: CGRect) {
+        let drop: CGFloat = bounds.height * 1.5
+        layer.transform = CATransform3DConcat(
+            CATransform3DMakeScale(0.5, 0.5, 1),
+            CATransform3DMakeTranslation(0, drop, 0)
+        )
+        let slideY = CASpringAnimation(keyPath: "transform.translation.y")
+        slideY.fromValue = drop; slideY.toValue = 0
+        slideY.mass = 0.9; slideY.stiffness = 130; slideY.damping = 9; slideY.initialVelocity = 15
+        slideY.duration = slideY.settlingDuration
+        slideY.fillMode = .forwards; slideY.isRemovedOnCompletion = false
+        let scale = CASpringAnimation(keyPath: "transform.scale")
+        scale.fromValue = 0.5; scale.toValue = 1.0
+        scale.mass = 0.8; scale.stiffness = 130; scale.damping = 9; scale.initialVelocity = 10
+        scale.duration = scale.settlingDuration
+        scale.fillMode = .forwards; scale.isRemovedOnCompletion = false
+        let group = CAAnimationGroup()
+        group.animations = [slideY, scale, makeWobble(delay: 0.25)]
+        group.duration = max(slideY.settlingDuration, scale.settlingDuration) + 0.3
+        group.fillMode = .forwards; group.isRemovedOnCompletion = false
+        commitEntrance(group, to: layer)
+    }
+
+    private func makeWobble(delay: Double) -> CAKeyframeAnimation {
+        let w = CAKeyframeAnimation(keyPath: "transform.rotation.z")
+        w.values = [0, 0.05, -0.04, 0.03, -0.018, 0.01, -0.005, 0]
+        w.keyTimes = [0, 0.12, 0.25, 0.4, 0.55, 0.7, 0.85, 1.0]
+        w.duration = 1.0; w.beginTime = CACurrentMediaTime() + delay
+        w.fillMode = .forwards; w.isRemovedOnCompletion = false
+        return w
+    }
+
+    private func commitEntrance(_ anim: CAAnimationGroup, to layer: CALayer) {
+        CATransaction.begin()
+        CATransaction.setCompletionBlock {
+            layer.transform = CATransform3DIdentity
+            layer.removeAllAnimations()
+        }
+        layer.add(anim, forKey: "entrance")
+        CATransaction.commit()
+    }
+
+    // MARK: - Rainbow Glow Border
+
+    /// Architecture: mask on CONTAINER (fixed), gradient rotates freely inside.
+    /// This prevents the mask from spinning with the gradient.
+    private func addRainbowGlow(to parentLayer: CALayer, toastRect: CGRect) {
+        let containerBounds = parentLayer.bounds
+        let borderRect = toastRect.insetBy(dx: 0.5, dy: 0.5)
+        let borderPath = CGPath(roundedRect: borderRect,
+                                cornerWidth: cornerRadius, cornerHeight: cornerRadius,
+                                transform: nil)
+
+        let rainbow: [Any] = [
+            NSColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1).cgColor,
+            NSColor(red: 1.0, green: 0.5, blue: 0.0, alpha: 1).cgColor,
+            NSColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1).cgColor,
+            NSColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1).cgColor,
+            NSColor(red: 0.0, green: 1.0, blue: 1.0, alpha: 1).cgColor,
+            NSColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1).cgColor,
+            NSColor(red: 0.5, green: 0.0, blue: 1.0, alpha: 1).cgColor,
+            NSColor(red: 1.0, green: 0.0, blue: 0.5, alpha: 1).cgColor,
+            NSColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1).cgColor,
+        ]
+
+        // Rotation animation (shared)
+        let spin = CABasicAnimation(keyPath: "transform.rotation.z")
+        spin.fromValue = 0; spin.toValue = Double.pi * 2
+        spin.duration = 4.0; spin.repeatCount = .infinity
+        spin.timingFunction = CAMediaTimingFunction(name: .linear)
+
+        // Large square gradient centered on toast — rotates around its own center
+        let side = max(containerBounds.width, containerBounds.height) * 2
+
+        func makeSpinningGradient() -> CAGradientLayer {
+            let grad = CAGradientLayer()
+            grad.type = .conic
+            grad.frame = CGRect(
+                x: borderRect.midX - side / 2,
+                y: borderRect.midY - side / 2,
+                width: side, height: side
+            )
+            grad.colors = rainbow
+            grad.startPoint = CGPoint(x: 0.5, y: 0.5)
+            grad.endPoint = CGPoint(x: 0.5, y: 0)
+            // anchorPoint = (0.5, 0.5) by default → rotates around gradient center = toast center
+            grad.add(spin, forKey: "spin")
+            return grad
+        }
+
+        // --- Layer 1: Soft glow ---
+        let bigClip = CALayer()
+        bigClip.frame = containerBounds
+        let bigMask = CAShapeLayer()
+        bigMask.path = borderPath
+        bigMask.fillColor = .clear
+        bigMask.strokeColor = NSColor.white.cgColor
+        bigMask.lineWidth = 8
+        bigClip.mask = bigMask
+        bigClip.addSublayer(makeSpinningGradient())
+        bigClip.opacity = 0.15
+        if let blur = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 4]) {
+            bigClip.filters = [blur]
+        }
+
+        // --- Layer 2: Thin sharp border ---
+        let sharpClip = CALayer()
+        sharpClip.frame = containerBounds
+        let sharpMask = CAShapeLayer()
+        sharpMask.path = borderPath
+        sharpMask.fillColor = .clear
+        sharpMask.strokeColor = NSColor.white.cgColor
+        sharpMask.lineWidth = 0.75
+        sharpClip.mask = sharpMask
+        sharpClip.addSublayer(makeSpinningGradient())
+
+        // --- Assemble ---
+        let glowContainer = CALayer()
+        glowContainer.frame = containerBounds
+        glowContainer.masksToBounds = false
+        glowContainer.addSublayer(bigClip)
+        glowContainer.addSublayer(sharpClip)
+
+        parentLayer.addSublayer(glowContainer)
+        glowBorderLayer = glowContainer
+
+        // Pulsing (voice-ready)
+        let pulse = CABasicAnimation(keyPath: "opacity")
+        pulse.fromValue = 0.65; pulse.toValue = 1.0
+        pulse.duration = 1.2; pulse.autoreverses = true
+        pulse.repeatCount = .infinity
+        pulse.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        glowContainer.add(pulse, forKey: "pulse")
+
+        // Fade in
+        glowContainer.opacity = 0
+        let fade = CABasicAnimation(keyPath: "opacity")
+        fade.fromValue = 0; fade.toValue = 0.85; fade.duration = 0.6
+        fade.fillMode = .forwards; fade.isRemovedOnCompletion = false
+        glowContainer.add(fade, forKey: "fadeIn")
+    }
+
+    // MARK: - Shimmer Sweep
+
+    /// Light streak: left→right, pause, then right→left.
+    private func addShimmerSweep(to parentLayer: CALayer, toastRect: CGRect) {
+        let shimmerWidth = toastRect.width * 0.35
+
+        let clipMask = CAShapeLayer()
+        clipMask.path = CGPath(roundedRect: toastRect,
+                               cornerWidth: cornerRadius, cornerHeight: cornerRadius,
+                               transform: nil)
+
+        let shimmerContainer = CALayer()
+        shimmerContainer.frame = parentLayer.bounds
+        shimmerContainer.mask = clipMask
+        parentLayer.addSublayer(shimmerContainer)
+
+        func makeShimmer() -> CAGradientLayer {
+            let s = CAGradientLayer()
+            s.colors = [
+                NSColor.clear.cgColor,
+                NSColor.white.withAlphaComponent(0.05).cgColor,
+                NSColor.white.withAlphaComponent(0.12).cgColor,
+                NSColor.white.withAlphaComponent(0.05).cgColor,
+                NSColor.clear.cgColor,
+            ]
+            s.locations = [0, 0.3, 0.5, 0.7, 1.0]
+            s.startPoint = CGPoint(x: 0, y: 0.3)
+            s.endPoint = CGPoint(x: 1, y: 0.7)
+            s.frame = CGRect(x: 0, y: toastRect.minY,
+                             width: shimmerWidth, height: toastRect.height)
+            return s
+        }
+
+        let leftX = toastRect.minX - shimmerWidth / 2
+        let rightX = toastRect.maxX + shimmerWidth / 2
+
+        // Pass 1: left → right
+        let shimmer1 = makeShimmer()
+        shimmerContainer.addSublayer(shimmer1)
+
+        let slide1 = CABasicAnimation(keyPath: "position.x")
+        slide1.fromValue = leftX; slide1.toValue = rightX
+        slide1.duration = 0.8
+        slide1.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        slide1.fillMode = .forwards; slide1.isRemovedOnCompletion = false
+
+        CATransaction.begin()
+        CATransaction.setCompletionBlock {
+            shimmer1.removeFromSuperlayer()
+
+            // Pass 2: right → left after short pause
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                let shimmer2 = makeShimmer()
+                shimmerContainer.addSublayer(shimmer2)
+
+                let slide2 = CABasicAnimation(keyPath: "position.x")
+                slide2.fromValue = rightX; slide2.toValue = leftX
+                slide2.duration = 0.8
+                slide2.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                slide2.fillMode = .forwards; slide2.isRemovedOnCompletion = false
+
+                CATransaction.begin()
+                CATransaction.setCompletionBlock {
+                    shimmerContainer.removeFromSuperlayer()
+                }
+                shimmer2.add(slide2, forKey: "sweep")
+                CATransaction.commit()
+            }
+        }
+        shimmer1.add(slide1, forKey: "sweep")
+        CATransaction.commit()
+    }
+
+    // MARK: - Dismiss
 
     private func startDismissCountdown() {
         dismissTask = Task {
             var remaining: Double = 10
             while remaining > 0 {
                 try? await Task.sleep(for: .milliseconds(500))
-                if !isHovered {
-                    remaining -= 0.5
-                }
+                if !isHovered { remaining -= 0.5 }
             }
             dismiss()
         }
@@ -75,34 +425,60 @@ final class ToastWindow {
         dismissTask?.cancel()
         guard let panel = window else { return }
 
-        NSAnimationContext.runAnimationGroup({ ctx in
-            ctx.duration = 0.3
-            ctx.timingFunction = CAMediaTimingFunction(name: .easeIn)
-            panel.animator().alphaValue = 0
-        }, completionHandler: {
-            Task { @MainActor [weak self] in
+        guard let layer = panel.contentView?.layer else {
+            panel.orderOut(nil); window = nil; return
+        }
+
+        CATransaction.begin()
+        CATransaction.setCompletionBlock { [weak self] in
+            Task { @MainActor in
+                self?.glowBorderLayer?.removeFromSuperlayer()
+                self?.glowBorderLayer = nil
                 panel.orderOut(nil)
                 self?.window = nil
             }
-        })
+        }
+
+        let shrink = CASpringAnimation(keyPath: "transform.scale")
+        shrink.fromValue = 1.0; shrink.toValue = 0.15
+        shrink.mass = 1.0; shrink.stiffness = 350; shrink.damping = 20
+        shrink.duration = 0.3; shrink.fillMode = .forwards; shrink.isRemovedOnCompletion = false
+        layer.add(shrink, forKey: "shrink")
+
+        NSAnimationContext.runAnimationGroup { ctx in
+            ctx.duration = 0.25
+            ctx.timingFunction = CAMediaTimingFunction(name: .easeIn)
+            panel.animator().alphaValue = 0
+        }
+        CATransaction.commit()
     }
+}
+
+// MARK: - Content Reveal (Notification bridge)
+
+@MainActor
+private final class ContentRevealState {
+    static let emojiNotification = Notification.Name("ToastRevealEmoji")
+    static let textNotification = Notification.Name("ToastRevealText")
+    static let metaNotification = Notification.Name("ToastRevealMeta")
+
+    func showEmoji() { NotificationCenter.default.post(name: Self.emojiNotification, object: nil) }
+    func showText()  { NotificationCenter.default.post(name: Self.textNotification, object: nil) }
+    func showMeta()  { NotificationCenter.default.post(name: Self.metaNotification, object: nil) }
 }
 
 // MARK: - Toast View
 
 private struct ToastView: View {
     let roast: RoastEntry
+    let revealState: ContentRevealState
     let onClose: () -> Void
     let onHover: (Bool) -> Void
 
-    // Staggered entrance states
-    @State private var bubblePopped = false
-    @State private var emojiPopped = false
-    @State private var textRevealed = false
-    @State private var personalityRevealed = false
-    @State private var wobblePhase: Double = 0
+    @State private var emojiVisible = false
+    @State private var textVisible = false
+    @State private var metaVisible = false
     @State private var isHovering = false
-    private let reduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
 
     private var moodColor: Color {
         switch roast.mood {
@@ -116,156 +492,150 @@ private struct ToastView: View {
     }
 
     var body: some View {
-        let skipAnim = reduceMotion
+        ZStack(alignment: .topTrailing) {
+            HStack(alignment: .top, spacing: 16) {
+                fluentEmojiView
+                    .frame(width: 56, height: 56)
+                    .scaleEffect(emojiVisible ? 1 : 0.01)
+                    .rotationEffect(.degrees(emojiVisible ? 0 : -30))
+                    .opacity(emojiVisible ? 1 : 0)
 
-        VStack(spacing: 0) {
-            ZStack(alignment: .topTrailing) {
-                HStack(alignment: .top, spacing: 16) {
-                    // Fluent 3D Emoji — pops in first
-                    fluentEmojiView
-                        .frame(width: 56, height: 56)
-                        .scaleEffect(skipAnim || emojiPopped ? 1 : 0.01)
-                        .rotationEffect(.degrees(skipAnim || emojiPopped ? 0 : -30))
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(roast.text)
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .lineSpacing(4)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .opacity(textVisible ? 1 : 0)
+                        .offset(y: textVisible ? 0 : 14)
 
-                    VStack(alignment: .leading, spacing: 8) {
-                        // Roast text — slides up after emoji
-                        Text(roast.text)
-                            .font(.system(size: 17, weight: .semibold, design: .rounded))
-                            .foregroundStyle(.white)
-                            .lineSpacing(4)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .opacity(skipAnim || textRevealed ? 1 : 0)
-                            .offset(y: skipAnim || textRevealed ? 0 : 12)
+                    Text(roast.personality)
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(moodColor)
+                        .opacity(metaVisible ? 1 : 0)
+                        .offset(y: metaVisible ? 0 : 6)
 
-                        // Personality label — fades in last
-                        Text(roast.personality)
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(moodColor)
-                            .opacity(skipAnim || personalityRevealed ? 1 : 0)
-                            .offset(y: skipAnim || personalityRevealed ? 0 : 8)
-
-                        HStack(spacing: 4) {
-                            Text("JudgyMac")
-                                .font(.system(size: 10, weight: .medium))
-                                .foregroundStyle(.white.opacity(0.4))
-                            Text("·")
-                                .foregroundStyle(.white.opacity(0.2))
-                            Text("judgymac.com")
-                                .font(.system(size: 10))
-                                .foregroundStyle(.white.opacity(0.3))
-                        }
-                        .opacity(skipAnim || personalityRevealed ? 1 : 0)
+                    HStack(spacing: 4) {
+                        Text("JudgyMac")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(.white.opacity(0.4))
+                        Text("·")
+                            .foregroundStyle(.white.opacity(0.2))
+                        Text("judgymac.com")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.white.opacity(0.3))
                     }
+                    .opacity(metaVisible ? 1 : 0)
                 }
-                .padding(20)
-
-                // Close button
-                Button(action: onClose) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(.white.opacity(isHovering ? 0.8 : 0.3))
-                        .frame(width: 20, height: 20)
-                        .background(.white.opacity(isHovering ? 0.15 : 0), in: Circle())
-                }
-                .buttonStyle(.plain)
-                .padding(10)
-                .opacity(skipAnim || textRevealed ? 1 : 0)
             }
+            .padding(.leading, 14)
+                .padding(.trailing, 38)
+                .padding(.vertical, 16)
+
+            Button(action: onClose) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(.white.opacity(isHovering ? 0.8 : 0.35))
+                    .frame(width: 24, height: 24)
+                    .background(.white.opacity(isHovering ? 0.15 : 0), in: Circle())
+            }
+            .buttonStyle(.plain)
+            .padding(8)
+            .opacity(textVisible ? 1 : 0)
         }
         .frame(width: 420)
         .background {
             ZStack {
-                // Base bubble
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(Color.black.opacity(0.88))
+                // Deep dark glass base
+                Color(white: 0.06)
 
-                // 3D bubble highlight — top-left sheen
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(
-                        LinearGradient(
-                            colors: [moodColor.opacity(0.15), .clear],
-                            startPoint: .topLeading,
-                            endPoint: .center
-                        )
-                    )
+                // Mood tint
+                moodColor.opacity(0.03)
 
-                // Inner highlight — soap bubble reflection
+                // Top highlight band — glass edge
+                LinearGradient(
+                    colors: [
+                        .white.opacity(0.22),
+                        .white.opacity(0.08),
+                        .white.opacity(0.02),
+                        .clear,
+                    ],
+                    startPoint: .top,
+                    endPoint: UnitPoint(x: 0.5, y: 0.35)
+                )
+
+                // Top-left bubble specular
                 Ellipse()
                     .fill(
                         RadialGradient(
-                            colors: [.white.opacity(0.08), .clear],
-                            center: .topLeading,
+                            colors: [.white.opacity(0.08), .white.opacity(0.02), .clear],
+                            center: .center,
                             startRadius: 0,
-                            endRadius: 180
+                            endRadius: 200
                         )
                     )
-                    .frame(width: 200, height: 80)
-                    .offset(x: -60, y: -30)
-                    .clipShape(RoundedRectangle(cornerRadius: 24))
+                    .frame(width: 280, height: 100)
+                    .offset(x: -50, y: -45)
+                    .clipShape(RoundedRectangle(cornerRadius: 32))
+
+                // Diagonal specular
+                LinearGradient(
+                    colors: [.clear, .white.opacity(0.06), .white.opacity(0.03), .clear],
+                    startPoint: UnitPoint(x: -0.2, y: -0.1),
+                    endPoint: UnitPoint(x: 0.5, y: 0.5)
+                )
+
+                // Bottom-right reflection
+                Ellipse()
+                    .fill(
+                        RadialGradient(
+                            colors: [.white.opacity(0.04), .clear],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 90
+                        )
+                    )
+                    .frame(width: 140, height: 50)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                    .offset(x: -10, y: -8)
+                    .clipShape(RoundedRectangle(cornerRadius: 32))
+
+                // Double border
+                RoundedRectangle(cornerRadius: 32)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [.white.opacity(0.16), .white.opacity(0.05), .white.opacity(0.02), .white.opacity(0.04)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 0.5
+                    )
+                RoundedRectangle(cornerRadius: 30)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [.white.opacity(0.08), .white.opacity(0.02), .clear, .white.opacity(0.02)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 0.5
+                    )
+                    .padding(1.5)
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 24))
-        .overlay(
-            RoundedRectangle(cornerRadius: 24)
-                .stroke(
-                    LinearGradient(
-                        colors: [moodColor.opacity(0.5), moodColor.opacity(0.1), .clear],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1.5
-                )
-        )
-        .shadow(color: .black.opacity(0.5), radius: 25, y: 10)
-        .shadow(color: moodColor.opacity(0.3), radius: 40, y: 15)
-        // Bubble pop-in: scale from tiny with overshoot
-        .scaleEffect(skipAnim || bubblePopped ? 1 : 0.3)
-        .opacity(skipAnim || bubblePopped ? 1 : 0)
-        // Subtle wobble after landing
-        .rotation3DEffect(
-            .degrees(wobblePhase > 0 ? sin(wobblePhase * 3) * 1.5 : 0),
-            axis: (x: 0, y: 0, z: 1),
-            perspective: 0.5
-        )
+        // Dark shadow halo — makes gradient border pop on light backgrounds
+        .shadow(color: .black.opacity(0.6), radius: 10, y: 3)
+        .shadow(color: .black.opacity(0.3), radius: 22, y: 6)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("JudgyMac roast from \(roast.personality): \(roast.text)")
         .accessibilityAddTraits(.isStaticText)
-        .onAppear {
-            guard !reduceMotion else {
-                bubblePopped = true
-                emojiPopped = true
-                textRevealed = true
-                personalityRevealed = true
-                return
-            }
-            // Step 1: Bubble pops in
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.55)) {
-                bubblePopped = true
-            }
-            // Step 2: Emoji pops
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                withAnimation(.spring(response: 0.45, dampingFraction: 0.45)) {
-                    emojiPopped = true
-                }
-            }
-            // Step 3: Text slides up
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                    textRevealed = true
-                }
-            }
-            // Step 4: Personality + footer
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                    personalityRevealed = true
-                }
-            }
-            // Step 5: Wobble settle
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                withAnimation(.easeOut(duration: 1.2)) {
-                    wobblePhase = .pi * 4
-                }
-            }
+        .onReceive(NotificationCenter.default.publisher(for: ContentRevealState.emojiNotification)) { _ in
+            withAnimation(.spring(duration: 0.6, bounce: 0.45)) { emojiVisible = true }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: ContentRevealState.textNotification)) { _ in
+            withAnimation(.spring(duration: 0.55, bounce: 0.2)) { textVisible = true }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: ContentRevealState.metaNotification)) { _ in
+            withAnimation(.spring(duration: 0.45, bounce: 0.15)) { metaVisible = true }
         }
         .onHover { hovering in
             isHovering = hovering
