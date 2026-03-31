@@ -5,14 +5,19 @@ import Foundation
 @MainActor
 final class SlapPresenter {
     private let appState: AppState
+    private nonisolated(unsafe) var observer: NSObjectProtocol?
 
     init(appState: AppState) {
         self.appState = appState
         observeEvents()
     }
 
+    deinit {
+        if let observer { NotificationCenter.default.removeObserver(observer) }
+    }
+
     private func observeEvents() {
-        NotificationCenter.default.addObserver(
+        observer = NotificationCenter.default.addObserver(
             forName: .behaviorEventDetected,
             object: nil,
             queue: .main

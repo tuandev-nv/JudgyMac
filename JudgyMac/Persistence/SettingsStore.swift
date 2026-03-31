@@ -17,6 +17,8 @@ enum SettingsStore {
         static let statsRoastCount = "com.judgymac.stats.roastCount"
         static let statsMaxIdle = "com.judgymac.stats.maxIdle"
 
+        static let statsTriggerCounts = "com.judgymac.stats.triggerCounts"
+
         // History
         static let roastHistory = "com.judgymac.roastHistory"
 
@@ -42,6 +44,14 @@ enum SettingsStore {
         defaults.set(state.todayStats.keystrokeCount, forKey: Keys.statsKeystrokes)
         defaults.set(state.todayStats.roastCount, forKey: Keys.statsRoastCount)
         defaults.set(state.todayStats.maxIdleMinutes, forKey: Keys.statsMaxIdle)
+        defaults.set(state.todayStats.slapCount, forKey: "com.judgymac.stats.slapCount")
+        defaults.set(state.todayStats.appSwitchCount, forKey: "com.judgymac.stats.appSwitchCount")
+        defaults.set(state.todayStats.thermalCount, forKey: "com.judgymac.stats.thermalCount")
+        defaults.set(state.todayStats.screenTimeMinutes, forKey: "com.judgymac.stats.screenTime")
+        let triggerCountsDict = Dictionary(uniqueKeysWithValues:
+            state.todayStats.triggerCounts.map { ($0.key.rawValue, $0.value) }
+        )
+        defaults.set(triggerCountsDict, forKey: Keys.statsTriggerCounts)
 
         // History — keep all
         let historyData = state.roastHistory.map { entry in
@@ -93,6 +103,17 @@ enum SettingsStore {
             state.todayStats.keystrokeCount = defaults.integer(forKey: Keys.statsKeystrokes)
             state.todayStats.roastCount = defaults.integer(forKey: Keys.statsRoastCount)
             state.todayStats.maxIdleMinutes = defaults.integer(forKey: Keys.statsMaxIdle)
+            state.todayStats.slapCount = defaults.integer(forKey: "com.judgymac.stats.slapCount")
+            state.todayStats.appSwitchCount = defaults.integer(forKey: "com.judgymac.stats.appSwitchCount")
+            state.todayStats.thermalCount = defaults.integer(forKey: "com.judgymac.stats.thermalCount")
+            state.todayStats.screenTimeMinutes = defaults.integer(forKey: "com.judgymac.stats.screenTime")
+            if let saved = defaults.dictionary(forKey: Keys.statsTriggerCounts) as? [String: Int] {
+                for (key, value) in saved {
+                    if let trigger = TriggerType(rawValue: key) {
+                        state.todayStats.triggerCounts[trigger] = value
+                    }
+                }
+            }
         }
 
         // History

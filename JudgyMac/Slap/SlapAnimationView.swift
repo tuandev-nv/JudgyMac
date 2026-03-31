@@ -47,6 +47,7 @@ struct SlapAnimationView: View {
     let onClose: () -> Void
 
     @State private var comicTexts: [ComicText] = []
+    @State private var comicCleanupTasks: [UUID: Task<Void, Never>] = [:]
     @State private var appeared = false
     @State private var counterBounce = true
     @State private var impact = ImpactSnapshot()
@@ -334,8 +335,13 @@ struct SlapAnimationView: View {
     }
 
     private func spawnComic(text: String, x: CGFloat, y: CGFloat, rotation: Double, scale: CGFloat, color: Color, hasBurst: Bool = true) {
-        // Cap comic texts to prevent memory buildup during rapid slaps
+        // Cap comic texts — cancel cleanup tasks for evicted comics
         if comicTexts.count > 6 {
+            let evicted = comicTexts.prefix(comicTexts.count - 6)
+            for comic in evicted {
+                comicCleanupTasks[comic.id]?.cancel()
+                comicCleanupTasks[comic.id] = nil
+            }
             comicTexts.removeFirst(comicTexts.count - 6)
         }
 
@@ -371,8 +377,12 @@ struct SlapAnimationView: View {
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + lifetime) {
+        // Cancellable cleanup task
+        comicCleanupTasks[comicId] = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(lifetime))
+            guard !Task.isCancelled else { return }
             comicTexts.removeAll { $0.id == comicId }
+            comicCleanupTasks[comicId] = nil
         }
     }
 

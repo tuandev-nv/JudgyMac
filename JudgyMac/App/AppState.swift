@@ -38,13 +38,14 @@ final class AppState {
     func handleEvent(_ event: BehaviorEvent) {
         todayStats.recordEvent(event)
         currentMood = MoodEngine.mood(for: event, stats: todayStats)
+        SettingsStore.save(self)
     }
 
     func deliverRoast(_ entry: RoastEntry) {
         currentRoast = entry
-        roastHistory.insert(entry, at: 0)
+        roastHistory.append(entry)
         if roastHistory.count > 100 {
-            roastHistory = Array(roastHistory.prefix(100))
+            roastHistory.removeFirst()
         }
         todayStats.roastCount += 1
     }

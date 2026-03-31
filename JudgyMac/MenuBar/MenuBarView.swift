@@ -48,8 +48,10 @@ struct MenuBarView: View {
                 Spacer()
             }
 
-            // Roast
-            roastBubble
+            // Roast (only show when there's an actual roast)
+            if appState.currentRoast != nil {
+                roastBubble
+            }
 
             // Stats
             statsRow
@@ -71,68 +73,33 @@ struct MenuBarView: View {
 
     private var devTools: some View {
         DisclosureGroup(isExpanded: $devExpanded) {
-            VStack(spacing: 6) {
-                DevButton(label: "🧪 Trigger Roast (Lid Open)") {
-                    let event = BehaviorEvent.lidOpen(count: appState.todayStats.lidOpenCount + 1)
-                    appState.handleEvent(event)
-                    NotificationCenter.default.post(
-                        name: .behaviorEventDetected,
-                        object: nil,
-                        userInfo: ["event": event]
-                    )
+            let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 3)
+            LazyVGrid(columns: columns, spacing: 6) {
+                DevGridButton(icon: "🧪", label: "Lid Open") {
+                    fireDevEvent(.lidOpen(count: appState.todayStats.lidOpenCount + 1))
                 }
-
-                DevButton(label: "😴 Trigger Idle") {
-                    let event = BehaviorEvent.idle(minutes: 30)
-                    appState.handleEvent(event)
-                    NotificationCenter.default.post(
-                        name: .behaviorEventDetected,
-                        object: nil,
-                        userInfo: ["event": event]
-                    )
+                DevGridButton(icon: "😴", label: "Idle") {
+                    fireDevEvent(.idle(minutes: 30))
                 }
-
-                DevButton(label: "🌙 Trigger Late Night") {
-                    let event = BehaviorEvent.lateNight(hour: 3)
-                    appState.handleEvent(event)
-                    NotificationCenter.default.post(
-                        name: .behaviorEventDetected,
-                        object: nil,
-                        userInfo: ["event": event]
-                    )
+                DevGridButton(icon: "🌙", label: "Late Night") {
+                    fireDevEvent(.lateNight(hour: 3))
                 }
-
-                DevButton(label: "🌅 Trigger Early Morning") {
-                    let event = BehaviorEvent.earlyMorning(hour: 6)
-                    appState.handleEvent(event)
-                    NotificationCenter.default.post(
-                        name: .behaviorEventDetected,
-                        object: nil,
-                        userInfo: ["event": event]
-                    )
+                DevGridButton(icon: "🌅", label: "Morning") {
+                    fireDevEvent(.earlyMorning(hour: 6))
                 }
-
-                DevButton(label: "🔥 Trigger Thermal") {
-                    let event = BehaviorEvent.thermal(state: "critical")
-                    appState.handleEvent(event)
-                    NotificationCenter.default.post(
-                        name: .behaviorEventDetected,
-                        object: nil,
-                        userInfo: ["event": event]
-                    )
+                DevGridButton(icon: "🔥", label: "Thermal") {
+                    fireDevEvent(.thermal(state: "critical"))
                 }
-
-                DevButton(label: "👋 Trigger Slap") {
-                    let event = BehaviorEvent.slap(pressure: 0.95)
-                    appState.handleEvent(event)
-                    NotificationCenter.default.post(
-                        name: .behaviorEventDetected,
-                        object: nil,
-                        userInfo: ["event": event]
-                    )
+                DevGridButton(icon: "👋", label: "Slap") {
+                    fireDevEvent(.slap(pressure: 0.95))
                 }
-
-                DevButton(label: "🔄 Reset Stats") {
+                DevGridButton(icon: "🔄", label: "App Switch") {
+                    fireDevEvent(.appSwitch(count: 15, app: "Safari"))
+                }
+                DevGridButton(icon: "🖥", label: "Screen Time") {
+                    fireDevEvent(.screenTime(minutes: 90))
+                }
+                DevGridButton(icon: "🗑", label: "Reset") {
                     appState.todayStats = UserStats()
                     appState.currentRoast = nil
                     appState.currentMood = .neutral
@@ -151,9 +118,18 @@ struct MenuBarView: View {
             .buttonStyle(.plain)
         }
         .font(.system(size: 11, weight: .medium))
-        .foregroundStyle(.orange)
+        .foregroundStyle(.secondary)
         .padding(8)
-        .background(.orange.opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
+    }
+
+    private func fireDevEvent(_ event: BehaviorEvent) {
+        appState.handleEvent(event)
+        NotificationCenter.default.post(
+            name: .behaviorEventDetected,
+            object: nil,
+            userInfo: ["event": event]
+        )
     }
     #endif
 
@@ -189,10 +165,14 @@ struct MenuBarView: View {
 
     private var statsRow: some View {
         let stats = appState.todayStats
-        return HStack(spacing: 8) {
+        let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 3)
+        return LazyVGrid(columns: columns, spacing: 6) {
             StatPill(icon: "laptopcomputer", value: "\(stats.lidOpenCount)", label: "Opens")
             StatPill(icon: "flame", value: "\(stats.roastCount)", label: "Roasts")
-            StatPill(icon: "zzz", value: "\(stats.maxIdleMinutes)m", label: "Idle")
+            StatPill(icon: "clock.arrow.circlepath", value: "\(stats.screenTimeMinutes)m", label: "Screen")
+            StatPill(icon: "hand.raised", value: "\(stats.slapCount)", label: "Slaps")
+            StatPill(icon: "arrow.left.arrow.right", value: "\(stats.appSwitchCount)", label: "Alt-Tab")
+            StatPill(icon: "thermometer.sun.fill", value: "\(stats.thermalCount)", label: "Overheat")
         }
     }
 
@@ -272,7 +252,7 @@ struct MenuBarView: View {
             } else {
                 ScrollView {
                     VStack(spacing: 6) {
-                        ForEach(appState.roastHistory) { entry in
+                        ForEach(appState.roastHistory.reversed()) { entry in
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(entry.text)
                                     .font(.system(size: 12, design: .rounded))
@@ -377,21 +357,25 @@ private struct StatPill: View {
     }
 }
 
-// MARK: - Dev Button (DEBUG only)
+// MARK: - Dev Grid Button (DEBUG only)
 
 #if DEBUG
-private struct DevButton: View {
+private struct DevGridButton: View {
+    let icon: String
     let label: String
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            Text(label)
-                .font(.system(size: 11, weight: .medium))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 4)
-                .padding(.horizontal, 6)
-                .background(.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
+            VStack(spacing: 3) {
+                Text(icon).font(.system(size: 16))
+                Text(label)
+                    .font(.system(size: 9, weight: .medium))
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 6)
+            .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 6))
         }
         .buttonStyle(.plain)
     }

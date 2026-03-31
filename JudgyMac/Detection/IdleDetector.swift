@@ -1,7 +1,6 @@
 import Foundation
-import CoreGraphics
 
-/// Detects user idle time via CGEventSource.
+/// Detects user idle time via shared ActivityMonitor.
 /// Triggers: idle (when user has been inactive for threshold duration)
 final class IdleDetector: BehaviorDetector, @unchecked Sendable {
     private(set) var isRunning = false
@@ -15,6 +14,7 @@ final class IdleDetector: BehaviorDetector, @unchecked Sendable {
         self.onEvent = onEvent
         isRunning = true
 
+        ActivityMonitor.shared.subscribe()
         timer = Timer.scheduledTimer(
             withTimeInterval: Constants.Detection.idlePollIntervalSeconds,
             repeats: true
@@ -28,23 +28,11 @@ final class IdleDetector: BehaviorDetector, @unchecked Sendable {
         isRunning = false
         timer?.invalidate()
         timer = nil
+        ActivityMonitor.shared.unsubscribe()
     }
 
     private func checkIdle() {
-        let idleSeconds = CGEventSource.secondsSinceLastEventType(
-            .combinedSessionState,
-            eventType: .mouseMoved
-        )
-
-        // Also check keyboard activity
-        let keyIdleSeconds = CGEventSource.secondsSinceLastEventType(
-            .combinedSessionState,
-            eventType: .keyDown
-        )
-
-        // Use the minimum (most recent activity of either type)
-        let effectiveIdle = min(idleSeconds, keyIdleSeconds)
-        let idleMinutes = Int(effectiveIdle / 60)
+        let idleMinutes = Int(ActivityMonitor.shared.idleSeconds / 60)
 
         if idleMinutes >= Constants.Detection.idleThresholdMinutes {
             if !hasTriggeredThisIdlePeriod {
@@ -52,7 +40,6 @@ final class IdleDetector: BehaviorDetector, @unchecked Sendable {
                 onEvent?(.idle(minutes: idleMinutes))
             }
         } else {
-            // User is active again, reset for next idle period
             hasTriggeredThisIdlePeriod = false
         }
     }

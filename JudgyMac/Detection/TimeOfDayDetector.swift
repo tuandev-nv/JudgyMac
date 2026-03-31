@@ -1,9 +1,7 @@
 import Foundation
 
-/// Clock-based trigger detection.
-/// This detector doesn't run on its own — it's called by LidDetector
-/// to add time-of-day context when the lid opens.
-/// Kept as a separate module for testability and clarity.
+/// Clock-based trigger detection for late night / early morning usage.
+/// Uses shared ActivityMonitor instead of polling CGEventSource directly.
 final class TimeOfDayDetector: BehaviorDetector, @unchecked Sendable {
     private(set) var isRunning = false
 
@@ -16,13 +14,14 @@ final class TimeOfDayDetector: BehaviorDetector, @unchecked Sendable {
         self.onEvent = onEvent
         isRunning = true
 
-        // First check after 5 minutes
+        ActivityMonitor.shared.subscribe()
+
+        // First check after 5 minutes, then every 15 minutes
         timer = Timer.scheduledTimer(
             withTimeInterval: 300,
             repeats: false
         ) { [weak self] _ in
             self?.checkTimeOfDay()
-            // Then every 15 minutes
             self?.timer = Timer.scheduledTimer(
                 withTimeInterval: 900,
                 repeats: true
@@ -37,29 +36,19 @@ final class TimeOfDayDetector: BehaviorDetector, @unchecked Sendable {
         isRunning = false
         timer?.invalidate()
         timer = nil
+        ActivityMonitor.shared.unsubscribe()
     }
 
     private func checkTimeOfDay() {
         let hour = Calendar.current.component(.hour, from: Date())
-
-        // Check both keyboard AND mouse activity
-        let keyIdle = CGEventSource.secondsSinceLastEventType(
-            .combinedSessionState,
-            eventType: .keyDown
-        )
-        let mouseIdle = CGEventSource.secondsSinceLastEventType(
-            .combinedSessionState,
-            eventType: .mouseMoved
-        )
-        let idleSeconds = min(keyIdle, mouseIdle)
+        let idleSeconds = ActivityMonitor.shared.idleSeconds
 
         // User was active in last 5 minutes during late hours
         guard idleSeconds < 300 else { return }
 
-        // Only trigger once per night (reset when leaving late hours)
         if hour >= Constants.Detection.lateNightStartHour,
            hour < Constants.Detection.lateNightEndHour {
-            guard !Calendar.current.isDateInToday(lastTriggeredDate ?? .distantPast)  else { return }
+            guard !Calendar.current.isDateInToday(lastTriggeredDate ?? .distantPast) else { return }
             lastTriggeredDate = Date()
             onEvent?(.lateNight(hour: hour))
         } else if hour >= Constants.Detection.earlyMorningStartHour,
@@ -68,10 +57,7 @@ final class TimeOfDayDetector: BehaviorDetector, @unchecked Sendable {
             lastTriggeredDate = Date()
             onEvent?(.earlyMorning(hour: hour))
         } else {
-            // Daytime — reset for next night
             lastTriggeredDate = nil
         }
     }
 }
-
-import CoreGraphics

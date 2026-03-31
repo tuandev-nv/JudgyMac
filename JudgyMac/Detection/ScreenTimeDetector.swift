@@ -1,4 +1,3 @@
-import CoreGraphics
 import Foundation
 
 /// Detects continuous screen usage without breaks.
@@ -12,9 +11,9 @@ final class ScreenTimeDetector: BehaviorDetector, @unchecked Sendable {
     private var sessionStartTime: Date?
     private var lastFireTime: Date?
 
-    private let checkInterval: TimeInterval = 60          // Poll every 60s
-    private let breakThresholdSeconds: TimeInterval = 300  // 5 min idle = break taken
-    private let fireIntervalMinutes: Int = 45              // Remind every 45 min
+    private let checkInterval: TimeInterval = 60
+    private let breakThresholdSeconds: TimeInterval = 300  // 5 min idle = break
+    private let fireIntervalMinutes: Int = 45
 
     func start(onEvent: @escaping @Sendable (BehaviorEvent) -> Void) {
         guard !isRunning else { return }
@@ -22,6 +21,7 @@ final class ScreenTimeDetector: BehaviorDetector, @unchecked Sendable {
         isRunning = true
         sessionStartTime = Date()
 
+        ActivityMonitor.shared.subscribe()
         timer = Timer.scheduledTimer(withTimeInterval: checkInterval, repeats: true) { [weak self] _ in
             self?.check()
         }
@@ -36,16 +36,11 @@ final class ScreenTimeDetector: BehaviorDetector, @unchecked Sendable {
         isRunning = false
         timer?.invalidate()
         timer = nil
+        ActivityMonitor.shared.unsubscribe()
     }
 
     private func check() {
-        let keyIdle = CGEventSource.secondsSinceLastEventType(
-            .combinedSessionState, eventType: .keyDown
-        )
-        let mouseIdle = CGEventSource.secondsSinceLastEventType(
-            .combinedSessionState, eventType: .mouseMoved
-        )
-        let idleSeconds = min(keyIdle, mouseIdle)
+        let idleSeconds = ActivityMonitor.shared.idleSeconds
 
         // User took a real break — reset session
         if idleSeconds >= breakThresholdSeconds {
@@ -62,10 +57,8 @@ final class ScreenTimeDetector: BehaviorDetector, @unchecked Sendable {
         guard let start = sessionStartTime else { return }
         let activeMinutes = Int(Date().timeIntervalSince(start) / 60)
 
-        // Not yet time to fire
         guard activeMinutes >= fireIntervalMinutes else { return }
 
-        // Check if we already fired recently (within this interval)
         if let lastFire = lastFireTime {
             let minutesSinceLastFire = Int(Date().timeIntervalSince(lastFire) / 60)
             guard minutesSinceLastFire >= fireIntervalMinutes else { return }

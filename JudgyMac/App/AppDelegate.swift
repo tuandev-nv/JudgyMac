@@ -18,7 +18,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private var animationTimer: Timer?
     private var animationFrame = 0
     private var currentMood: Mood = .neutral
-    private var currentAnimationInterval: TimeInterval = 2.5
+    private var animationSkipRate = 1  // 1 = every tick, 2 = every other tick, etc.
     private var systemStatsTick = 0  // throttle heavy stats polling
 
     // Sprite run cycle for character packs
@@ -121,40 +121,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         // Update mood from app state
         currentMood = _appState.currentMood
 
-        // CPU every tick, heavy stats every ~5s
+        // CPU every tick, RAM every ~15s, GPU/Disk every ~30s
         let cpu = cpuMonitor.currentUsage()
         _appState.cpuUsage = cpu
         systemStatsTick += 1
-        if systemStatsTick % 5 == 0 {
+        if systemStatsTick % 10 == 0 {
             _appState.ramUsage = currentRAMUsage()
+        }
+        if systemStatsTick % 20 == 0 {
             _appState.gpuUsage = currentGPUUsage()
             _appState.diskUsage = currentDiskUsage()
         }
 
-        // Faster animation = higher CPU
-        let newInterval: TimeInterval = switch cpu {
-        case 0.8...: 0.3   // Very fast — panic
-        case 0.5..<0.8: 0.6 // Fast — stressed
-        case 0.2..<0.5: 1.2 // Normal
-        default: 2.5        // Slow — chill
-        }
-
-        // Only recreate timer when interval bracket changes
-        if newInterval != currentAnimationInterval {
-            currentAnimationInterval = newInterval
-            animationTimer?.invalidate()
-            animationTimer = Timer.scheduledTimer(withTimeInterval: newInterval, repeats: true) { [weak self] _ in
-                guard let self else { return }
-                Task { @MainActor in
-                    self.tickAnimation()
-                }
-            }
+        // Faster animation = higher CPU (skip fewer ticks)
+        animationSkipRate = switch cpu {
+        case 0.8...: 1   // Every tick — panic
+        case 0.5..<0.8: 1 // Every tick — stressed
+        case 0.2..<0.5: 1 // Every tick — normal
+        default: 2         // Every other tick — chill
         }
 
         // Advance frame (static on Reduce Motion — always frame 0)
         if NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
             animationFrame = 0
-        } else {
+        } else if systemStatsTick % animationSkipRate == 0 {
             animationFrame = (animationFrame + 1) % 4
         }
         updateMenuBarIcon()

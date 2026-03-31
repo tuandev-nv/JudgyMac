@@ -5,6 +5,10 @@ struct UserStats: Sendable {
     var keystrokeCount: Int = 0
     var roastCount: Int = 0
     var maxIdleMinutes: Int = 0
+    var slapCount: Int = 0
+    var appSwitchCount: Int = 0
+    var thermalCount: Int = 0
+    var screenTimeMinutes: Int = 0
     var triggerCounts: [TriggerType: Int] = [:]
     var date: Date = Calendar.current.startOfDay(for: Date())
 
@@ -24,6 +28,16 @@ struct UserStats: Sendable {
             if let minutes = Int(event.metadata["idle_minutes"] ?? "") {
                 maxIdleMinutes = max(maxIdleMinutes, minutes)
             }
+        case .slap:
+            slapCount += 1
+        case .appSwitch:
+            appSwitchCount += 1
+        case .screenTime:
+            if let minutes = Int(event.metadata["minutes"] ?? "") {
+                screenTimeMinutes = max(screenTimeMinutes, minutes)
+            }
+        case .thermal:
+            thermalCount += 1
         default:
             break
         }

@@ -21,6 +21,7 @@
 		2E45B75B1073D8EC651EAF60 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1CAAC9FE2B10A28F010DC1 /* HistoryView.swift */; };
 		2FF2144CB375DC348C431214 /* RoastEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9100DF1CA31D047308E4216 /* RoastEntry.swift */; };
 		3265259BB2F0F6826C1DED94 /* RoastBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51F274515A877D4EB33C49 /* RoastBubble.swift */; };
+		355F60029CC68FBFEA2C9B90 /* ActivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06148C9A9E28B56AE417AC2E /* ActivityMonitor.swift */; };
 		366814E659DAF2E942B88717 /* DetectionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7162979E25841246E79E8578 /* DetectionCoordinator.swift */; };
 		37D5F54E16C82B0687704C6E /* SoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C863C21F0DA4E197BDFAFA43 /* SoundPlayer.swift */; };
 		3D348B5D222B1CBB6B03E5D3 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA629D49B1C788897ECD732C /* GlassCard.swift */; };
@@ -64,6 +65,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		06148C9A9E28B56AE417AC2E /* ActivityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityMonitor.swift; sourceTree = "<group>"; };
 		0811A026395AC21A32063256 /* ToastWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastWindow.swift; sourceTree = "<group>"; };
 		0C092D7F9C46FE5FDFFBE254 /* JudgyMac.storekit */ = {isa = PBXFileReference; path = JudgyMac.storekit; sourceTree = "<group>"; };
 		1099E327C918F88773A0CD69 /* SummaryCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryCardView.swift; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 		B13C7B5A8DCD61C175279F5D /* Detection */ = {
 			isa = PBXGroup;
 			children = (
+				06148C9A9E28B56AE417AC2E /* ActivityMonitor.swift */,
 				CDCB418A07F03FA3DF9357EA /* AppSwitchDetector.swift */,
 				4A3F4279DEAB034963BF3879 /* CPUMonitor.swift */,
 				7162979E25841246E79E8578 /* DetectionCoordinator.swift */,
@@ -390,6 +393,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				275B2626CE3BBA292D4419FA /* AccessibilityHelper.swift in Sources */,
+				355F60029CC68FBFEA2C9B90 /* ActivityMonitor.swift in Sources */,
 				9409005EFC052EF8F77BD804 /* AppDelegate.swift in Sources */,
 				D9AAED4E8DC60AF14E68D65B /* AppState.swift in Sources */,
 				45962483F361E4464EB2A3CE /* AppSwitchDetector.swift in Sources */,

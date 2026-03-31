@@ -8,6 +8,8 @@ final class RoastPresenter {
     private let appState: AppState
     private let engine: RoastEngine
     private var snoozedUntil: Date?
+    private nonisolated(unsafe) var eventObserver: NSObjectProtocol?
+    private nonisolated(unsafe) var snoozeObserver: NSObjectProtocol?
 
     init(appState: AppState) {
         self.appState = appState
@@ -15,6 +17,12 @@ final class RoastPresenter {
         setupNotifications()
         observeEvents()
         observeSnooze()
+    }
+
+    deinit {
+        if let eventObserver { NotificationCenter.default.removeObserver(eventObserver) }
+        if let snoozeObserver { NotificationCenter.default.removeObserver(snoozeObserver) }
+        if let screenUnlockObserver { DistributedNotificationCenter.default().removeObserver(screenUnlockObserver) }
     }
 
     // MARK: - Setup
@@ -51,7 +59,7 @@ final class RoastPresenter {
     // MARK: - Event Observation
 
     private func observeEvents() {
-        NotificationCenter.default.addObserver(
+        eventObserver = NotificationCenter.default.addObserver(
             forName: .behaviorEventDetected,
             object: nil,
             queue: .main
@@ -64,7 +72,7 @@ final class RoastPresenter {
     }
 
     private func observeSnooze() {
-        NotificationCenter.default.addObserver(
+        snoozeObserver = NotificationCenter.default.addObserver(
             forName: .snoozeRoasts,
             object: nil,
             queue: .main
@@ -92,7 +100,7 @@ final class RoastPresenter {
     // MARK: - Toast (wait for screen unlock)
 
     private var pendingRoast: RoastEntry?
-    private var screenUnlockObserver: Any?
+    private nonisolated(unsafe) var screenUnlockObserver: Any?
 
     private func showToastWhenUnlocked(roast: RoastEntry) {
         let isLocked = CGSessionCopyCurrentDictionary()
