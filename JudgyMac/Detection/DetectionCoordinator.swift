@@ -27,6 +27,7 @@ final class DetectionCoordinator {
 
         detectors[.idle] = IdleDetector()
         detectors[.screenTime] = ScreenTimeDetector()
+        detectors[.appSwitch] = AppSwitchDetector()
         detectors[.thermal] = ThermalDetector()
         detectors[.slap] = SlapDetector()
     }

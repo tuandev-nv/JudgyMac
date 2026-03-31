@@ -36,15 +36,23 @@ enum SoundPlayer {
         activePlayers.append(player)
     }
 
-    /// Play slap impact + voice reaction with slight delay between them.
-    static func playSlapCombo(slapSound: String, voiceSound: String?) {
+    /// Play slap impact + umph + voice reaction with delays between them.
+    static func playSlapCombo(slapSound: String, umphSound: String? = nil, voiceSound: String?) {
         // Slap impact — immediate
         play(slapSound)
 
-        // Voice reaction — slight delay for natural feel
+        // Umph reaction — short delay after impact
+        if let umph = umphSound {
+            Task {
+                try? await Task.sleep(for: .milliseconds(80))
+                play(umph, volume: 0.85)
+            }
+        }
+
+        // Voice line — after umph settles
         guard let voice = voiceSound else { return }
         Task {
-            try? await Task.sleep(for: .milliseconds(50))
+            try? await Task.sleep(for: .milliseconds(umphSound != nil ? 350 : 50))
             play(voice, volume: 0.9)
         }
     }

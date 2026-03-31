@@ -24,6 +24,9 @@ enum MoodEngine {
         case .screenTime:
             return .judging
 
+        case .appSwitch:
+            return .judging
+
         case .slap:
             return .raging
         }

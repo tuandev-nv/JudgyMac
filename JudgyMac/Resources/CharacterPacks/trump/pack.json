@@ -183,6 +183,18 @@
       {"id": "roast_st8", "text": "{minutes} minutes. Even Sleepy Joe takes walks. You're being out-walked by SLEEPY JOE. Think about that.", "variables": ["minutes"], "weight": 1.0, "voice": "roast_st8"},
       {"id": "roast_st9", "text": "I'm declaring a state of emergency on your screen time. {minutes} minutes is a NATIONAL CRISIS.", "variables": ["minutes"], "weight": 1.0, "voice": "roast_st9"},
       {"id": "roast_st10", "text": "{minutes} minutes. Your back is gonna file for bankruptcy. Chapter 11. I know Chapter 11 very well.", "variables": ["minutes"], "weight": 1.0, "voice": "roast_st10"}
+    ],
+    "app_switch": [
+      {"id": "roast_as1", "text": "{count} app switches! You flip-flop more than a politician. And I would know.", "variables": ["count"], "weight": 1.0},
+      {"id": "roast_as2", "text": "Switching to {app}? AGAIN? That's more back and forth than my trade negotiations with China.", "variables": ["app"], "weight": 1.0},
+      {"id": "roast_as3", "text": "{count} switches. Nobody has less focus than you. NOBODY. It's actually impressive how unfocused you are.", "variables": ["count"], "weight": 1.0},
+      {"id": "roast_as4", "text": "Pick an app. ANY app. And STAY THERE. This is worse than Congress. And Congress is TERRIBLE.", "variables": [], "weight": 1.0},
+      {"id": "roast_as5", "text": "You're switching apps faster than I switch lawyers. And I switch lawyers A LOT.", "variables": [], "weight": 1.0},
+      {"id": "roast_as6", "text": "{count} app switches in 2 minutes. I've seen better focus from Sleepy Joe. SAD!", "variables": ["count"], "weight": 1.0},
+      {"id": "roast_as7", "text": "Alt-tab alt-tab alt-tab. You know what that sounds like? LOSING. Winners pick one app and DOMINATE it.", "variables": [], "weight": 1.0},
+      {"id": "roast_as8", "text": "I could build a WALL between your apps and you'd still find a way to switch. TREMENDOUS procrastination.", "variables": [], "weight": 1.0},
+      {"id": "roast_as9", "text": "Just opened {app}. Again. Your app history looks like my list of fired staff. Very long. Very sad.", "variables": ["app"], "weight": 1.0},
+      {"id": "roast_as10", "text": "FOCUS! I ran a country AND a business AND a TV show. You can't even stay in one app. Pathetic.", "variables": [], "weight": 1.0}
     ]
   }
 }

@@ -48,6 +48,7 @@ struct SlapAnimationView: View {
 
     @State private var comicTexts: [ComicText] = []
     @State private var appeared = false
+    @State private var counterBounce = true
     @State private var impact = ImpactSnapshot()
 
     @State private var slapSign: Double = 0 // 0 = not chosen yet
@@ -129,7 +130,7 @@ struct SlapAnimationView: View {
                     comicTextView(comic)
                 }
 
-                // Hit counter — overlaid near bottom of face
+                // Hit counter
                 if state.hitCount > 0 {
                     Text("× \(state.hitCount)")
                         .font(.system(size: 64, weight: .black, design: .rounded))
@@ -137,6 +138,8 @@ struct SlapAnimationView: View {
                         .shadow(color: .black, radius: 0, x: 2, y: 2)
                         .shadow(color: .black, radius: 0, x: -1, y: -1)
                         .contentTransition(.numericText())
+                        .scaleEffect(counterBounce ? 1 : 2.0)
+                        .animation(.spring(duration: 0.2, bounce: 0.4), value: counterBounce)
                         .animation(.spring(duration: 0.15), value: state.hitCount)
                         .offset(y: faceSize * 0.45)
                 }
@@ -291,6 +294,12 @@ struct SlapAnimationView: View {
             jiggleIntensity: jiggle
         )
 
+        // Counter slam-in bounce
+        counterBounce = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            counterBounce = true
+        }
+
         // Comic text
         addComicText(level: level)
     }
@@ -370,17 +379,14 @@ struct SlapAnimationView: View {
     // MARK: - Counter
 
     private var counterColor: Color {
-        let tier = state.hitCount / 10
-        switch tier {
-        case 0: return .white
-        case 1: return .yellow
-        case 2: return .orange
-        case 3: return .red
-        case 4: return .pink
-        case 5: return .purple
-        case 6: return .cyan
-        case 7: return .mint
-        default: return Color(hue: Double(tier % 10) / 10.0, saturation: 1, brightness: 1)
+        switch state.hitCount {
+        case 1...3:   return .yellow
+        case 4...7:   return .orange
+        case 8...15:  return .red
+        case 16...25: return .pink
+        case 26...35: return .purple
+        case 36...45: return .cyan
+        default:      return Color(hue: Double(state.hitCount % 50) / 50.0, saturation: 1, brightness: 1)
         }
     }
 }

@@ -134,7 +134,11 @@ final class SlapWindow {
         // Pick ONE reaction line → use both text and voice
         let pickedLine = pickReactionLine(pack: pack)
         slapState.currentReactionText = pickedLine?.text
-        SoundPlayer.playSlapCombo(slapSound: pack.slapSoundPath, voiceSound: pickedLine?.voicePath)
+        SoundPlayer.playSlapCombo(
+            slapSound: pack.slapSoundPath,
+            umphSound: "\(pack.folderPath)/slap_voice",
+            voiceSound: pickedLine?.voicePath
+        )
 
         restartDismissTimer()
     }

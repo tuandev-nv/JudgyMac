@@ -21,6 +21,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private var currentAnimationInterval: TimeInterval = 2.5
     private var systemStatsTick = 0  // throttle heavy stats polling
 
+    // Sprite run cycle for character packs
+    private var spriteFrames: [NSImage] = []
+    private var spriteTimer: Timer?
+    private var spriteFrame = 0
+
     // MARK: - App Lifecycle
 
     private var saveTimer: Timer?
@@ -89,8 +94,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
+        loadSpriteFrames()
+
         if let button = statusItem.button {
-            // Initial icon — Fluent Emoji
             updateMenuBarIcon()
             button.action = #selector(togglePopover)
             button.target = self
@@ -155,6 +161,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     }
 
     private func updateMenuBarIcon() {
+        // Sprite animation handles its own icon updates
+        if spriteTimer != nil { return }
+
         let faceName = FluentEmoji.face(for: currentMood, frame: animationFrame)
         let emojiImage = FluentEmoji.menuBarImage(named: faceName)
 
@@ -279,6 +288,63 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         image.unlockFocus()
         image.isTemplate = false
         return image
+    }
+
+    // MARK: - Sprite Animation
+
+    /// Load run-cycle frames from CharacterPacks/{packId}/menubar_frames/
+    private func loadSpriteFrames() {
+        spriteTimer?.invalidate()
+        spriteTimer = nil
+        spriteFrames.removeAll()
+
+        let packId = _appState.currentPack.id
+        guard let dirURL = Bundle.main.resourceURL?
+            .appendingPathComponent("CharacterPacks")
+            .appendingPathComponent(packId)
+            .appendingPathComponent("menubar_frames") else { return }
+
+        guard let files = try? FileManager.default.contentsOfDirectory(
+            at: dirURL, includingPropertiesForKeys: nil
+        ).filter({ $0.pathExtension == "png" }).sorted(by: { $0.lastPathComponent < $1.lastPathComponent })
+        else { return }
+
+        spriteFrames = files.compactMap { url in
+            guard let img = NSImage(contentsOf: url) else { return nil }
+            img.size = NSSize(width: 20, height: 32)
+            img.isTemplate = false
+            return img
+        }
+
+        #if DEBUG
+        print("🎬 [Sprite] Loaded \(spriteFrames.count) menubar frames for '\(packId)'")
+        #endif
+
+        if !spriteFrames.isEmpty {
+            startSpriteAnimation()
+        }
+    }
+
+    private func startSpriteAnimation() {
+        spriteFrame = 0
+        // ~6 FPS — 4 frames = smooth run cycle
+        spriteTimer = Timer.scheduledTimer(withTimeInterval: 0.16, repeats: true) { [weak self] _ in
+            guard let self, !self.spriteFrames.isEmpty else { return }
+            Task { @MainActor in
+                self.spriteFrame = (self.spriteFrame + 1) % self.spriteFrames.count
+                let image = self.spriteFrames[self.spriteFrame]
+
+                let cpu = Int(self._appState.cpuUsage * 100)
+                let gpu = Int(self._appState.gpuUsage * 100)
+                let ram = Int(self._appState.ramUsage * 100)
+
+                let stats = [("CPU", "\(cpu)%"), ("GPU", "\(gpu)%"), ("RAM", "\(ram)%")]
+                let combined = self.renderMenuBarImage(emoji: image, stats: stats)
+                combined.accessibilityDescription = "JudgyMac"
+                self.statusItem.button?.image = combined
+                self.statusItem.button?.title = ""
+            }
+        }
     }
 
     // MARK: - Popover

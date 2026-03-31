@@ -19,7 +19,7 @@ enum Constants {
 
         // Base tempo — all slap timing scales from this (seconds)
         // Increase this single value to slow everything down proportionally
-        static let baseTempo: TimeInterval = 0.5
+        static let baseTempo: TimeInterval = 0.65
 
         /// Min interval between slaps (2 slaps/sec)
         static let debounceSeconds: TimeInterval = baseTempo
@@ -27,14 +27,14 @@ enum Constants {
         /// Idle time before slap window dismisses
         static let dismissIdleSeconds: TimeInterval = baseTempo * 5   // 2.5s
 
-        /// Comic text hold time before fading
-        static let comicHoldSeconds: TimeInterval = baseTempo * 2.5   // 1.25s
+        /// Comic text hold time before fading (must be > dismissIdleSeconds so panel fades first)
+        static let comicHoldSeconds: TimeInterval = baseTempo * 5.5
 
         /// Comic text total lifetime (hold + fade)
-        static let comicLifetimeSeconds: TimeInterval = baseTempo * 4  // 2.0s
+        static let comicLifetimeSeconds: TimeInterval = baseTempo * 7
 
         /// Comic text fade duration
-        static let comicFadeSeconds: TimeInterval = baseTempo * 1.5   // 0.75s
+        static let comicFadeSeconds: TimeInterval = baseTempo * 1.5
     }
 
     enum Detection {
