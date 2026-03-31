@@ -83,7 +83,7 @@ enum SoundPlayer {
     private static func findSoundURL(_ name: String) -> URL? {
         let resourceURL = Bundle.main.resourceURL
 
-        // Try exact path first (e.g. "SlapTargets/chibi-girl/slap_normal")
+        // Try exact path first (e.g. "CharacterPacks/trump/slap_impact")
         for ext in supportedExtensions {
             if let url = resourceURL?.appendingPathComponent("\(name).\(ext)"),
                FileManager.default.fileExists(atPath: url.path) {

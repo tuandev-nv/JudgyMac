@@ -89,6 +89,11 @@ final class SlapWindow {
             panel.animator().alphaValue = 1
         }
 
+        // Create hosting controller if needed (should already be pre-warmed)
+        if currentPackId != pack.id || hostingController == nil {
+            warmUp(pack: pack)
+        }
+
         slapState.hitCount += 1
 
         // Check if this hit triggers KO
@@ -115,18 +120,13 @@ final class SlapWindow {
         print("👋 [SlapWindow] Hit #\(slapState.hitCount)")
         #endif
 
-        // Create hosting controller if needed (should already be pre-warmed)
-        if currentPackId != pack.id || hostingController == nil {
-            warmUp(pack: pack)
-        }
-
         if !panel.isVisible {
             centerOnScreen()
             panel.alphaValue = 1
             panel.orderFrontRegardless()
         }
 
-        // Trigger impact after view is mounted (single trigger, no double-fire)
+        // Trigger impact after view is mounted
         DispatchQueue.main.async {
             self.slapState.impactTrigger += 1
         }
@@ -213,14 +213,14 @@ final class SlapState {
 
     var deformationLevel: Int {
         switch hitCount {
-        case 0:       return 0
-        case 1...3:   return 1
-        case 4...7:   return 2
-        case 8...12:  return 3
-        case 13...20: return 4
-        case 21...30: return 5
-        case 31...40: return 6
-        case 41...49: return 7
+        case 0...1:   return 0  // idle
+        case 2...4:   return 1
+        case 5...8:   return 2
+        case 9...12:  return 3
+        case 13...16: return 4
+        case 17...20: return 5
+        case 21...25: return 6
+        case 26...31: return 7
         default:      return 8  // KO / rage
         }
     }

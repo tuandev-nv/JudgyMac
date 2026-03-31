@@ -4,7 +4,7 @@
   "language": "en",
   "description": "Make slapping great again",
   "icon": "idle",
-  "slapLimit": 50,
+  "slapLimit": 32,
   "slap": {
     "animationStyle": "shake",
     "slapSound": "slap_impact",
