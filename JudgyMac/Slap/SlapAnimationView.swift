@@ -53,6 +53,7 @@ struct SlapAnimationView: View {
     @State private var impact = ImpactSnapshot()
 
     @State private var slapSign: Double = 0 // 0 = not chosen yet
+    @State private var renderedFaceHeight: CGFloat = 500
 
     private let faceSize: CGFloat = 500
 
@@ -145,7 +146,7 @@ struct SlapAnimationView: View {
                         .offset(y: faceSize * 0.45)
                 }
             }
-            .frame(width: 700, height: 650)
+            .frame(width: 1000, height: 1000)
         }
         .scaleEffect(appeared ? 1 : 0.1)
         .opacity(appeared ? 1 : 0)
@@ -235,6 +236,10 @@ struct SlapAnimationView: View {
                     Text("🤨").font(.system(size: 80))
                 }
             }
+            .background(GeometryReader { geo in
+                Color.clear.onAppear { renderedFaceHeight = geo.size.height }
+                    .onChange(of: state.deformationLevel) { _, _ in renderedFaceHeight = geo.size.height }
+            })
         }
     }
 
@@ -323,12 +328,14 @@ struct SlapAnimationView: View {
         // Random: with burst border (70%) or plain text (30%)
         let withBurst = Double.random(in: 0...1) < 0.7
 
+        // Place above face, slightly overlapping the top edge (dynamic per image)
+        let faceTop = -renderedFaceHeight / 2
         spawnComic(
             text: word,
-            x: CGFloat.random(in: -80...80),
-            y: CGFloat.random(in: -120 ... -30),
-            rotation: Double.random(in: -20...20),
-            scale: CGFloat.random(in: 0.8...1.2),
+            x: CGFloat.random(in: -120...120),
+            y: CGFloat.random(in: (faceTop - 60)...(faceTop + 40)),
+            rotation: Double.random(in: -15...15),
+            scale: CGFloat.random(in: 0.7...1.0),
             color: Self.comicColors.randomElement()!,
             hasBurst: withBurst
         )

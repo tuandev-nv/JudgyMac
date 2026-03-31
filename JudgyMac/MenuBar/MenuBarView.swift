@@ -29,21 +29,14 @@ struct MenuBarView: View {
         VStack(spacing: 14) {
             // Header
             HStack(spacing: 12) {
-                fluentFace(mood: appState.currentMood, size: 32)
+                packIcon(pack: appState.currentPack, size: 48)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("JudgyMac")
                         .font(.system(size: 16, weight: .bold, design: .rounded))
-                    HStack(spacing: 8) {
-                        Text(appState.todayStats.todayVibe)
-                            .font(.system(size: 11))
-                            .foregroundStyle(.secondary)
-                        if appState.cpuUsage > 0.01 {
-                            Text("CPU \(Int(appState.cpuUsage * 100))%")
-                                .font(.system(size: 10, weight: .medium, design: .monospaced))
-                                .foregroundStyle(appState.cpuUsage > 0.7 ? .red : .secondary)
-                        }
-                    }
+                    Text(appState.currentPack.displayName)
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
                 }
                 Spacer()
             }
@@ -148,7 +141,7 @@ struct MenuBarView: View {
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                 Spacer()
-                fluentFace(mood: roast?.mood ?? .neutral, size: 24)
+                packIcon(pack: appState.currentPack, size: 32)
             }
         }
         .padding(14)
@@ -286,6 +279,32 @@ struct MenuBarView: View {
         }
         .padding(16)
     }
+}
+
+// MARK: - Pack Icon Helper
+
+private func packIcon(pack: CharacterPack, size: CGFloat) -> some View {
+    Group {
+        // Try avatar first (square crop), fallback to icon
+        let avatarPath = "\(pack.folderPath)/avatar"
+        let iconPath = pack.iconImagePath
+        if let url = Bundle.main.resourceURL?.appendingPathComponent("\(avatarPath).png"),
+           let nsImage = NSImage(contentsOf: url) {
+            Image(nsImage: nsImage)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        } else if !iconPath.isEmpty,
+                  let url = Bundle.main.resourceURL?.appendingPathComponent("\(iconPath).png"),
+                  let nsImage = NSImage(contentsOf: url) {
+            Image(nsImage: nsImage)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        } else {
+            Text("🤨").font(.system(size: size * 0.8))
+        }
+    }
+    .frame(width: size, height: size)
+    .clipShape(RoundedRectangle(cornerRadius: size * 0.2))
 }
 
 // MARK: - Fluent Emoji Helper

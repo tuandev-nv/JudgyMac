@@ -15,7 +15,7 @@ enum Constants {
 
     enum Slap {
         static let pressureThreshold: Double = 0.8
-        static let windowSize: CGFloat = 750
+        static let windowSize: CGFloat = 1000
 
         // Base tempo — all slap timing scales from this (seconds)
         // Increase this single value to slow everything down proportionally

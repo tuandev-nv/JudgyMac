@@ -14,6 +14,8 @@ struct GeneralSettingsTab: View {
     @State private var launchAtLogin = AppDelegate.isLaunchAtLoginEnabled
 
     var body: some View {
+        @Bindable var state = appState
+
         Form {
             Section {
                 Toggle("Start at login", isOn: $launchAtLogin)
@@ -22,19 +24,51 @@ struct GeneralSettingsTab: View {
                     }
             }
 
-            Section("Today") {
-                LabeledContent("Roasts received") {
-                    Text("\(appState.todayStats.roastCount)")
+            Section("Character Pack") {
+                Picker("Pack", selection: $state.selectedCharacterPack) {
+                    ForEach(CharacterPackCatalog.all) { pack in
+                        HStack(spacing: 12) {
+                            packIcon(pack)
+                                .frame(width: 40, height: 40)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(pack.displayName)
+                                    .font(.system(size: 13, weight: .semibold))
+                                Text(pack.description)
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .tag(pack.id)
+                    }
                 }
-                LabeledContent("Lid opens") {
-                    Text("\(appState.todayStats.lidOpenCount)")
-                }
-                LabeledContent("Max idle") {
-                    Text("\(appState.todayStats.maxIdleMinutes) min")
-                }
+                .pickerStyle(.radioGroup)
+                .labelsHidden()
+                .onChange(of: appState.selectedCharacterPack) { _, _ in SettingsStore.save(appState) }
             }
         }
         .formStyle(.grouped)
+    }
+
+    @ViewBuilder
+    private func packIcon(_ pack: CharacterPack) -> some View {
+        let avatarPath = "\(pack.folderPath)/avatar"
+        let iconPath = pack.iconImagePath
+        if let url = Bundle.main.resourceURL?.appendingPathComponent("\(avatarPath).png"),
+           let nsImage = NSImage(contentsOf: url) {
+            Image(nsImage: nsImage)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        } else if !iconPath.isEmpty,
+                  let url = Bundle.main.resourceURL?.appendingPathComponent("\(iconPath).png"),
+                  let nsImage = NSImage(contentsOf: url) {
+            Image(nsImage: nsImage)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+        } else {
+            Text("🤨").font(.system(size: 24))
+        }
     }
 }
 
@@ -86,80 +120,6 @@ struct TriggersSettingsTab: View {
                 SettingsStore.save(appState)
             }
         )
-    }
-}
-
-// MARK: - Character Pack Tab
-
-struct CharacterPackTab: View {
-    @Environment(AppState.self) private var appState
-
-    var body: some View {
-        @Bindable var state = appState
-
-        Form {
-            Section("Character Pack") {
-                Picker("Pack", selection: $state.selectedCharacterPack) {
-                    ForEach(CharacterPackCatalog.all) { pack in
-                        HStack(spacing: 12) {
-                            packIcon(pack)
-                                .frame(width: 40, height: 40)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
-
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(pack.displayName)
-                                    .font(.system(size: 13, weight: .semibold))
-                                Text(pack.description)
-                                    .font(.system(size: 11))
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .tag(pack.id)
-                    }
-                }
-                .pickerStyle(.radioGroup)
-                .labelsHidden()
-                .onChange(of: appState.selectedCharacterPack) { _, _ in SettingsStore.save(appState) }
-            }
-
-            Section("Preview") {
-                let pack = appState.currentPack
-                VStack(alignment: .leading, spacing: 12) {
-                    // Sample roast
-                    if let sample = pack.templates(for: .lidOpen).first {
-                        Text("\"\(sample.text)\"")
-                            .font(.system(.body, design: .rounded))
-                            .italic()
-                            .foregroundStyle(.secondary)
-                    }
-
-                    // Pack info
-                    HStack(spacing: 16) {
-                        Label("\(pack.language.uppercased())", systemImage: "globe")
-                        Label("Slap limit: \(pack.slapLimit)", systemImage: "hand.raised")
-                    }
-                    .font(.system(size: 11))
-                    .foregroundStyle(.tertiary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, 4)
-            }
-        }
-        .formStyle(.grouped)
-    }
-
-    @ViewBuilder
-    private func packIcon(_ pack: CharacterPack) -> some View {
-        let path = pack.iconImagePath
-        if !path.isEmpty,
-           let url = Bundle.main.resourceURL?.appendingPathComponent("\(path).png"),
-           let nsImage = NSImage(contentsOf: url) {
-            Image(nsImage: nsImage)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-        } else {
-            Text("🤨").font(.system(size: 24))
-        }
     }
 }
 
