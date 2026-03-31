@@ -16,7 +16,7 @@ enum Constants {
     enum Slap {
         static let pressureThreshold: Double = 0.8
         static let dismissIdleSeconds: TimeInterval = 1.5
-        static let windowSize: CGFloat = 600
+        static let windowSize: CGFloat = 750
     }
 
     enum Detection {
@@ -28,6 +28,6 @@ enum Constants {
         static let lateNightStartHour = 0
         static let lateNightEndHour = 5
         static let earlyMorningStartHour = 5
-        static let earlyMorningEndHour = 6
+        static let earlyMorningEndHour = 7
     }
 }

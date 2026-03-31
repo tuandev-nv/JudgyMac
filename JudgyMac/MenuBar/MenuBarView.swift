@@ -67,10 +67,10 @@ struct MenuBarView: View {
     // MARK: - Dev Tools (DEBUG only)
 
     #if DEBUG
-    @State private var devExpanded = false
+    @State private var devExpanded = true
 
     private var devTools: some View {
-        DisclosureGroup("🛠 Dev Tools", isExpanded: $devExpanded) {
+        DisclosureGroup(isExpanded: $devExpanded) {
             VStack(spacing: 6) {
                 DevButton(label: "🧪 Trigger Roast (Lid Open)") {
                     let event = BehaviorEvent.lidOpen(count: appState.todayStats.lidOpenCount + 1)
@@ -94,6 +94,16 @@ struct MenuBarView: View {
 
                 DevButton(label: "🌙 Trigger Late Night") {
                     let event = BehaviorEvent.lateNight(hour: 3)
+                    appState.handleEvent(event)
+                    NotificationCenter.default.post(
+                        name: .behaviorEventDetected,
+                        object: nil,
+                        userInfo: ["event": event]
+                    )
+                }
+
+                DevButton(label: "🌅 Trigger Early Morning") {
+                    let event = BehaviorEvent.earlyMorning(hour: 6)
                     appState.handleEvent(event)
                     NotificationCenter.default.post(
                         name: .behaviorEventDetected,
@@ -128,6 +138,17 @@ struct MenuBarView: View {
                     appState.currentMood = .neutral
                 }
             }
+        } label: {
+            Button {
+                withAnimation { devExpanded.toggle() }
+            } label: {
+                HStack(spacing: 4) {
+                    Text("🛠 Dev Tools")
+                    Spacer()
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
         }
         .font(.system(size: 11, weight: .medium))
         .foregroundStyle(.orange)
@@ -208,12 +229,6 @@ struct MenuBarView: View {
             } else {
                 BarButton(icon: "clock", label: "History") {
                     showHistory = true
-                }
-            }
-
-            BarButton(icon: "doc.on.doc", label: "Copy") {
-                if let roast = appState.currentRoast {
-                    SummaryShareHelper.copyRoastText(roast)
                 }
             }
 

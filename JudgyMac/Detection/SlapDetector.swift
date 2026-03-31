@@ -68,9 +68,15 @@ final class SlapDetector: BehaviorDetector, @unchecked Sendable {
         if held && !modifiersHeld {
             modifiersHeld = true
             showOverlay()
+            #if DEBUG
+            print("👋 [SlapDetector] Cmd+Shift HELD — overlay ON")
+            #endif
         } else if !held && modifiersHeld {
             modifiersHeld = false
             hideOverlay()
+            #if DEBUG
+            print("👋 [SlapDetector] Cmd+Shift RELEASED — overlay OFF")
+            #endif
         }
     }
 
@@ -116,6 +122,17 @@ final class SlapDetector: BehaviorDetector, @unchecked Sendable {
     // MARK: - Pressure Detection
 
     private func handlePressureSpike(_ pressure: Double) {
+        // Double-check modifiers are still held (guards against stuck state)
+        let currentFlags = NSEvent.modifierFlags
+        guard currentFlags.contains([.command, .shift]) else {
+            // Modifiers released but overlay still showing — clean up
+            Task { @MainActor in
+                self.modifiersHeld = false
+                self.hideOverlay()
+            }
+            return
+        }
+
         // Max 3 slaps per second
         let now = Date()
         if let last = lastSlapTime, now.timeIntervalSince(last) < 0.33 {

@@ -28,16 +28,13 @@ targets:
       - path: JudgyMac
         excludes:
           - "Resources/**"
-      - path: JudgyMac/Resources/Roasts
+      - path: JudgyMac/Resources/CharacterPacks
         type: folder
         buildPhase: resources
       - path: JudgyMac/Resources/Emoji
         type: folder
         buildPhase: resources
       - path: JudgyMac/Resources/Sounds
-        type: folder
-        buildPhase: resources
-      - path: JudgyMac/Resources/SlapTargets
         type: folder
         buildPhase: resources
     info:

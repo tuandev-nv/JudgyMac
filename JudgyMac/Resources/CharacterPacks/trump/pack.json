@@ -1,0 +1,140 @@
+{
+  "id": "trump",
+  "displayName": "The Donald",
+  "language": "en",
+  "description": "Make slapping great again",
+  "icon": "idle",
+  "slapLimit": 50,
+  "slap": {
+    "animationStyle": "shake",
+    "slapSound": "slap_impact",
+    "faces": {
+      "normal": "idle",
+      "hit": "hit_level_2",
+      "damaged1": "hit_level_1",
+      "damaged2": "hit_level_2",
+      "damaged3": "hit_level_3",
+      "damaged4": "hit_level_4",
+      "damaged5": "hit_level_5",
+      "damaged6": "hit_level_6",
+      "damaged7": "hit_level_7",
+      "ko": "hit_ko",
+      "rage": "hit_ko"
+    },
+    "reactions": [
+      {
+        "minHits": 1,
+        "texts": ["FAKE SLAP!", "NOT NICE!", "This is VERY unfair!", "Nobody slaps like this. NOBODY."]
+      },
+      {
+        "minHits": 4,
+        "texts": ["STOP THE SLAP!", "This is a WITCH HUNT!", "TREMENDOUS pain, believe me!", "I will SUE you! SAD!"]
+      },
+      {
+        "minHits": 8,
+        "texts": ["I'm calling my LAWYERS!", "This is the biggest HOAX!", "I've never been treated so badly!", "MAKE IT STOP!"]
+      },
+      {
+        "minHits": 16,
+        "texts": ["I'm a very stable genius... lying down...", "Covfefe...", "You're FIRED... at slapping...", "I'll be back. BIGLY."]
+      }
+    ],
+    "slapVoiceCount": 7,
+    "rageReaction": {
+      "text": "ENOUGH! You think you can just SLAP the greatest president? I will BUILD A WALL around this trackpad! BELIEVE ME!",
+      "voice": "slap_voice_rage"
+    }
+  },
+  "roasts": {
+    "lid_open": [
+      {"id": "roast_1", "text": "Lid open #{count}. TREMENDOUS. Nobody opens laptops like you. Nobody. It's actually a problem.", "variables": ["count"], "weight": 1.0, "voice": "roast_1"},
+      {"id": "roast_2", "text": "You've opened this {count} times. I have the best words for this: STOP.", "variables": ["count"], "weight": 1.0, "voice": "roast_2"},
+      {"id": "roast_3", "text": "In my administration we had the BEST lid discipline. The best. You would not believe it.", "variables": [], "weight": 1.0, "voice": "roast_3"},
+      {"id": "roast_4", "text": "I open deals. BIGLY deals. You open a MacBook. We are not the same. Believe me.", "variables": [], "weight": 1.0, "voice": "roast_4"},
+      {"id": "roast_5", "text": "Nobody knows more about opening things than me. Doors, deals, investigations — and your laptop, {count} times. SAD!", "variables": ["count"], "weight": 1.0, "voice": "roast_5"},
+      {"id": "roast_6", "text": "This laptop has been opened more times than a congressional hearing on me. And that's a LOT.", "variables": [], "weight": 1.0, "voice": "roast_6"},
+      {"id": "roast_7", "text": "Covfefe. That's all I have to say about lid open #{count}.", "variables": ["count"], "weight": 1.0, "voice": "roast_7"},
+      {"id": "roast_8", "text": "Your hinges are filing for bankruptcy. Chapter 11. I know Chapter 11 very well — great chapter, actually.", "variables": [], "weight": 1.0, "voice": "roast_8"},
+      {"id": "roast_9", "text": "Make Your Laptop Great Again. Step one: stop opening it {count} times a day.", "variables": ["count"], "weight": 1.0, "voice": "roast_9"},
+      {"id": "roast_10", "text": "I could stand in the middle of Fifth Avenue and not open my laptop this many times. {count} times! WRONG.", "variables": ["count"], "weight": 1.0, "voice": "roast_10"},
+      {"id": "roast_11", "text": "We're gonna win so much, you'll get tired of winning. But first, stop opening the laptop. {count} times is not winning.", "variables": ["count"], "weight": 1.0, "voice": "roast_11"},
+      {"id": "roast_12", "text": "Person. Woman. Man. Camera. TV. Laptop open #{count}. I remembered all of that. Can you remember to STOP?", "variables": ["count"], "weight": 1.0, "voice": "roast_12"},
+      {"id": "roast_13", "text": "I alone can fix your laptop addiction. But I'm too busy. Very busy. The busiest.", "variables": [], "weight": 1.0, "voice": "roast_13"},
+      {"id": "roast_14", "text": "Billions and billions of lid opens. OK maybe just {count}. But it FEELS like billions.", "variables": ["count"], "weight": 1.0, "voice": "roast_14"},
+      {"id": "roast_15", "text": "WRONG. You don't need to open this again. Put it down. Executive order.", "variables": [], "weight": 1.0, "voice": "roast_15"}
+    ],
+    "lid_reopen": [
+      {"id": "roast_16", "text": "{seconds_since_close} seconds closed. That's the fastest flip since my trade policy. HUGE.", "variables": ["seconds_since_close"], "weight": 1.0, "voice": "roast_16"},
+      {"id": "roast_17", "text": "You closed it for {seconds_since_close} seconds. Even my attention span is longer. Maybe.", "variables": ["seconds_since_close"], "weight": 1.0, "voice": "roast_17"},
+      {"id": "roast_18", "text": "Open, close, open. This is NOT the Art of the Deal. This is the Art of No Idea What You're Doing.", "variables": [], "weight": 1.0, "voice": "roast_18"},
+      {"id": "roast_19", "text": "Witch hunt against your own focus. Very unfair. Very sad. {seconds_since_close} seconds! Pathetic.", "variables": ["seconds_since_close"], "weight": 1.0, "voice": "roast_19"},
+      {"id": "roast_20", "text": "{seconds_since_close} seconds. That's not a break, that's a blink. I've fired people slower than that.", "variables": ["seconds_since_close"], "weight": 1.0, "voice": "roast_20"},
+      {"id": "roast_21", "text": "Closed for {seconds_since_close} seconds then came crawling back. Low energy. Very low energy. Like Jeb.", "variables": ["seconds_since_close"], "weight": 1.0, "voice": "roast_21"},
+      {"id": "roast_22", "text": "I'm not a puppet. You're a puppet. A puppet that can't stop reopening things.", "variables": [], "weight": 1.0, "voice": "roast_22"}
+    ],
+    "late_night": [
+      {"id": "roast_23", "text": "It's {time}. I'm up at 3 AM tweeting. What's YOUR excuse? At least my tweets are tremendous.", "variables": ["time"], "weight": 1.0, "voice": "roast_23"},
+      {"id": "roast_24", "text": "{time} and you're still here. Fake productivity. The fakest. Sleepy Joe does better.", "variables": ["time"], "weight": 1.0, "voice": "roast_24"},
+      {"id": "roast_25", "text": "Nobody stays up later than me. NOBODY. You're trying and that is, frankly, a disgrace.", "variables": [], "weight": 1.0, "voice": "roast_25"},
+      {"id": "roast_26", "text": "It's {time}. This is a WITCH HUNT against your sleep schedule. Go to bed. Executive order.", "variables": ["time"], "weight": 1.0, "voice": "roast_26"},
+      {"id": "roast_27", "text": "{time}. Your screen time is a DISASTER. Total disaster. I would fix it but I'm busy being a stable genius.", "variables": ["time"], "weight": 1.0, "voice": "roast_27"},
+      {"id": "roast_28", "text": "It's {time}. I have the best sleep. The most beautiful sleep. You should try it. Believe me.", "variables": ["time"], "weight": 1.0, "voice": "roast_28"},
+      {"id": "roast_29", "text": "Despite the constant negative press covfefe... wait, it's {time}. GO TO BED.", "variables": ["time"], "weight": 1.0, "voice": "roast_29"},
+      {"id": "roast_30", "text": "{time}. CHINA doesn't sleep, and look where that got them. Actually they're doing fine. Bad example. Still — BED.", "variables": ["time"], "weight": 1.0, "voice": "roast_30"},
+      {"id": "roast_31", "text": "It's {time}. Make Your Sleep Great Again. I'll even build a wall around your laptop. A beautiful wall.", "variables": ["time"], "weight": 1.0, "voice": "roast_31"},
+      {"id": "roast_32", "text": "{time}. Bing bing bong bong — that's the sound of you NOT sleeping. Very bad. Tremendous waste.", "variables": ["time"], "weight": 1.0, "voice": "roast_32"}
+    ],
+    "early_morning": [
+      {"id": "roast_33", "text": "Up at {time}? Tremendous hustle. I was up earlier though. Much earlier. The earliest. Ask anyone.", "variables": ["time"], "weight": 1.0, "voice": "roast_33"},
+      {"id": "roast_34", "text": "{time}? I've already eaten a hamberder, fired someone, and posted 14 tweets. Get it together.", "variables": ["time"], "weight": 1.0, "voice": "roast_34"},
+      {"id": "roast_35", "text": "Early bird gets the worm. I get the whole deal — the most beautiful deal. BIGLY. You get a worm. SAD.", "variables": [], "weight": 1.0, "voice": "roast_35"},
+      {"id": "roast_36", "text": "Make This Morning Great Again! But first — did you even sleep? I know you didn't. I know everything.", "variables": [], "weight": 1.0, "voice": "roast_36"},
+      {"id": "roast_37", "text": "{time}. The fake news will say you're productive. I say you never went to bed. Which is it?", "variables": ["time"], "weight": 1.0, "voice": "roast_37"},
+      {"id": "roast_38", "text": "Up at {time}. I respect that. But nobody respects it more than me. I respect it the most. TREMENDOUSLY.", "variables": ["time"], "weight": 1.0, "voice": "roast_38"}
+    ],
+    "thermal": [
+      {"id": "roast_39", "text": "Your Mac is OVERHEATING. Nobody builds hotter laptops than you. It's a record. Not a good record.", "variables": [], "weight": 1.0, "voice": "roast_39"},
+      {"id": "roast_40", "text": "Thermal state: {thermal}. This laptop is more fired up than my rally crowd. Close some tabs. You're fired.", "variables": ["thermal"], "weight": 1.0, "voice": "roast_40"},
+      {"id": "roast_41", "text": "This machine is hotter than the China deal negotiations. And those were TREMENDOUS.", "variables": [], "weight": 1.0, "voice": "roast_41"},
+      {"id": "roast_42", "text": "You're running more tabs than I have legal cases. And I have a LOT of legal cases.", "variables": [], "weight": 1.0, "voice": "roast_42"},
+      {"id": "roast_43", "text": "Global warming is a HOAX. But your laptop temperature? That's REAL. Close Chrome. NOW.", "variables": [], "weight": 1.0, "voice": "roast_43"},
+      {"id": "roast_44", "text": "I alone can fix this laptop. Step one: close tabs. Step two: Make Thermal Great Again.", "variables": [], "weight": 1.0, "voice": "roast_44"},
+      {"id": "roast_45", "text": "Your laptop is running hotter than my Twitter mentions. And my mentions are VERY hot. Believe me.", "variables": [], "weight": 1.0, "voice": "roast_45"},
+      {"id": "roast_46", "text": "We're gonna build a wall around your Chrome tabs. And Chrome is gonna pay for it.", "variables": [], "weight": 1.0, "voice": "roast_46"}
+    ],
+    "idle": [
+      {"id": "roast_47", "text": "{idle_minutes} minutes idle. In that time I would have built HALF a wall. A beautiful, tremendous half wall.", "variables": ["idle_minutes"], "weight": 1.0, "voice": "roast_47"},
+      {"id": "roast_48", "text": "You've done nothing for {idle_minutes} minutes. That's more nothing than Congress. And they do the most nothing.", "variables": ["idle_minutes"], "weight": 1.0, "voice": "roast_48"},
+      {"id": "roast_49", "text": "{idle_minutes} minutes idle? I'm like, really smart. A very stable genius. What's your excuse?", "variables": ["idle_minutes"], "weight": 1.0, "voice": "roast_49"},
+      {"id": "roast_50", "text": "Are you taking a nap? Only Sleepy Joe takes naps. Don't be Sleepy. Be best.", "variables": [], "weight": 1.0, "voice": "roast_50"},
+      {"id": "roast_51", "text": "{idle_minutes} minutes. Make This Session Great Again. Start by actually DOING something.", "variables": ["idle_minutes"], "weight": 1.0, "voice": "roast_51"},
+      {"id": "roast_52", "text": "I alone can fix your productivity. But you have to show up first. {idle_minutes} minutes of NOTHING.", "variables": ["idle_minutes"], "weight": 1.0, "voice": "roast_52"},
+      {"id": "roast_53", "text": "We're gonna win so much you'll be tired of winning. But first you have to START. {idle_minutes} minutes!", "variables": ["idle_minutes"], "weight": 1.0, "voice": "roast_53"},
+      {"id": "roast_54", "text": "{idle_minutes} minutes. Person. Woman. Man. Camera. TV. All more productive than you right now.", "variables": ["idle_minutes"], "weight": 1.0, "voice": "roast_54"},
+      {"id": "roast_55", "text": "WRONG. You said you'd be productive. {idle_minutes} minutes later — WRONG. Total fraud.", "variables": ["idle_minutes"], "weight": 1.0, "voice": "roast_55"},
+      {"id": "roast_56", "text": "{idle_minutes} minutes. Even the wall got built faster than your productivity. And it didn't get built.", "variables": ["idle_minutes"], "weight": 1.0, "voice": "roast_56"}
+    ],
+    "slap": [
+      {"id": "roast_57", "text": "Did you just SLAP me? That is an impeachable offense. Possibly two. I would know.", "variables": [], "weight": 1.0, "voice": "roast_57"},
+      {"id": "roast_58", "text": "FAKE SLAP! I barely felt it. I have the thickest skin. Everybody says so. Many, many people.", "variables": [], "weight": 1.0, "voice": "roast_58"},
+      {"id": "roast_59", "text": "You slap like a Democrat. Very low energy. Pathetic, frankly.", "variables": [], "weight": 1.0, "voice": "roast_59"},
+      {"id": "roast_60", "text": "I will build a WALL around this trackpad. And your fingers will pay for it.", "variables": [], "weight": 1.0, "voice": "roast_60"},
+      {"id": "roast_61", "text": "WRONG. That slap was wrong. Everything about it was wrong. I'm calling my lawyers.", "variables": [], "weight": 1.0, "voice": "roast_61"},
+      {"id": "roast_62", "text": "That was the worst slap in the history of slaps. Maybe ever. People are saying it.", "variables": [], "weight": 1.0, "voice": "roast_62"},
+      {"id": "roast_63", "text": "Make Slapping Great Again? You can't. You don't have what it takes. SAD!", "variables": [], "weight": 1.0, "voice": "roast_63"},
+      {"id": "roast_64", "text": "I've been slapped by the best. The media, Congress, the courts. You? Low energy.", "variables": [], "weight": 1.0, "voice": "roast_64"},
+      {"id": "roast_65", "text": "Nobody gets slapped more than me. NOBODY. It's very unfair. Total witch hunt.", "variables": [], "weight": 1.0, "voice": "roast_65"},
+      {"id": "roast_66", "text": "OW! That's an assault on a very stable genius. My lawyers will be in touch. Bigly.", "variables": [], "weight": 1.0, "voice": "roast_66"},
+      {"id": "roast_67", "text": "You're fired! From slapping! Effective immediately! Get out of my trackpad!", "variables": [], "weight": 1.0, "voice": "roast_67"},
+      {"id": "roast_68", "text": "I've taken worse from Rosie O'Donnell. And that's saying something. Believe me.", "variables": [], "weight": 1.0, "voice": "roast_68"},
+      {"id": "roast_69", "text": "This is the greatest slap hoax of all time. Even bigger than Russia. And Russia was BIG.", "variables": [], "weight": 1.0, "voice": "roast_69"},
+      {"id": "roast_70", "text": "Bing bing bong — that's the sound of a TERRIBLE slap. Do better. Or don't. I don't care. I care a little.", "variables": [], "weight": 1.0, "voice": "roast_70"},
+      {"id": "roast_71", "text": "I would slap back, but I'm too classy. Very classy. The classiest. Ask Melania.", "variables": [], "weight": 1.0, "voice": "roast_71"},
+      {"id": "roast_72", "text": "That slap is FAKE NEWS. It never happened. Even though it clearly just happened. FAKE.", "variables": [], "weight": 1.0, "voice": "roast_72"},
+      {"id": "roast_73", "text": "Not nice! NOT NICE! I was being very presidential and you just slapped me. Very disrespectful.", "variables": [], "weight": 1.0, "voice": "roast_73"},
+      {"id": "roast_74", "text": "I've survived two impeachments. You think a slap scares me? Please. Tremendous resilience.", "variables": [], "weight": 1.0, "voice": "roast_74"},
+      {"id": "roast_75", "text": "China would never slap me. They respect me too much. You? No respect. Zero.", "variables": [], "weight": 1.0, "voice": "roast_75"},
+      {"id": "roast_76", "text": "Covfefe! That's what that slap felt like. Nobody knows what it means but it's provocative.", "variables": [], "weight": 1.0, "voice": "roast_76"}
+    ]
+  }
+}

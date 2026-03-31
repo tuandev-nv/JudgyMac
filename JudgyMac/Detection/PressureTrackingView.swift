@@ -8,19 +8,9 @@ final class PressureTrackingNSView: NSView {
 
     override var acceptsFirstResponder: Bool { true }
 
-    override func pressureChange(with event: NSEvent) {
-        let pressure = Double(event.pressure)
-        if pressure >= Constants.Slap.pressureThreshold {
-            onPressureSpike?(pressure)
-        }
-    }
-
-    // Also detect via mouseDown force for some trackpad configurations
     override func mouseDown(with event: NSEvent) {
-        let pressure = Double(event.pressure)
-        if pressure >= Constants.Slap.pressureThreshold {
-            onPressureSpike?(pressure)
-        }
+        // Cmd+Shift + click = instant slap, no need to hold for Force Touch
+        onPressureSpike?(1.0)
     }
 }
 

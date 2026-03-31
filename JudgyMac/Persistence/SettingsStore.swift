@@ -5,13 +5,10 @@ enum SettingsStore {
     private nonisolated(unsafe) static let defaults = UserDefaults.standard
 
     enum Keys {
-        static let intensity = "com.judgymac.intensity"
-        static let selectedPersonality = "com.judgymac.personality"
+        static let selectedCharacterPack = "com.judgymac.characterPack"
         static let enabledTriggers = "com.judgymac.enabledTriggers"
         static let isOnboarded = "com.judgymac.onboarded"
         static let isFullVersion = "com.judgymac.fullVersion"
-
-        static let selectedSlapCharacter = "com.judgymac.slapCharacter"
 
         // Stats
         static let statsDate = "com.judgymac.stats.date"
@@ -22,16 +19,19 @@ enum SettingsStore {
 
         // History
         static let roastHistory = "com.judgymac.roastHistory"
+
+        // Legacy keys (for migration)
+        static let legacyPersonality = "com.judgymac.personality"
+        static let legacySlapCharacter = "com.judgymac.slapCharacter"
+        static let legacyIntensity = "com.judgymac.intensity"
     }
 
     // MARK: - Save AppState
 
     static func save(_ state: AppState) {
-        defaults.set(state.intensity, forKey: Keys.intensity)
-        defaults.set(state.selectedPersonality, forKey: Keys.selectedPersonality)
+        defaults.set(state.selectedCharacterPack, forKey: Keys.selectedCharacterPack)
         defaults.set(state.isOnboarded, forKey: Keys.isOnboarded)
         defaults.set(state.isFullVersion, forKey: Keys.isFullVersion)
-        defaults.set(state.selectedSlapCharacter, forKey: Keys.selectedSlapCharacter)
 
         let triggers = state.enabledTriggers.map(\.rawValue)
         defaults.set(triggers, forKey: Keys.enabledTriggers)
@@ -59,21 +59,15 @@ enum SettingsStore {
     // MARK: - Load into AppState
 
     static func load(into state: AppState) {
-        if defaults.object(forKey: Keys.intensity) != nil {
-            state.intensity = defaults.integer(forKey: Keys.intensity)
-            if state.intensity == 0 { state.intensity = 2 }
-        }
+        // Migration: clear legacy keys
+        migrateLegacyKeys()
 
-        if let personality = defaults.string(forKey: Keys.selectedPersonality) {
-            state.selectedPersonality = personality
+        if let pack = defaults.string(forKey: Keys.selectedCharacterPack) {
+            state.selectedCharacterPack = pack
         }
 
         state.isOnboarded = defaults.bool(forKey: Keys.isOnboarded)
         state.isFullVersion = defaults.bool(forKey: Keys.isFullVersion)
-
-        if let slapChar = defaults.string(forKey: Keys.selectedSlapCharacter) {
-            state.selectedSlapCharacter = slapChar
-        }
 
         if let triggers = defaults.stringArray(forKey: Keys.enabledTriggers) {
             state.enabledTriggers = Set(triggers.compactMap { TriggerType(rawValue: $0) })
@@ -100,6 +94,15 @@ enum SettingsStore {
                       let mood = Mood(rawValue: moodRaw) else { return nil }
                 return RoastEntry(text: text, personality: personality, triggerType: trigger, mood: mood)
             }
+        }
+    }
+
+    // MARK: - Migration
+
+    private static func migrateLegacyKeys() {
+        // Remove old keys so they don't interfere
+        for key in [Keys.legacyPersonality, Keys.legacySlapCharacter, Keys.legacyIntensity] {
+            defaults.removeObject(forKey: key)
         }
     }
 }

@@ -4,22 +4,22 @@ import AVFoundation
 /// Plays from `Resources/Sounds/` folder. Supports `.aiff`, `.mp3`, `.wav`.
 @MainActor
 enum SoundPlayer {
-    private static var cache: [String: AVAudioPlayer] = [:]
+    private static var urlCache: [String: URL?] = [:]
     private static var activePlayers: [AVAudioPlayer] = []
+    private static let maxActivePlayers = 10
 
     // MARK: - Play
 
     /// Play a sound by name (without extension). Searches for .aiff, .mp3, .wav.
     /// If the sound is already playing, a new overlapping instance is created.
     static func play(_ name: String, volume: Float = 1.0, rate: Float = 1.0) {
-        guard let url = findSoundURL(name) else {
+        guard let url = resolveURL(name) else {
             #if DEBUG
             print("🔊 [SoundPlayer] Sound not found: \(name)")
             #endif
             return
         }
 
-        // Create a new player for overlapping support
         guard let player = try? AVAudioPlayer(contentsOf: url) else { return }
         player.volume = volume
         player.enableRate = rate != 1.0
@@ -27,9 +27,13 @@ enum SoundPlayer {
         player.prepareToPlay()
         player.play()
 
-        // Keep strong reference, remove when done
-        activePlayers.append(player)
+        // Cap active players to prevent memory spike during rapid slapping
         cleanupFinished()
+        if activePlayers.count >= maxActivePlayers {
+            activePlayers.first?.stop()
+            activePlayers.removeFirst()
+        }
+        activePlayers.append(player)
     }
 
     /// Play slap impact + voice reaction with slight delay between them.
@@ -47,20 +51,26 @@ enum SoundPlayer {
 
     // MARK: - Preload
 
-    /// Preload sounds into cache for instant playback.
+    /// Preload sound URL resolution into cache for instant playback.
     static func preload(_ names: [String]) {
         for name in names {
-            guard cache[name] == nil, let url = findSoundURL(name) else { continue }
-            if let player = try? AVAudioPlayer(contentsOf: url) {
-                player.prepareToPlay()
-                cache[name] = player
-            }
+            _ = resolveURL(name)
         }
     }
 
     // MARK: - Internal
 
     private static let supportedExtensions = ["aiff", "mp3", "wav", "m4a"]
+
+    /// Cached URL resolution — filesystem lookup only once per sound name
+    private static func resolveURL(_ name: String) -> URL? {
+        if let cached = urlCache[name] {
+            return cached
+        }
+        let url = findSoundURL(name)
+        urlCache[name] = url
+        return url
+    }
 
     private static func findSoundURL(_ name: String) -> URL? {
         let resourceURL = Bundle.main.resourceURL

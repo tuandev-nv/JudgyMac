@@ -1,6 +1,6 @@
 import Foundation
 
-/// Orchestrates slap events: picks character, plays sound combo, shows animation.
+/// Orchestrates slap events: picks character pack, plays sound combo, shows animation.
 /// Listens for `.slap` BehaviorEvents via NotificationCenter.
 @MainActor
 final class SlapPresenter {
@@ -26,14 +26,12 @@ final class SlapPresenter {
     }
 
     private func handleSlap(_ event: BehaviorEvent) {
-        let characterId = appState.selectedSlapCharacter
-        let character = SlapCharacterCatalog.character(for: characterId)
-            ?? SlapCharacterCatalog.defaultCharacter
+        let pack = appState.currentPack
 
         #if DEBUG
-        print("👋 [SlapPresenter] Slap detected! Character: \(character.displayName)")
+        print("👋 [SlapPresenter] Slap detected! Pack: \(pack.displayName)")
         #endif
 
-        SlapWindow.shared.slap(character: character)
+        SlapWindow.shared.slap(pack: pack)
     }
 }

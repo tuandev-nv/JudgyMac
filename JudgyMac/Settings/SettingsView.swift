@@ -14,29 +14,12 @@ struct GeneralSettingsTab: View {
     @State private var launchAtLogin = AppDelegate.isLaunchAtLoginEnabled
 
     var body: some View {
-        @Bindable var state = appState
-
         Form {
             Section {
                 Toggle("Start at login", isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { _, newValue in
                         AppDelegate.setLaunchAtLogin(newValue)
                     }
-            }
-
-            Section("Roast Intensity") {
-                Picker("Level", selection: $state.intensity) {
-                    Text("Mild — gentle nudges").tag(1)
-                    Text("Medium — solid roasts").tag(2)
-                    Text("Savage — no mercy").tag(3)
-                }
-                .pickerStyle(.radioGroup)
-                .onChange(of: appState.intensity) { _, _ in SettingsStore.save(appState) }
-
-                LabeledContent("Daily roast limit") {
-                    Text("50 per day")
-                        .foregroundStyle(.secondary)
-                }
             }
 
             Section("Today") {
@@ -101,72 +84,76 @@ struct TriggersSettingsTab: View {
     }
 }
 
-// MARK: - Personality Tab
+// MARK: - Character Pack Tab
 
-struct PersonalitySettingsTab: View {
+struct CharacterPackTab: View {
     @Environment(AppState.self) private var appState
 
     var body: some View {
         @Bindable var state = appState
 
         Form {
-            Section("Active Personality") {
-                Picker("Judge", selection: $state.selectedPersonality) {
-                    ForEach(PersonalityPack.catalog) { pack in
-                        HStack(spacing: 8) {
-                            Text(packEmoji(pack.id))
-                            Text(pack.displayName)
-                            Text("— \(pack.language.uppercased())")
-                                .foregroundStyle(.secondary)
-                                .font(.caption)
+            Section("Character Pack") {
+                Picker("Pack", selection: $state.selectedCharacterPack) {
+                    ForEach(CharacterPackCatalog.all) { pack in
+                        HStack(spacing: 12) {
+                            packIcon(pack)
+                                .frame(width: 40, height: 40)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(pack.displayName)
+                                    .font(.system(size: 13, weight: .semibold))
+                                Text(pack.description)
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                         .tag(pack.id)
                     }
                 }
                 .pickerStyle(.radioGroup)
-                .onChange(of: appState.selectedPersonality) { _, _ in SettingsStore.save(appState) }
+                .labelsHidden()
+                .onChange(of: appState.selectedCharacterPack) { _, _ in SettingsStore.save(appState) }
             }
 
             Section("Preview") {
-                Text(previewText(for: appState.selectedPersonality))
-                    .font(.system(.body, design: .rounded))
-                    .italic()
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical, 4)
+                let pack = appState.currentPack
+                VStack(alignment: .leading, spacing: 12) {
+                    // Sample roast
+                    if let sample = pack.templates(for: .lidOpen).first {
+                        Text("\"\(sample.text)\"")
+                            .font(.system(.body, design: .rounded))
+                            .italic()
+                            .foregroundStyle(.secondary)
+                    }
+
+                    // Pack info
+                    HStack(spacing: 16) {
+                        Label("\(pack.language.uppercased())", systemImage: "globe")
+                        Label("Slap limit: \(pack.slapLimit)", systemImage: "hand.raised")
+                    }
+                    .font(.system(size: 11))
+                    .foregroundStyle(.tertiary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.vertical, 4)
             }
         }
         .formStyle(.grouped)
     }
 
-    private func packEmoji(_ id: String) -> String {
-        switch id {
-        case "the-critic": return "🤨"
-        case "vietnamese-mom": return "🇻🇳"
-        case "toxic-boss": return "👔"
-        case "drill-sergeant": return "🎖️"
-        case "shakespeare": return "🎭"
-        case "therapist": return "🛋️"
-        default: return "😐"
-        }
-    }
-
-    private func previewText(for id: String) -> String {
-        switch id {
-        case "the-critic":
-            return "\"You've opened this lid 7 times. What are you looking for? Meaning? It's not in there.\""
-        case "vietnamese-mom":
-            return "\"Lại mở máy rồi. Hôm nay 7 lần rồi đó. Con nhà người ta thì đi ngủ sớm.\""
-        case "toxic-boss":
-            return "\"Per my last observation, that's excessive. Going forward, be more intentional.\""
-        case "drill-sergeant":
-            return "\"LAPTOP OPEN #7! DROP AND GIVE ME TWENTY PRODUCTIVE MINUTES!\""
-        case "shakespeare":
-            return "\"What light through yonder lid breaks? 'Tis the fool, returning for the 7th time.\""
-        case "therapist":
-            return "\"So, you've opened your laptop 7 times. How does that make you feel?\""
-        default:
-            return ""
+    @ViewBuilder
+    private func packIcon(_ pack: CharacterPack) -> some View {
+        let path = pack.iconImagePath
+        if !path.isEmpty,
+           let url = Bundle.main.resourceURL?.appendingPathComponent("\(path).png"),
+           let nsImage = NSImage(contentsOf: url) {
+            Image(nsImage: nsImage)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+        } else {
+            Text("🤨").font(.system(size: 24))
         }
     }
 }

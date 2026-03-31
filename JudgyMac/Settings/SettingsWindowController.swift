@@ -10,14 +10,14 @@ final class SettingsWindowController: NSWindowController, NSToolbarDelegate {
     enum SettingsTab: String, CaseIterable {
         case general = "General"
         case triggers = "Triggers"
-        case personality = "Personality"
+        case character = "Character"
         case about = "About"
 
         var icon: String {
             switch self {
             case .general: return "gearshape"
             case .triggers: return "bolt.fill"
-            case .personality: return "theatermasks"
+            case .character: return "person.crop.circle"
             case .about: return "info.circle"
             }
         }
@@ -107,7 +107,7 @@ final class SettingsWindowController: NSWindowController, NSToolbarDelegate {
             let view: AnyView = switch tab {
             case .general:     AnyView(GeneralSettingsTab().environment(appState))
             case .triggers:    AnyView(TriggersSettingsTab().environment(appState))
-            case .personality: AnyView(PersonalitySettingsTab().environment(appState))
+            case .character: AnyView(CharacterPackTab().environment(appState))
             case .about:       AnyView(AboutSettingsTab())
             }
             let controller = NSHostingController(rootView: view)

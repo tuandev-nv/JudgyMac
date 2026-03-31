@@ -1,35 +1,35 @@
 import Foundation
 
 /// Core engine: selects appropriate roast for a behavior event.
-/// Loads templates, applies cooldown, injects variables, returns RoastEntry.
+/// Loads templates from CharacterPack, applies cooldown, injects variables, returns RoastEntry.
 @MainActor
 final class RoastEngine {
-    private var packs: [String: PersonalityPack] = [:]
     private let cooldown = RoastCooldownTracker()
     private let appState: AppState
+    private static let timeFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "h:mm a"
+        return f
+    }()
 
     init(appState: AppState) {
         self.appState = appState
-        loadAllPacks()
-
     }
 
     // MARK: - Public
 
     func generateRoast(for event: BehaviorEvent) -> RoastEntry? {
-        let personalityId = appState.selectedPersonality
-
-        guard let pack = packs[personalityId] else { return nil }
+        let pack = appState.currentPack
 
         let allForTrigger = pack.templates(for: event.type)
-        let afterIntensity = allForTrigger.filter { $0.intensity <= appState.intensity }
-        let candidates = afterIntensity.filter { cooldown.canRoast(templateId: $0.id, triggerType: event.type, isFullVersion: appState.isFullVersion) }
+        let candidates = allForTrigger.filter {
+            cooldown.canRoast(templateId: $0.id, triggerType: event.type, isFullVersion: appState.isFullVersion)
+        }
 
         guard !candidates.isEmpty else { return nil }
 
         // Weighted random selection
-        let selected = weightedRandom(from: candidates)
-        guard let template = selected else { return nil }
+        guard let template = weightedRandom(from: candidates) else { return nil }
 
         // Build context variables
         let context = buildContext(for: event)
@@ -38,6 +38,11 @@ final class RoastEngine {
         // Record usage
         cooldown.recordRoast(templateId: template.id, triggerType: event.type)
 
+        // Play roast voice if available
+        if let voicePath = template.voicePath {
+            SoundPlayer.play(voicePath, volume: 0.8)
+        }
+
         let mood = MoodEngine.mood(for: event, stats: appState.todayStats)
         return RoastEntry(
             text: text,
@@ -45,35 +50,6 @@ final class RoastEngine {
             triggerType: event.type,
             mood: mood
         )
-    }
-
-    // MARK: - Template Loading
-
-    private func loadAllPacks() {
-        for catalog in PersonalityPack.catalog {
-            var pack = catalog
-            if let data = loadJSON(personality: pack.id, language: pack.language) {
-                pack.templates = data.templates
-            }
-            packs[pack.id] = pack
-        }
-    }
-
-    private func loadJSON(personality: String, language: String) -> PersonalityPackData? {
-        // Try folder reference path first (xcodegen folder type)
-        let possiblePaths = [
-            Bundle.main.resourceURL?.appendingPathComponent("Roasts/\(language)/\(personality).json"),
-            Bundle.main.url(forResource: personality, withExtension: "json", subdirectory: "Roasts/\(language)"),
-        ]
-
-        for case let url? in possiblePaths {
-            if let data = try? Data(contentsOf: url),
-               let pack = try? JSONDecoder().decode(PersonalityPackData.self, from: data) {
-                return pack
-            }
-        }
-
-        return nil
     }
 
     // MARK: - Weighted Random
@@ -105,9 +81,7 @@ final class RoastEngine {
         let hour = Calendar.current.component(.hour, from: Date())
         ctx["hour"] = "\(hour)"
 
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm a"
-        ctx["time"] = formatter.string(from: Date())
+        ctx["time"] = Self.timeFormatter.string(from: Date())
 
         return ctx
     }

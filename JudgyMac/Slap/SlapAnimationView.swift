@@ -43,17 +43,16 @@ struct ComicText: Identifiable {
 
 struct SlapAnimationView: View {
     @Bindable var state: SlapState
-    let character: SlapCharacter
+    let pack: CharacterPack
     let onClose: () -> Void
 
-    @State private var slapMarks: [SlapMark] = []
     @State private var comicTexts: [ComicText] = []
     @State private var appeared = false
     @State private var impact = ImpactSnapshot()
 
     @State private var slapSign: Double = 0 // 0 = not chosen yet
 
-    private let faceSize: CGFloat = 280
+    private let faceSize: CGFloat = 500
 
     var body: some View {
         VStack(spacing: 16) {
@@ -95,11 +94,11 @@ struct SlapAnimationView: View {
                             CubicKeyframe(0.96 - p * 0.01, duration: 0.04)
                             SpringKeyframe(1.0, duration: 0.2, spring: .init(response: 0.2, dampingRatio: 0.5))
                         }
-                        // Tilt — snap, brief stun, fast recover
+                        // Tilt — subtle, quick recover
                         KeyframeTrack(\.rotation) {
-                            CubicKeyframe(dx * (10 + p * 5), duration: 0.04)
-                            LinearKeyframe(dx * (8 + p * 4), duration: 0.12)
-                            SpringKeyframe(0, duration: 0.25, spring: .init(response: 0.25, dampingRatio: 0.6))
+                            CubicKeyframe(dx * (4 + p * 2), duration: 0.04)
+                            LinearKeyframe(dx * (3 + p * 1.5), duration: 0.12)
+                            SpringKeyframe(0, duration: 0.25, spring: .init(response: 0.25, dampingRatio: 0.7))
                         }
                         KeyframeTrack(\.flash) {
                             CubicKeyframe(0.6, duration: 0.02)
@@ -125,23 +124,9 @@ struct SlapAnimationView: View {
                         }
                     }
 
-                // Slap marks
-                ForEach(slapMarks) { mark in
-                    Text("👋")
-                        .font(.system(size: 26 * mark.scale))
-                        .rotationEffect(.degrees(mark.rotation))
-                        .offset(x: mark.x, y: mark.y)
-                        .opacity(mark.opacity)
-                }
-
                 // Comic impact text — "OW!", "ARGH!", etc.
                 ForEach(comicTexts) { comic in
                     comicTextView(comic)
-                }
-
-                // Stars at level 3+
-                if state.deformationLevel >= 3 {
-                    starsView
                 }
 
                 // Hit counter — overlaid near bottom of face
@@ -156,7 +141,7 @@ struct SlapAnimationView: View {
                         .offset(y: faceSize * 0.45)
                 }
             }
-            .frame(width: 550, height: 520)
+            .frame(width: 700, height: 650)
         }
         .scaleEffect(appeared ? 1 : 0.1)
         .opacity(appeared ? 1 : 0)
@@ -231,7 +216,7 @@ struct SlapAnimationView: View {
     @ViewBuilder
     private var faceView: some View {
         let level = state.deformationLevel
-        let name = character.faceImage(level: level)
+        let name = pack.faceImage(level: level)
 
         ZStack {
             // Base image
@@ -244,60 +229,15 @@ struct SlapAnimationView: View {
                     Text("🤨").font(.system(size: 80))
                 }
             }
-            // Progressive red tint — more hits = redder face
-            .colorMultiply(damageColor)
-
-            // Damage overlays (code-generated, no extra images needed)
-            damageOverlays
-        }
-    }
-
-    /// Progressive red tint
-    private var damageColor: Color {
-        let level = state.deformationLevel
-        switch level {
-        case 0: return .white                           // No tint
-        case 1: return Color(red: 1, green: 0.95, blue: 0.95) // Slight pink
-        case 2: return Color(red: 1, green: 0.85, blue: 0.85) // Pink
-        case 3: return Color(red: 1, green: 0.75, blue: 0.75) // Red-ish
-        default: return Color(red: 1, green: 0.65, blue: 0.65) // Very red
-        }
-    }
-
-    /// Sweat, tears, bandaids — overlaid by code
-    @ViewBuilder
-    private var damageOverlays: some View {
-        let level = state.deformationLevel
-        if level >= 1 {
-            // Sweat drop
-            Text("💧")
-                .font(.system(size: 20))
-                .offset(x: faceSize * 0.3, y: -faceSize * 0.2)
-        }
-        if level >= 2 {
-            // Tears
-            Text("😢")
-                .font(.system(size: 16))
-                .offset(x: -faceSize * 0.25, y: faceSize * 0.05)
-                .opacity(0.7)
-        }
-        if level >= 3 {
-            // Bandaid
-            Text("🩹")
-                .font(.system(size: 24))
-                .rotationEffect(.degrees(-20))
-                .offset(x: faceSize * 0.2, y: faceSize * 0.1)
-        }
-        if level >= 4 {
-            // Dizzy
-            Text("💫")
-                .font(.system(size: 20))
-                .offset(x: 0, y: -faceSize * 0.35)
         }
     }
 
     /// Load image from character folder — cached
-    private static let imageCache = NSCache<NSString, NSImage>()
+    private static let imageCache: NSCache<NSString, NSImage> = {
+        let cache = NSCache<NSString, NSImage>()
+        cache.countLimit = 30
+        return cache
+    }()
 
     private func loadImage(_ name: String) -> Image? {
         let key = name as NSString
@@ -337,7 +277,7 @@ struct SlapAnimationView: View {
         let tiltAngle = slapSign * min(2 + 1.5 * sqrt(Double(hitCount)), 15)
 
         // Jiggle intensity: butt = lots of wobble, face = none
-        let jiggle: CGFloat = character.animationStyle == .jiggle
+        let jiggle: CGFloat = pack.animationStyle == .jiggle
             ? CGFloat(0.06 + power * 0.03)
             : 0
 
@@ -348,17 +288,6 @@ struct SlapAnimationView: View {
             slapAngle: tiltAngle,
             jiggleIntensity: jiggle
         )
-
-        // Slap mark
-        let mark = SlapMark(
-            x: CGFloat.random(in: -50...50),
-            y: CGFloat.random(in: -50...50),
-            rotation: Double.random(in: -50...50),
-            scale: CGFloat.random(in: 0.6...1.0),
-            opacity: min(0.35 + Double(level) * 0.1, 0.7)
-        )
-        slapMarks.append(mark)
-        if slapMarks.count > 8 { slapMarks.removeFirst() }
 
         // Comic text
         addComicText(level: level)
@@ -373,7 +302,7 @@ struct SlapAnimationView: View {
 
         if useImpact {
             word = Self.impactWords.randomElement()!
-        } else if let reaction = character.reaction(forHitCount: state.hitCount) {
+        } else if let reaction = pack.reaction(forHitCount: state.hitCount) {
             word = reaction.texts.randomElement() ?? "OW!"
         } else {
             let idx = min(level, Self.fallbackWords.count - 1)
@@ -420,33 +349,16 @@ struct SlapAnimationView: View {
             }
         }
 
-        // Drift + fade
-        withAnimation(.easeOut(duration: 0.25).delay(0.08)) {
+        // Hold, then drift + fade
+        withAnimation(.easeOut(duration: 0.5).delay(0.7)) {
             if let idx = comicTexts.firstIndex(where: { $0.id == comicId }) {
-                comicTexts[idx].y -= 20
+                comicTexts[idx].y -= 30
                 comicTexts[idx].opacity = 0
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
             comicTexts.removeAll { $0.id == comicId }
-        }
-    }
-
-    // MARK: - Stars
-
-    private var starsView: some View {
-        let emojis = ["⭐", "💫", "✨", "💥"]
-        return ForEach(0..<3, id: \.self) { i in
-            let baseAngle = Double(i) * 120 + Double(state.impactTrigger * 40)
-            let radius: CGFloat = 90
-            Text(emojis[i % emojis.count])
-                .font(.system(size: 18))
-                .offset(
-                    x: cos(baseAngle * .pi / 180) * radius,
-                    y: sin(baseAngle * .pi / 180) * radius
-                )
-                .animation(.spring(duration: 0.3), value: state.impactTrigger)
         }
     }
 
@@ -469,15 +381,6 @@ struct SlapAnimationView: View {
 }
 
 // MARK: - Models
-
-struct SlapMark: Identifiable {
-    let id = UUID()
-    let x: CGFloat
-    let y: CGFloat
-    let rotation: Double
-    let scale: CGFloat
-    let opacity: Double
-}
 
 // MARK: - Comic Burst Shape (spiky explosion border)
 

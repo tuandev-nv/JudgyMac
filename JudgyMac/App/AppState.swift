@@ -14,20 +14,21 @@ final class AppState {
 
     // MARK: - Settings
 
-    var selectedPersonality: String = "the-critic"
-    var intensity: Int = 2 // 1-3
+    var selectedCharacterPack: String = "trump"
     var enabledTriggers: Set<TriggerType> = Set(TriggerType.allCases)
     var isOnboarded: Bool = false
-
-    // MARK: - Slap
-    var selectedSlapCharacter: String = "face-judgy"
 
     // MARK: - System Stats
     var cpuUsage: Double = 0
 
     // MARK: - Purchase
-    // App is paid upfront ($4.99 on App Store) — all features always unlocked
     var isFullVersion: Bool = true
+
+    // MARK: - Computed
+
+    var currentPack: CharacterPack {
+        CharacterPackCatalog.pack(for: selectedCharacterPack) ?? CharacterPackCatalog.defaultPack
+    }
 
     // MARK: - Methods
 

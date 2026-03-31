@@ -50,26 +50,9 @@ final class ToastWindow {
 
         window = panel
 
-        let reduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
-
-        if reduceMotion {
-            // No animation — just show immediately
-            panel.alphaValue = 1
-            panel.orderFrontRegardless()
-        } else {
-            // Animate in: slide down + fade
-            panel.alphaValue = 0
-            let finalOrigin = panel.frame.origin
-            panel.setFrameOrigin(NSPoint(x: finalOrigin.x, y: finalOrigin.y + 20))
-            panel.orderFrontRegardless()
-
-            NSAnimationContext.runAnimationGroup { ctx in
-                ctx.duration = 0.4
-                ctx.timingFunction = CAMediaTimingFunction(name: .default)
-                panel.animator().alphaValue = 1
-                panel.animator().setFrameOrigin(finalOrigin)
-            }
-        }
+        // Show immediately — all animation is handled by SwiftUI inside ToastView
+        panel.alphaValue = 1
+        panel.orderFrontRegardless()
 
         // Auto-dismiss after 10s (paused while hovered)
         startDismissCountdown()
@@ -92,25 +75,16 @@ final class ToastWindow {
         dismissTask?.cancel()
         guard let panel = window else { return }
 
-        let reduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
-
-        if reduceMotion {
-            panel.orderOut(nil)
-            window = nil
-        } else {
-            let origin = panel.frame.origin
-            NSAnimationContext.runAnimationGroup({ ctx in
-                ctx.duration = 0.25
-                ctx.timingFunction = CAMediaTimingFunction(name: .easeIn)
-                panel.animator().alphaValue = 0
-                panel.animator().setFrameOrigin(NSPoint(x: origin.x, y: origin.y + 15))
-            }, completionHandler: {
-                Task { @MainActor [weak self] in
-                    panel.orderOut(nil)
-                    self?.window = nil
-                }
-            })
-        }
+        NSAnimationContext.runAnimationGroup({ ctx in
+            ctx.duration = 0.3
+            ctx.timingFunction = CAMediaTimingFunction(name: .easeIn)
+            panel.animator().alphaValue = 0
+        }, completionHandler: {
+            Task { @MainActor [weak self] in
+                panel.orderOut(nil)
+                self?.window = nil
+            }
+        })
     }
 }
 
@@ -120,9 +94,15 @@ private struct ToastView: View {
     let roast: RoastEntry
     let onClose: () -> Void
     let onHover: (Bool) -> Void
-    @State private var emojiAppeared = false
+
+    // Staggered entrance states
+    @State private var bubblePopped = false
+    @State private var emojiPopped = false
+    @State private var textRevealed = false
+    @State private var personalityRevealed = false
+    @State private var wobblePhase: Double = 0
     @State private var isHovering = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private let reduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
 
     private var moodColor: Color {
         switch roast.mood {
@@ -136,33 +116,33 @@ private struct ToastView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Mood accent bar
-            Rectangle()
-                .fill(moodColor)
-                .frame(height: 3)
+        let skipAnim = reduceMotion
 
+        VStack(spacing: 0) {
             ZStack(alignment: .topTrailing) {
                 HStack(alignment: .top, spacing: 16) {
-                    // Fluent 3D Emoji
+                    // Fluent 3D Emoji — pops in first
                     fluentEmojiView
                         .frame(width: 56, height: 56)
-                        .scaleEffect(emojiAppeared || reduceMotion ? 1 : 0.3)
-                        .animation(
-                            reduceMotion ? nil : .spring(response: 0.4, dampingFraction: 0.5).delay(0.15),
-                            value: emojiAppeared
-                        )
+                        .scaleEffect(skipAnim || emojiPopped ? 1 : 0.01)
+                        .rotationEffect(.degrees(skipAnim || emojiPopped ? 0 : -30))
 
                     VStack(alignment: .leading, spacing: 8) {
+                        // Roast text — slides up after emoji
                         Text(roast.text)
                             .font(.system(size: 17, weight: .semibold, design: .rounded))
                             .foregroundStyle(.white)
                             .lineSpacing(4)
                             .fixedSize(horizontal: false, vertical: true)
+                            .opacity(skipAnim || textRevealed ? 1 : 0)
+                            .offset(y: skipAnim || textRevealed ? 0 : 12)
 
+                        // Personality label — fades in last
                         Text(roast.personality)
                             .font(.system(size: 12, weight: .bold))
                             .foregroundStyle(moodColor)
+                            .opacity(skipAnim || personalityRevealed ? 1 : 0)
+                            .offset(y: skipAnim || personalityRevealed ? 0 : 8)
 
                         HStack(spacing: 4) {
                             Text("JudgyMac")
@@ -174,6 +154,7 @@ private struct ToastView: View {
                                 .font(.system(size: 10))
                                 .foregroundStyle(.white.opacity(0.3))
                         }
+                        .opacity(skipAnim || personalityRevealed ? 1 : 0)
                     }
                 }
                 .padding(20)
@@ -188,24 +169,104 @@ private struct ToastView: View {
                 }
                 .buttonStyle(.plain)
                 .padding(10)
+                .opacity(skipAnim || textRevealed ? 1 : 0)
             }
         }
         .frame(width: 420)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.black.opacity(0.88))
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .background {
+            ZStack {
+                // Base bubble
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(Color.black.opacity(0.88))
+
+                // 3D bubble highlight — top-left sheen
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(
+                        LinearGradient(
+                            colors: [moodColor.opacity(0.15), .clear],
+                            startPoint: .topLeading,
+                            endPoint: .center
+                        )
+                    )
+
+                // Inner highlight — soap bubble reflection
+                Ellipse()
+                    .fill(
+                        RadialGradient(
+                            colors: [.white.opacity(0.08), .clear],
+                            center: .topLeading,
+                            startRadius: 0,
+                            endRadius: 180
+                        )
+                    )
+                    .frame(width: 200, height: 80)
+                    .offset(x: -60, y: -30)
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
+            }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 24))
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(moodColor.opacity(0.3), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 24)
+                .stroke(
+                    LinearGradient(
+                        colors: [moodColor.opacity(0.5), moodColor.opacity(0.1), .clear],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
         )
-        .shadow(color: .black.opacity(0.4), radius: 20, y: 8)
-        .shadow(color: moodColor.opacity(0.25), radius: 30, y: 12)
+        .shadow(color: .black.opacity(0.5), radius: 25, y: 10)
+        .shadow(color: moodColor.opacity(0.3), radius: 40, y: 15)
+        // Bubble pop-in: scale from tiny with overshoot
+        .scaleEffect(skipAnim || bubblePopped ? 1 : 0.3)
+        .opacity(skipAnim || bubblePopped ? 1 : 0)
+        // Subtle wobble after landing
+        .rotation3DEffect(
+            .degrees(wobblePhase > 0 ? sin(wobblePhase * 3) * 1.5 : 0),
+            axis: (x: 0, y: 0, z: 1),
+            perspective: 0.5
+        )
         .accessibilityElement(children: .combine)
         .accessibilityLabel("JudgyMac roast from \(roast.personality): \(roast.text)")
         .accessibilityAddTraits(.isStaticText)
-        .onAppear { emojiAppeared = true }
+        .onAppear {
+            guard !reduceMotion else {
+                bubblePopped = true
+                emojiPopped = true
+                textRevealed = true
+                personalityRevealed = true
+                return
+            }
+            // Step 1: Bubble pops in
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.55)) {
+                bubblePopped = true
+            }
+            // Step 2: Emoji pops
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                withAnimation(.spring(response: 0.45, dampingFraction: 0.45)) {
+                    emojiPopped = true
+                }
+            }
+            // Step 3: Text slides up
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                    textRevealed = true
+                }
+            }
+            // Step 4: Personality + footer
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    personalityRevealed = true
+                }
+            }
+            // Step 5: Wobble settle
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                withAnimation(.easeOut(duration: 1.2)) {
+                    wobblePhase = .pi * 4
+                }
+            }
+        }
         .onHover { hovering in
             isHovering = hovering
             onHover(hovering)
