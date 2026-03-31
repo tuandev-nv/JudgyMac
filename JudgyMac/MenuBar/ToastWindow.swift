@@ -127,19 +127,19 @@ final class ToastWindow {
         case .fromTop:   animateDrop(layer: layer, bounds: bounds)
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { revealState.showEmoji() }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { revealState.showText() }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.95) { revealState.showMeta() }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { revealState.showEmoji() }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.30) { revealState.showText() }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { revealState.showMeta() }
 
-        // Rainbow glow border
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
+        // Rainbow glow border — almost immediate
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
             guard let self else { return }
             self.addRainbowGlow(to: layer, toastRect: toastRect)
         }
 
-        // Shimmer sweep across toast surface
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            guard let self, let hostingLayer = layer.sublayers?.first(where: { $0 is CALayer && $0.sublayers == nil }) ?? layer.sublayers?.first else { return }
+        // Shimmer sweep
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) { [weak self] in
+            guard let self else { return }
             self.addShimmerSweep(to: layer, toastRect: toastRect)
         }
     }
@@ -150,12 +150,12 @@ final class ToastWindow {
         layer.transform = CATransform3DMakeScale(0.01, 0.01, 1)
         let scale = CASpringAnimation(keyPath: "transform.scale")
         scale.fromValue = 0.01; scale.toValue = 1.0
-        scale.mass = 0.8; scale.stiffness = 140; scale.damping = 7; scale.initialVelocity = 18
+        scale.mass = 0.6; scale.stiffness = 280; scale.damping = 10; scale.initialVelocity = 25
         scale.duration = scale.settlingDuration
         scale.fillMode = .forwards; scale.isRemovedOnCompletion = false
         let group = CAAnimationGroup()
-        group.animations = [scale, makeWobble(delay: 0.3)]
-        group.duration = max(scale.settlingDuration, 1.3)
+        group.animations = [scale, makeWobble(delay: 0.15)]
+        group.duration = max(scale.settlingDuration, 0.8)
         group.fillMode = .forwards; group.isRemovedOnCompletion = false
         commitEntrance(group, to: layer)
     }
@@ -170,23 +170,23 @@ final class ToastWindow {
         )
         let slide = CASpringAnimation(keyPath: "transform.translation.x")
         slide.fromValue = offX; slide.toValue = 0
-        slide.mass = 0.9; slide.stiffness = 120; slide.damping = 10; slide.initialVelocity = 12
+        slide.mass = 0.7; slide.stiffness = 220; slide.damping = 12; slide.initialVelocity = 20
         slide.duration = slide.settlingDuration
         slide.fillMode = .forwards; slide.isRemovedOnCompletion = false
         let scale = CASpringAnimation(keyPath: "transform.scale")
         scale.fromValue = 0.6; scale.toValue = 1.0
-        scale.mass = 0.8; scale.stiffness = 130; scale.damping = 9; scale.initialVelocity = 10
+        scale.mass = 0.6; scale.stiffness = 250; scale.damping = 11; scale.initialVelocity = 18
         scale.duration = scale.settlingDuration
         scale.fillMode = .forwards; scale.isRemovedOnCompletion = false
         let tilt = CAKeyframeAnimation(keyPath: "transform.rotation.z")
         let d: Double = fromRight ? -1 : 1
-        tilt.values = [0.08 * d, -0.04 * d, 0.02 * d, 0]
-        tilt.keyTimes = [0, 0.4, 0.7, 1.0]; tilt.duration = 0.8
-        tilt.beginTime = CACurrentMediaTime() + 0.15
+        tilt.values = [0.10 * d, -0.06 * d, 0.03 * d, 0]
+        tilt.keyTimes = [0, 0.35, 0.65, 1.0]; tilt.duration = 0.5
+        tilt.beginTime = CACurrentMediaTime() + 0.08
         tilt.fillMode = .forwards; tilt.isRemovedOnCompletion = false
         let group = CAAnimationGroup()
         group.animations = [slide, scale, tilt]
-        group.duration = max(slide.settlingDuration, scale.settlingDuration) + 0.2
+        group.duration = max(slide.settlingDuration, scale.settlingDuration)
         group.fillMode = .forwards; group.isRemovedOnCompletion = false
         commitEntrance(group, to: layer)
     }
@@ -201,26 +201,26 @@ final class ToastWindow {
         )
         let slideY = CASpringAnimation(keyPath: "transform.translation.y")
         slideY.fromValue = drop; slideY.toValue = 0
-        slideY.mass = 0.9; slideY.stiffness = 130; slideY.damping = 9; slideY.initialVelocity = 15
+        slideY.mass = 0.7; slideY.stiffness = 240; slideY.damping = 11; slideY.initialVelocity = 22
         slideY.duration = slideY.settlingDuration
         slideY.fillMode = .forwards; slideY.isRemovedOnCompletion = false
         let scale = CASpringAnimation(keyPath: "transform.scale")
         scale.fromValue = 0.5; scale.toValue = 1.0
-        scale.mass = 0.8; scale.stiffness = 130; scale.damping = 9; scale.initialVelocity = 10
+        scale.mass = 0.6; scale.stiffness = 250; scale.damping = 10; scale.initialVelocity = 18
         scale.duration = scale.settlingDuration
         scale.fillMode = .forwards; scale.isRemovedOnCompletion = false
         let group = CAAnimationGroup()
-        group.animations = [slideY, scale, makeWobble(delay: 0.25)]
-        group.duration = max(slideY.settlingDuration, scale.settlingDuration) + 0.3
+        group.animations = [slideY, scale, makeWobble(delay: 0.12)]
+        group.duration = max(slideY.settlingDuration, scale.settlingDuration)
         group.fillMode = .forwards; group.isRemovedOnCompletion = false
         commitEntrance(group, to: layer)
     }
 
     private func makeWobble(delay: Double) -> CAKeyframeAnimation {
         let w = CAKeyframeAnimation(keyPath: "transform.rotation.z")
-        w.values = [0, 0.05, -0.04, 0.03, -0.018, 0.01, -0.005, 0]
-        w.keyTimes = [0, 0.12, 0.25, 0.4, 0.55, 0.7, 0.85, 1.0]
-        w.duration = 1.0; w.beginTime = CACurrentMediaTime() + delay
+        w.values = [0, 0.07, -0.05, 0.03, -0.015, 0.007, 0]
+        w.keyTimes = [0, 0.15, 0.3, 0.5, 0.7, 0.85, 1.0]
+        w.duration = 0.6; w.beginTime = CACurrentMediaTime() + delay
         w.fillMode = .forwards; w.isRemovedOnCompletion = false
         return w
     }
@@ -283,20 +283,21 @@ final class ToastWindow {
             return grad
         }
 
-        // --- Layer 1: Soft glow ---
+        // --- Layer 1: Soft glow (shadow-based, no CIFilter) ---
         let bigClip = CALayer()
         bigClip.frame = containerBounds
         let bigMask = CAShapeLayer()
         bigMask.path = borderPath
         bigMask.fillColor = .clear
         bigMask.strokeColor = NSColor.white.cgColor
-        bigMask.lineWidth = 8
+        bigMask.lineWidth = 3
         bigClip.mask = bigMask
         bigClip.addSublayer(makeSpinningGradient())
-        bigClip.opacity = 0.15
-        if let blur = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": 4]) {
-            bigClip.filters = [blur]
-        }
+        bigClip.opacity = 0.2
+        bigClip.shadowColor = NSColor.white.cgColor
+        bigClip.shadowRadius = 6
+        bigClip.shadowOpacity = 0.4
+        bigClip.shadowOffset = .zero
 
         // --- Layer 2: Thin sharp border ---
         let sharpClip = CALayer()
@@ -425,9 +426,15 @@ final class ToastWindow {
         dismissTask?.cancel()
         guard let panel = window else { return }
 
+        // Stop all glow animations immediately to free GPU
+        stopGlowAnimations()
+
         guard let layer = panel.contentView?.layer else {
             panel.orderOut(nil); window = nil; return
         }
+
+        // Stop any entrance animation that might conflict with shrink
+        layer.removeAnimation(forKey: "entrance")
 
         CATransaction.begin()
         CATransaction.setCompletionBlock { [weak self] in
@@ -451,6 +458,15 @@ final class ToastWindow {
             panel.animator().alphaValue = 0
         }
         CATransaction.commit()
+    }
+
+    /// Recursively stop all animations on glow layers to free GPU before dismiss.
+    private func stopGlowAnimations() {
+        func removeAll(_ layer: CALayer) {
+            layer.removeAllAnimations()
+            layer.sublayers?.forEach { removeAll($0) }
+        }
+        if let glow = glowBorderLayer { removeAll(glow) }
     }
 }
 
@@ -629,13 +645,13 @@ private struct ToastView: View {
         .accessibilityLabel("JudgyMac roast from \(roast.personality): \(roast.text)")
         .accessibilityAddTraits(.isStaticText)
         .onReceive(NotificationCenter.default.publisher(for: ContentRevealState.emojiNotification)) { _ in
-            withAnimation(.spring(duration: 0.6, bounce: 0.45)) { emojiVisible = true }
+            withAnimation(.spring(duration: 0.4, bounce: 0.5)) { emojiVisible = true }
         }
         .onReceive(NotificationCenter.default.publisher(for: ContentRevealState.textNotification)) { _ in
-            withAnimation(.spring(duration: 0.55, bounce: 0.2)) { textVisible = true }
+            withAnimation(.spring(duration: 0.35, bounce: 0.2)) { textVisible = true }
         }
         .onReceive(NotificationCenter.default.publisher(for: ContentRevealState.metaNotification)) { _ in
-            withAnimation(.spring(duration: 0.45, bounce: 0.15)) { metaVisible = true }
+            withAnimation(.spring(duration: 0.3, bounce: 0.15)) { metaVisible = true }
         }
         .onHover { hovering in
             isHovering = hovering

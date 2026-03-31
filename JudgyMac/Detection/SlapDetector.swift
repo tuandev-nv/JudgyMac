@@ -94,21 +94,23 @@ final class SlapDetector: BehaviorDetector, @unchecked Sendable {
         )
         panel.isOpaque = false
         panel.backgroundColor = .clear
-        panel.alphaValue = 0.01
+        // Alpha must be > 0.01 for macOS to reliably forward click events
+        panel.alphaValue = 0.02
         panel.level = .floating           // Below SlapWindow, above normal windows
         panel.collectionBehavior = [.canJoinAllSpaces, .stationary]
         panel.ignoresMouseEvents = false
         panel.hasShadow = false
 
-        let trackingView = PressureTrackingView { [weak self] pressure in
+        // Use NSView directly — more reliable click capture than SwiftUI hosting
+        let trackingNSView = PressureTrackingNSView()
+        trackingNSView.frame = screen.frame
+        trackingNSView.onPressureSpike = { [weak self] pressure in
             self?.handlePressureSpike(pressure)
         }
-        let hostingController = NSHostingController(rootView: trackingView)
-        hostingController.view.frame = screen.frame
-        panel.contentViewController = hostingController
+        panel.contentView = trackingNSView
 
         panel.orderFrontRegardless()
-        panel.makeFirstResponder(hostingController.view.subviews.first ?? hostingController.view)
+        panel.makeFirstResponder(trackingNSView)
 
         overlayPanel = panel
     }
