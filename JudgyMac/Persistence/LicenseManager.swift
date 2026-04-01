@@ -4,8 +4,7 @@ import CryptoKit
 /// Validates license keys via Polar.sh API.
 @MainActor
 enum LicenseManager {
-    // TODO: Replace with real Polar.sh organization ID
-    private static let organizationId = "YOUR_POLAR_ORG_ID"
+    private static let organizationId = "87153ee2-de7a-473a-bc5d-e150e027e4f0"
     private static let validateURL = URL(string: "https://api.polar.sh/v1/customer-portal/license-keys/validate")!
     /// Hash a license key for secure local storage
     nonisolated static func hashKey(_ key: String) -> String {

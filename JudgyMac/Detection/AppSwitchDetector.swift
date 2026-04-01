@@ -13,11 +13,11 @@ final class AppSwitchDetector: BehaviorDetector, @unchecked Sendable {
     private var lastFireTime: Date?
 
     /// Fire when user switches apps this many times within the window
-    private let switchThreshold = 10
+    private let switchThreshold = 15
     /// Rolling time window (seconds)
     private let windowSeconds: TimeInterval = 120  // 2 minutes
     /// Cooldown between fires
-    private let cooldownSeconds: TimeInterval = 180  // 3 minutes
+    private let cooldownSeconds: TimeInterval = 300  // 5 minutes
 
     func start(onEvent: @escaping @Sendable (BehaviorEvent) -> Void) {
         guard !isRunning else { return }

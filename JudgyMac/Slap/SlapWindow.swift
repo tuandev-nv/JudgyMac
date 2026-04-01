@@ -75,6 +75,9 @@ final class SlapWindow {
         #endif
     }
 
+    /// Suppress slap voice lines until this time (milestone voice playing).
+    var voiceSuppressedUntil: Date = .distantPast
+
     func slap(pack: CharacterPack) {
         // KO — ignore all slaps during cooldown
         if slapState.isKnockedOut {
@@ -135,10 +138,11 @@ final class SlapWindow {
         // Pick ONE reaction line → use both text and voice
         let pickedLine = pickReactionLine(pack: pack)
         slapState.currentReactionText = pickedLine?.text
+        let isVoiceSuppressed = Date() < voiceSuppressedUntil
         SoundPlayer.playSlapCombo(
             slapSound: pack.slapSoundPath,
             umphSound: "\(pack.folderPath)/slap_voice",
-            voiceSound: pickedLine?.voicePath
+            voiceSound: isVoiceSuppressed ? nil : pickedLine?.voicePath
         )
 
         restartDismissTimer()

@@ -100,6 +100,14 @@ struct MenuBarView: View {
                         NotificationCenter.default.post(name: .showMenuBarSprite, object: nil)
                     }
                 }
+                DevGridButton(icon: "🏆", label: "Mile 50") {
+                    appState.todayStats.slapCount = 49
+                    fireDevEvent(.slap(pressure: 0.95))
+                }
+                DevGridButton(icon: "💯", label: "Mile 100") {
+                    appState.todayStats.slapCount = 99
+                    fireDevEvent(.slap(pressure: 0.95))
+                }
                 DevGridButton(icon: "🗑", label: "Reset") {
                     appState.todayStats = UserStats()
                     appState.currentRoast = nil

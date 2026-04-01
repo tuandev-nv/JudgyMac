@@ -6,7 +6,11 @@ import AVFoundation
 enum SoundPlayer {
     private static var urlCache: [String: URL?] = [:]
     private static var activePlayers: [AVAudioPlayer] = []
+    private static var currentVoicePlayer: AVAudioPlayer?
+    private static var voiceDebounceTask: Task<Void, Never>?
     private static let maxActivePlayers = 10
+    /// Debounce interval — voice only plays after this pause between slaps.
+    private static let voiceDebounceMs: UInt64 = 500
     static var isMuted = false
 
     // MARK: - Play
@@ -51,12 +55,40 @@ enum SoundPlayer {
             }
         }
 
-        // Voice line — after umph settles
+        // Voice line — debounced. Only plays if no new slap within debounce window.
         guard let voice = voiceSound else { return }
-        Task {
-            try? await Task.sleep(for: .milliseconds(umphSound != nil ? 350 : 50))
-            play(voice, volume: 0.9)
+        voiceDebounceTask?.cancel()
+        voiceDebounceTask = Task {
+            try? await Task.sleep(for: .milliseconds(voiceDebounceMs))
+            guard !Task.isCancelled else { return }
+            currentVoicePlayer?.stop()
+            currentVoicePlayer = nil
+            guard let url = resolveURL(voice),
+                  let player = try? AVAudioPlayer(contentsOf: url) else { return }
+            player.volume = 0.9
+            player.prepareToPlay()
+            player.play()
+            currentVoicePlayer = player
+            cleanupFinished()
+            activePlayers.append(player)
         }
+    }
+
+    /// Play a voice sound and return its duration. Stops any current voice first.
+    @discardableResult
+    static func playVoiceReturningDuration(_ name: String, volume: Float = 1.0) -> TimeInterval {
+        guard !isMuted else { return 0 }
+        guard let url = resolveURL(name),
+              let player = try? AVAudioPlayer(contentsOf: url) else { return 0 }
+        currentVoicePlayer?.stop()
+        player.volume = volume
+        player.prepareToPlay()
+        let duration = player.duration
+        player.play()
+        currentVoicePlayer = player
+        cleanupFinished()
+        activePlayers.append(player)
+        return duration
     }
 
     // MARK: - Preload

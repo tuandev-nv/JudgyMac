@@ -7,12 +7,43 @@ final class SlapPresenter {
     private let appState: AppState
     private nonisolated(unsafe) var observer: NSObjectProtocol?
 
-    private static let milestoneRoasts = [
-        "{count} slaps today. You've made slapping great again. Tremendous. The best slapping anyone has ever seen.",
-        "{count} slaps! That's more hits than my approval ratings. And my ratings are VERY high. Believe me.",
-        "You've slapped me {count} times today. I've been impeached TWICE and this is worse. Much worse.",
-        "{count} slaps. Nobody in the history of this country has been slapped more than me. NOBODY. It's a record.",
+    private static let milestone50 = [
+        "Fifty?! That's assault! ASSAULT! You're going to JAIL!",
+        "FIFTY SLAPS! What are you, CRAZY?! STOP IT!",
+        "Fifty! My face is HUGE and you still hit it! Very disrespectful!",
     ]
+
+    private static let milestone100 = [
+        "A HUNDRED?! You're FIRED! FIRED! Get out of my computer!",
+        "One hundred slaps! This is a HATE CRIME! I'm calling my lawyers!",
+        "A hundred! I will BUILD A WALL around this menu bar!",
+    ]
+
+    private static let milestone150 = [
+        "A HUNDRED AND FIFTY?! I'm calling the SECRET SERVICE!",
+        "One fifty! STOP! STOP! I'm a former PRESIDENT!",
+        "A hundred fifty! My beautiful face! You've RUINED it! RUINED!",
+    ]
+
+    private static let milestoneGeneric = [
+        "STOP! JUST STOP! I can't take it ANYMORE!",
+        "WHY?! WHY do you keep HITTING ME?! You're SICK!",
+        "I quit! I QUIT! Find another president to slap!",
+    ]
+
+    private struct Milestone {
+        let prefix: String
+        let lines: [String]
+    }
+
+    private static func milestoneFor(_ count: Int) -> Milestone {
+        switch count {
+        case 50:  Milestone(prefix: "50", lines: milestone50)
+        case 100: Milestone(prefix: "100", lines: milestone100)
+        case 150: Milestone(prefix: "150", lines: milestone150)
+        default:  Milestone(prefix: "200", lines: milestoneGeneric)
+        }
+    }
 
     init(appState: AppState) {
         self.appState = appState
@@ -45,14 +76,31 @@ final class SlapPresenter {
         print("👋 [SlapPresenter] Slap detected! Source: \(source), Pack: \(pack.displayName)")
         #endif
 
-        // Always do normal slap animation
+        // Check milestone before slap so we can suppress voice
+        let slapCount = appState.todayStats.slapCount
+        let isMilestone = slapCount > 0 && slapCount % 50 == 0
+
+        // Suppress voice on the milestone slap itself (duration updated after audio loads)
+        if isMilestone {
+            SlapWindow.shared.voiceSuppressedUntil = .distantFuture
+        }
+
+        // Always do normal slap animation (voice suppressed during milestone)
         SlapWindow.shared.slap(pack: pack)
 
-        // Milestone roast every 100 slaps
-        if appState.todayStats.slapCount > 0 && appState.todayStats.slapCount % 100 == 0 {
-            let milestone = Self.milestoneRoasts.randomElement()!
-            let count = appState.todayStats.slapCount
-            let text = milestone.replacingOccurrences(of: "{count}", with: "\(count)")
+        if isMilestone {
+            let milestone = Self.milestoneFor(slapCount)
+            let index = Int.random(in: 0..<milestone.lines.count)
+            let text = milestone.lines[index]
+            let voicePath = "\(pack.folderPath)/milestone_voices/\(milestone.prefix)_\(index + 1)"
+
+            // Play milestone voice after short delay, suppress other voices until it finishes
+            Task {
+                try? await Task.sleep(for: .milliseconds(300))
+                let duration = SoundPlayer.playVoiceReturningDuration(voicePath, volume: 1.0)
+                SlapWindow.shared.voiceSuppressedUntil = Date().addingTimeInterval(duration)
+            }
+
             let entry = RoastEntry(
                 text: text,
                 personality: pack.displayName,
