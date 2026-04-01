@@ -25,6 +25,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private var spriteFrames: [NSImage] = []
     private var spriteTimer: Timer?
     private var spriteFrame = 0
+    private var cachedStatsPill: NSImage?
+    private var cachedStatsPillKey = ""
 
     // MARK: - App Lifecycle
 
@@ -116,7 +118,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
 
     private func startMenuBarAnimation() {
         // Respect Reduce Motion — use static icon, only update mood (no frame cycling)
-        let interval: TimeInterval = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? 5.0 : 1.5
+        let interval: TimeInterval = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? 10.0 : 5.0
         animationTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
             MainActor.assumeIsolated { [weak self] in
                 self?.tickAnimation()
@@ -128,14 +130,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         // Update mood from app state
         currentMood = _appState.currentMood
 
-        // CPU every tick (~1.5s), RAM every ~10s, GPU every ~15s
+        // CPU every tick (5s), RAM every ~10s, GPU every ~15s
         let cpu = cpuMonitor.currentUsage()
         _appState.cpuUsage = cpu
         systemStatsTick += 1
-        if systemStatsTick % 7 == 0 {
+        if systemStatsTick % 2 == 0 {
             _appState.ramUsage = currentRAMUsage()
         }
-        if systemStatsTick % 10 == 0 {
+        if systemStatsTick % 3 == 0 {
             _appState.gpuUsage = currentGPUUsage()
         }
 
@@ -181,13 +183,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         statusItem.button?.title = ""
     }
 
-    /// Renders emoji + stat pills into a single menu bar image.
-    private func renderMenuBarImage(emoji: NSImage?, stats: [(String, String)]) -> NSImage {
-        let barHeight: CGFloat = 22
-        let emojiSize: CGFloat = 18
-        let colGap: CGFloat = 8       // space between stat columns
-        let gapAfterEmoji: CGFloat = 5
-        let hPad: CGFloat = 8         // horizontal padding inside bg
+    /// Renders stats pill only (gradient bg + text). Cached between updates.
+    private func renderStatsPill(stats: [(String, String)]) -> NSImage {
+        let colGap: CGFloat = 8
+        let hPad: CGFloat = 8
         let vPad: CGFloat = 1
         let labelValueGap: CGFloat = -3
 
@@ -195,7 +194,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         let valueFont = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .bold)
 
         let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-        // Warm gradient like the settings popover
         let gradStart = isDark
             ? NSColor(red: 0.35, green: 0.25, blue: 0.18, alpha: 1)
             : NSColor(red: 1.0, green: 0.92, blue: 0.82, alpha: 1)
@@ -212,7 +210,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
             ? NSColor(white: 1, alpha: 0.95)
             : NSColor(white: 0, alpha: 0.8)
 
-        // Measure column widths
         var colWidths: [CGFloat] = []
         for (label, value) in stats {
             let lw = (label as NSString).size(withAttributes: [.font: labelFont]).width
@@ -227,59 +224,75 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         let statsWidth = colWidths.reduce(0, +) + CGFloat(stats.count - 1) * colGap
         let bgWidth = statsWidth + hPad * 2
         let bgHeight = contentHeight + vPad * 2
-        let totalWidth = emojiSize + gapAfterEmoji + bgWidth + 2
 
-        let image = NSImage(size: NSSize(width: totalWidth, height: barHeight))
-        image.lockFocus()
+        let pill = NSImage(size: NSSize(width: bgWidth, height: bgHeight))
+        pill.lockFocus()
 
-        // Emoji
-        if let emoji {
-            emoji.draw(in: NSRect(x: 0, y: (barHeight - emojiSize) / 2,
-                                  width: emojiSize, height: emojiSize))
-        }
-
-        // Background pill with warm gradient
-        let bgX = emojiSize + gapAfterEmoji
-        let bgY = (barHeight - bgHeight) / 2
-        let bgRect = NSRect(x: bgX, y: bgY, width: bgWidth, height: bgHeight)
+        let bgRect = NSRect(x: 0, y: 0, width: bgWidth, height: bgHeight)
         let bgPath = NSBezierPath(roundedRect: bgRect, xRadius: 5, yRadius: 5)
 
-        // Draw gradient
         NSGraphicsContext.saveGraphicsState()
         bgPath.addClip()
         let gradient = NSGradient(starting: gradStart, ending: gradEnd)
-        gradient?.draw(in: bgRect, angle: 0) // left to right
+        gradient?.draw(in: bgRect, angle: 0)
         NSGraphicsContext.restoreGraphicsState()
 
         borderColor.setStroke()
         bgPath.lineWidth = 0.5
         bgPath.stroke()
 
-        // Stat columns
-        var x = bgX + hPad
-        let contentY = bgY + vPad
+        var x: CGFloat = hPad
+        let contentY = vPad
 
         for (i, (label, value)) in stats.enumerated() {
             let colW = colWidths[i]
-
-            // Label (top, left-aligned)
             let labelAttrs: [NSAttributedString.Key: Any] = [.font: labelFont, .foregroundColor: labelColor]
             (label as NSString).draw(
-                at: NSPoint(x: x,
-                            y: contentY + valueHeight + labelValueGap),
+                at: NSPoint(x: x, y: contentY + valueHeight + labelValueGap),
                 withAttributes: labelAttrs
             )
-
-            // Value (bottom)
             let valueAttrs: [NSAttributedString.Key: Any] = [.font: valueFont, .foregroundColor: valueColor]
             let valueSize = (value as NSString).size(withAttributes: valueAttrs)
             (value as NSString).draw(
-                at: NSPoint(x: x + (colW - valueSize.width) / 2,
-                            y: contentY),
+                at: NSPoint(x: x + (colW - valueSize.width) / 2, y: contentY),
                 withAttributes: valueAttrs
             )
-
             x += colW + colGap
+        }
+
+        pill.unlockFocus()
+        return pill
+    }
+
+    /// Lightweight compose: sprite + cached stats pill → single menu bar image.
+    private func renderMenuBarImage(emoji: NSImage?, stats: [(String, String)]) -> NSImage {
+        let barHeight: CGFloat = 22
+        let emojiSize: CGFloat = 18
+        let gapAfterEmoji: CGFloat = 5
+
+        // Cache stats pill — only re-render when values change
+        let statsKey = stats.map { "\($0.0)\($0.1)" }.joined()
+        if statsKey != cachedStatsPillKey {
+            cachedStatsPillKey = statsKey
+            cachedStatsPill = renderStatsPill(stats: stats)
+        }
+
+        let pillWidth = cachedStatsPill?.size.width ?? 0
+        let pillHeight = cachedStatsPill?.size.height ?? 0
+        let totalWidth = emojiSize + gapAfterEmoji + pillWidth + 2
+
+        let image = NSImage(size: NSSize(width: totalWidth, height: barHeight))
+        image.lockFocus()
+
+        if let emoji {
+            emoji.draw(in: NSRect(x: 0, y: (barHeight - emojiSize) / 2,
+                                  width: emojiSize, height: emojiSize))
+        }
+
+        if let pill = cachedStatsPill {
+            let pillX = emojiSize + gapAfterEmoji
+            let pillY = (barHeight - pillHeight) / 2
+            pill.draw(in: NSRect(x: pillX, y: pillY, width: pillWidth, height: pillHeight))
         }
 
         image.unlockFocus()
@@ -355,8 +368,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private func startSpriteAnimation() {
         spriteFrame = 0
         spriteTick = 0
-        // 20Hz tick, frame advance rate scales with CPU
-        spriteTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
+        // 12Hz tick, frame advance rate scales with CPU
+        spriteTimer = Timer.scheduledTimer(withTimeInterval: 0.083, repeats: true) { _ in
             MainActor.assumeIsolated { [weak self] in
                 guard let self, !self.spriteFrames.isEmpty else { return }
                 let cpu = self._appState.cpuUsage
@@ -371,6 +384,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
                     self.spriteTick = 0
                     self.spriteFrame = (self.spriteFrame + 1) % self.spriteFrames.count
                 }
+
+                // Only update status bar when sprite frame actually changes
+                guard self.spriteTick == 0 else { return }
 
                 let image = self.spriteFrames[self.spriteFrame]
                 let cpuPct = Int(cpu * 100)
