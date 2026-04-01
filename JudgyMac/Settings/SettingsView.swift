@@ -29,8 +29,12 @@ struct GeneralSettingsTab: View {
                     ForEach(CharacterPackCatalog.all) { pack in
                         HStack(spacing: 12) {
                             packIcon(pack)
-                                .frame(width: 40, height: 40)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                                .frame(width: 72, height: 72)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .fill(Color(white: 0.92))
+                                )
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(pack.displayName)
@@ -59,12 +63,16 @@ struct GeneralSettingsTab: View {
            let nsImage = NSImage(contentsOf: url) {
             Image(nsImage: nsImage)
                 .resizable()
+                .interpolation(.high)
+                .antialiased(true)
                 .aspectRatio(contentMode: .fill)
         } else if !iconPath.isEmpty,
                   let url = Bundle.main.resourceURL?.appendingPathComponent("\(iconPath).png"),
                   let nsImage = NSImage(contentsOf: url) {
             Image(nsImage: nsImage)
                 .resizable()
+                .interpolation(.high)
+                .antialiased(true)
                 .aspectRatio(contentMode: .fill)
         } else {
             Text("🤨").font(.system(size: 24))

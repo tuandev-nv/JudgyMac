@@ -33,6 +33,7 @@ struct DesktopRunnerView: View {
     @State private var runStartTime: Date?
     @State private var runDuration: TimeInterval = 0
     @State private var squash: CGFloat = 1.0
+    @State private var cachedFrames: [Image] = []
 
     private let spriteSize: CGFloat = 120
     private let gravity: CGFloat = 600      // Slower fall — more dramatic
@@ -61,18 +62,30 @@ struct DesktopRunnerView: View {
             }
         }
         .frame(width: screenSize.width, height: screenSize.height)
-        .onAppear { startFalling() }
+        .onAppear {
+            preloadFrames()
+            startFalling()
+        }
         .onDisappear { timer?.invalidate() }
     }
 
-    // MARK: - Trump Sprite
+    // MARK: - Preload & Sprite
+
+    private func preloadFrames() {
+        guard cachedFrames.isEmpty else { return }
+        for i in 0..<4 {
+            let name = "\(pack.folderPath)/menubar_frames/frame_\(String(format: "%02d", i))"
+            if let url = Bundle.main.resourceURL?.appendingPathComponent("\(name).png"),
+               let nsImage = NSImage(contentsOf: url) {
+                cachedFrames.append(Image(nsImage: nsImage))
+            }
+        }
+    }
 
     @ViewBuilder
     private var trumpSprite: some View {
-        let frameName = "\(pack.folderPath)/menubar_frames/frame_\(String(format: "%02d", frame))"
-        if let url = Bundle.main.resourceURL?.appendingPathComponent("\(frameName).png"),
-           let nsImage = NSImage(contentsOf: url) {
-            Image(nsImage: nsImage)
+        if frame < cachedFrames.count {
+            cachedFrames[frame]
                 .resizable()
                 .interpolation(.high)
                 .aspectRatio(contentMode: .fit)

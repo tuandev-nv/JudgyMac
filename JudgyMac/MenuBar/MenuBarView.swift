@@ -29,7 +29,8 @@ struct MenuBarView: View {
         VStack(spacing: 14) {
             // Header
             HStack(spacing: 12) {
-                packIcon(pack: appState.currentPack, size: 48)
+                packIcon(pack: appState.currentPack, size: 72)
+                    .fixedSize()
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("JudgyMac")
@@ -297,20 +298,29 @@ private func packIcon(pack: CharacterPack, size: CGFloat) -> some View {
         let iconPath = pack.iconImagePath
         if let url = Bundle.main.resourceURL?.appendingPathComponent("\(avatarPath).png"),
            let nsImage = NSImage(contentsOf: url) {
+            let _ = { nsImage.size = NSSize(width: size, height: size) }()
             Image(nsImage: nsImage)
                 .resizable()
+                .interpolation(.high)
+                .antialiased(true)
                 .aspectRatio(contentMode: .fill)
         } else if !iconPath.isEmpty,
                   let url = Bundle.main.resourceURL?.appendingPathComponent("\(iconPath).png"),
                   let nsImage = NSImage(contentsOf: url) {
             Image(nsImage: nsImage)
                 .resizable()
+                .interpolation(.high)
+                .antialiased(true)
                 .aspectRatio(contentMode: .fill)
         } else {
             Text("🤨").font(.system(size: size * 0.8))
         }
     }
     .frame(width: size, height: size)
+    .background(
+        RoundedRectangle(cornerRadius: size * 0.2)
+            .fill(Color(white: 0.92))
+    )
     .clipShape(RoundedRectangle(cornerRadius: size * 0.2))
 }
 
