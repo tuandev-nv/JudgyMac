@@ -36,6 +36,7 @@
 		31E8316508D69E45F2EE43FB /* JudgyMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE02200D5870AF01016DA0E /* JudgyMacApp.swift */; };
 		3265259BB2F0F6826C1DED94 /* RoastBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E51F274515A877D4EB33C49 /* RoastBubble.swift */; };
 		355F60029CC68FBFEA2C9B90 /* ActivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06148C9A9E28B56AE417AC2E /* ActivityMonitor.swift */; };
+		358074987489759B49751698 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 77EA0E0B982C531DC3DA28E2 /* Assets.xcassets */; };
 		366814E659DAF2E942B88717 /* DetectionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7162979E25841246E79E8578 /* DetectionCoordinator.swift */; };
 		37D5F54E16C82B0687704C6E /* SoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C863C21F0DA4E197BDFAFA43 /* SoundPlayer.swift */; };
 		3D348B5D222B1CBB6B03E5D3 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA629D49B1C788897ECD732C /* GlassCard.swift */; };
@@ -100,6 +101,7 @@
 		BF1FC608DD2876F43422DF14 /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384C3A8579A07694C8026266 /* StoreManager.swift */; };
 		C1BB29F2EAD1C3D6B4E929A4 /* RoastPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A62757D14A172F7BDD17E8 /* RoastPresenter.swift */; };
 		C4F536A5EE96A8B7CDFBB925 /* AccelerometerDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41C96D6970A9CB2BB061A55D /* AccelerometerDetector.swift */; };
+		C5A826D47C91A6E9627C92B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 77EA0E0B982C531DC3DA28E2 /* Assets.xcassets */; };
 		C8814D8C893E9CBA27A43232 /* DesktopRunnerWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0860369C5964AFF5D6DBE73D /* DesktopRunnerWindow.swift */; };
 		C9E15F391A1754387EA4F8A8 /* ProductIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CFD1CCB886B29269B6FF3 /* ProductIdentifiers.swift */; };
 		CE70E87D2B3ECD1D62AEEB8A /* FluentEmoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE37C414A6717B82D99B4629 /* FluentEmoji.swift */; };
@@ -165,6 +167,7 @@
 		6B27FE2482465FBC17BC4011 /* Emoji */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Emoji; path = JudgyMac/Resources/Emoji; sourceTree = SOURCE_ROOT; };
 		6DEDE45E8122B0A9E671BE14 /* JudgyMacPro.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JudgyMacPro.entitlements; sourceTree = "<group>"; };
 		7162979E25841246E79E8578 /* DetectionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionCoordinator.swift; sourceTree = "<group>"; };
+		77EA0E0B982C531DC3DA28E2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8AC2C68A6054309E5A14DBC3 /* ScreenTimeDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTimeDetector.swift; sourceTree = "<group>"; };
 		902119412E9AC6D670EB7461 /* SystemMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMonitor.swift; sourceTree = "<group>"; };
 		9BE02200D5870AF01016DA0E /* JudgyMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JudgyMacApp.swift; sourceTree = "<group>"; };
@@ -305,8 +308,18 @@
 				6B27FE2482465FBC17BC4011 /* Emoji */,
 				E2FD3E23059CB798FA5D13B6 /* Sounds */,
 				1AFD3F9AE3079600C37CAB10 /* JudgyMac */,
+				9CE4A093BB41F962F31160D5 /* Resources */,
 				E87CF9EF3E6E547CCB6E3FEB /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		9CE4A093BB41F962F31160D5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				77EA0E0B982C531DC3DA28E2 /* Assets.xcassets */,
+			);
+			name = Resources;
+			path = JudgyMac/Resources;
 			sourceTree = "<group>";
 		};
 		B13C7B5A8DCD61C175279F5D /* Detection */ = {
@@ -480,6 +493,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5A826D47C91A6E9627C92B6 /* Assets.xcassets in Resources */,
 				27A7B5EBD7E9E657373FABA1 /* CharacterPacks in Resources */,
 				94D48CD67AA617B676C3ECF5 /* Emoji in Resources */,
 				EF0768F2BBF8B1CFBF4E3F80 /* JudgyMac.storekit in Resources */,
@@ -491,6 +505,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				358074987489759B49751698 /* Assets.xcassets in Resources */,
 				0EB6CC7F06243EF6BDA07C4B /* CharacterPacks in Resources */,
 				2C9DC824C28D5229140379F4 /* Emoji in Resources */,
 				9C2B89DAD06FFE8B7DE910A8 /* JudgyMac.storekit in Resources */,
@@ -667,6 +682,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -764,6 +780,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";

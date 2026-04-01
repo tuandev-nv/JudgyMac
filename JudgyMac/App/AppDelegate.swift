@@ -308,7 +308,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
 
         spriteFrames = files.compactMap { url in
             guard let img = NSImage(contentsOf: url) else { return nil }
-            img.size = NSSize(width: 20, height: 32)
+            img.size = NSSize(width: 20, height: 22)
             img.isTemplate = false
             return img
         }
@@ -355,8 +355,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private func startSpriteAnimation() {
         spriteFrame = 0
         spriteTick = 0
-        // 8Hz tick, frame advance rate scales with CPU
-        spriteTimer = Timer.scheduledTimer(withTimeInterval: 0.125, repeats: true) { _ in
+        // 20Hz tick, frame advance rate scales with CPU
+        spriteTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
             MainActor.assumeIsolated { [weak self] in
                 guard let self, !self.spriteFrames.isEmpty else { return }
                 let cpu = self._appState.cpuUsage

@@ -73,12 +73,14 @@ struct DesktopRunnerView: View {
 
     private func preloadFrames() {
         guard cachedFrames.isEmpty else { return }
-        for i in 0..<4 {
+        // Load all available frames dynamically
+        var i = 0
+        while true {
             let name = "\(pack.folderPath)/menubar_frames/frame_\(String(format: "%02d", i))"
-            if let url = Bundle.main.resourceURL?.appendingPathComponent("\(name).png"),
-               let nsImage = NSImage(contentsOf: url) {
-                cachedFrames.append(Image(nsImage: nsImage))
-            }
+            guard let url = Bundle.main.resourceURL?.appendingPathComponent("\(name).png"),
+                  let nsImage = NSImage(contentsOf: url) else { break }
+            cachedFrames.append(Image(nsImage: nsImage))
+            i += 1
         }
     }
 
@@ -179,15 +181,10 @@ struct DesktopRunnerView: View {
 
         // Sprite frame advance
         frameTick += 1
+        let frameCount = max(cachedFrames.count, 1)
         if frameTick >= frameEveryNTicks {
             frameTick = 0
-            frame = (frame + 1) % 4
-
-            // Squash-stretch between frames for fluidity
-            squash = 1.05
-            withAnimation(.easeOut(duration: Double(frameEveryNTicks) * fps)) {
-                squash = 0.97
-            }
+            frame = (frame + 1) % frameCount
         }
 
 
@@ -210,7 +207,7 @@ struct DesktopRunnerView: View {
         frameTick += 1
         if frameTick >= frameEveryNTicks {
             frameTick = 0
-            frame = (frame + 1) % 4
+            frame = (frame + 1) % max(cachedFrames.count, 1)
         }
         if x <= -spriteSize || x >= screenSize.width + spriteSize {
             phase = .done

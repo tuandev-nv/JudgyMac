@@ -19,6 +19,7 @@ settings:
     CODE_SIGN_STYLE: Automatic
     SWIFT_STRICT_CONCURRENCY: complete
     ENABLE_HARDENED_RUNTIME: true
+    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
 targets:
   JudgyMac:
@@ -28,6 +29,7 @@ targets:
       - path: JudgyMac
         excludes:
           - "Resources/**"
+      - path: JudgyMac/Resources/Assets.xcassets
       - path: JudgyMac/Resources/CharacterPacks
         type: folder
         buildPhase: resources
@@ -62,6 +64,7 @@ targets:
       - path: JudgyMac
         excludes:
           - "Resources/**"
+      - path: JudgyMac/Resources/Assets.xcassets
       - path: JudgyMac/Resources/CharacterPacks
         type: folder
         buildPhase: resources
