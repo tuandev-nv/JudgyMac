@@ -42,10 +42,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         observeMenuBarSprite()
         SoundPlayer.isMuted = !_appState.voiceEnabled
 
-        // Pre-warm slap window so first slap is instant
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-            guard let self else { return }
-            SlapWindow.shared.warmUp(pack: self._appState.currentPack)
+        // Pre-warm slap window so first slap is instant (only if licensed)
+        if _appState.isLicenseValid {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                guard let self else { return }
+                SlapWindow.shared.warmUp(pack: self._appState.currentPack)
+                SoundPlayer.preload([
+                    self._appState.currentPack.slapSoundPath,
+                    "\(self._appState.currentPack.folderPath)/slap_voice",
+                ])
+            }
         }
 
         #if DEBUG
@@ -122,16 +128,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         // Update mood from app state
         currentMood = _appState.currentMood
 
-        // CPU every tick, RAM every ~15s, GPU/Disk every ~30s
+        // CPU every tick (~1.5s), RAM every ~10s, GPU every ~15s
         let cpu = cpuMonitor.currentUsage()
         _appState.cpuUsage = cpu
         systemStatsTick += 1
-        if systemStatsTick % 10 == 0 {
+        if systemStatsTick % 7 == 0 {
             _appState.ramUsage = currentRAMUsage()
         }
-        if systemStatsTick % 20 == 0 {
+        if systemStatsTick % 10 == 0 {
             _appState.gpuUsage = currentGPUUsage()
-            _appState.diskUsage = currentDiskUsage()
         }
 
         // Faster animation = higher CPU (skip fewer ticks)

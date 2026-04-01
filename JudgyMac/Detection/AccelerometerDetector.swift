@@ -15,7 +15,7 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
     private var lastSlapTime: Date = .distantPast
 
     // Tuning
-    private let spikeThreshold: Double = 0.075  // g-force threshold for slap detection
+    private let spikeThreshold: Double = 0.1  // g-force threshold for slap detection
     private let debounceInterval: TimeInterval = 0.5
     private var baselineMagnitude: Double = 1.0  // ~1g at rest
 

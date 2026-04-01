@@ -26,8 +26,9 @@ final class AppState {
     var gpuUsage: Double = 0
     var diskUsage: Double = 0
 
-    // MARK: - Purchase
-    var isFullVersion: Bool = true
+    // MARK: - License
+    var licenseKey: String = ""
+    var isLicenseValid: Bool = false
 
     // MARK: - Computed
 

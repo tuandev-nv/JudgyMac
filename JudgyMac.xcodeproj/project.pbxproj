@@ -80,6 +80,7 @@
 		9C2B89DAD06FFE8B7DE910A8 /* JudgyMac.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 0C092D7F9C46FE5FDFFBE254 /* JudgyMac.storekit */; };
 		9EB6D87D0349E83378C019B8 /* IdleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38B35251CB604B1CED9835B5 /* IdleDetector.swift */; };
 		A2152ADF8A126C14349C7450 /* SlapAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F736FBB5FE1C36AE5B14633 /* SlapAnimationView.swift */; };
+		A2E4C45BD631CE53D41665BC /* LicenseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8183E8396FC686B7215334D /* LicenseManager.swift */; };
 		A5333E9F5AD015A0EB46C98F /* PressureTrackingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BDE62CC433E43448BCD092 /* PressureTrackingView.swift */; };
 		A832A00A90D770D307559B5E /* SoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C863C21F0DA4E197BDFAFA43 /* SoundPlayer.swift */; };
 		AA0884F3BC40FFC9C8AC9607 /* TimeOfDayDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201D0EA6EFC1AB1F74FA4E5D /* TimeOfDayDetector.swift */; };
@@ -93,6 +94,7 @@
 		B948D7AD89C50162F3ABBA99 /* RoastEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F45A53EAB9A5FF2172C637 /* RoastEngine.swift */; };
 		BD2EC15D563C9E1D1E53C5B6 /* DetectionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7162979E25841246E79E8578 /* DetectionCoordinator.swift */; };
 		BDB6D701AC0FBB9C14C3F11A /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA02D1EC626473B027D56BDE /* SettingsStore.swift */; };
+		BE20AEF2EEA0B7FC6B293CE5 /* LicenseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8183E8396FC686B7215334D /* LicenseManager.swift */; };
 		BF1FC608DD2876F43422DF14 /* StoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 384C3A8579A07694C8026266 /* StoreManager.swift */; };
 		C1BB29F2EAD1C3D6B4E929A4 /* RoastPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A62757D14A172F7BDD17E8 /* RoastPresenter.swift */; };
 		C4F536A5EE96A8B7CDFBB925 /* AccelerometerDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41C96D6970A9CB2BB061A55D /* AccelerometerDetector.swift */; };
@@ -180,6 +182,7 @@
 		CDCB418A07F03FA3DF9357EA /* AppSwitchDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSwitchDetector.swift; sourceTree = "<group>"; };
 		D0FE6AF81934ED2393BB02AB /* JudgyMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = JudgyMac.entitlements; sourceTree = "<group>"; };
 		D55EE2BD5868466FD569BEE3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		D8183E8396FC686B7215334D /* LicenseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LicenseManager.swift; sourceTree = "<group>"; };
 		D8B76A7CA23083514C1E757A /* CharacterPack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterPack.swift; sourceTree = "<group>"; };
 		DE37C414A6717B82D99B4629 /* FluentEmoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluentEmoji.swift; sourceTree = "<group>"; };
 		E18F5D092B33FACE9B7C389F /* ThermalDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThermalDetector.swift; sourceTree = "<group>"; };
@@ -230,6 +233,7 @@
 		342CC586799C35F21D47E0A1 /* Persistence */ = {
 			isa = PBXGroup;
 			children = (
+				D8183E8396FC686B7215334D /* LicenseManager.swift */,
 				2B6B06B217D79D97570722B7 /* RoastHistory.swift */,
 				CA02D1EC626473B027D56BDE /* SettingsStore.swift */,
 				5EA8F9880213B6271E776347 /* StatsStore.swift */,
@@ -518,6 +522,7 @@
 				E0816E4F0A3BC5A393B1B5FB /* HistoryView.swift in Sources */,
 				9EB6D87D0349E83378C019B8 /* IdleDetector.swift in Sources */,
 				31E8316508D69E45F2EE43FB /* JudgyMacApp.swift in Sources */,
+				A2E4C45BD631CE53D41665BC /* LicenseManager.swift in Sources */,
 				56B83CED104B4D337A58AA38 /* LidDetector.swift in Sources */,
 				0F4B238E3BE847AEAEE30FF9 /* MenuBarView.swift in Sources */,
 				F2DFDD8EC65D24CB5A772C6F /* Mood.swift in Sources */,
@@ -579,6 +584,7 @@
 				2E45B75B1073D8EC651EAF60 /* HistoryView.swift in Sources */,
 				4332C1F72B138EEF404397B6 /* IdleDetector.swift in Sources */,
 				7270FC211B986C2F320B42EC /* JudgyMacApp.swift in Sources */,
+				BE20AEF2EEA0B7FC6B293CE5 /* LicenseManager.swift in Sources */,
 				662DE64D63EB8805A711EE24 /* LidDetector.swift in Sources */,
 				8308261336EE90F27DED82A2 /* MenuBarView.swift in Sources */,
 				9661F064E0C3EB4E29282C83 /* Mood.swift in Sources */,

@@ -104,6 +104,9 @@ final class DetectionCoordinator {
     // MARK: - Event Handling
 
     private func handleEvent(_ event: BehaviorEvent) {
+        // License gate — no events without valid license
+        guard appState.isLicenseValid else { return }
+
         // Check if this trigger type is enabled
         guard appState.enabledTriggers.contains(event.type) else { return }
 

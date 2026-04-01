@@ -35,7 +35,7 @@ enum TriggerType: String, CaseIterable, Codable, Sendable {
         case .idle:          return "Roast after 10 minutes of inactivity"
         case .screenTime:    return "Remind to take a break every 45 minutes"
         case .appSwitch:     return "Roast when switching apps too frequently"
-        case .slap:          return "⌘ + ⇧ + Click to slap the character"
+        case .slap:          return "⌘ + ⇧ + Click or slap your MacBook body"
         }
     }
 

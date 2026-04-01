@@ -23,7 +23,7 @@ final class RoastEngine {
 
         let allForTrigger = pack.templates(for: event.type)
         let candidates = allForTrigger.filter {
-            cooldown.canRoast(templateId: $0.id, triggerType: event.type, isFullVersion: appState.isFullVersion)
+            cooldown.canRoast(templateId: $0.id, triggerType: event.type, isFullVersion: appState.isLicenseValid)
         }
 
         guard !candidates.isEmpty else { return nil }

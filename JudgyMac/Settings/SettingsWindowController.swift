@@ -37,6 +37,7 @@ final class SettingsWindowController: NSWindowController, NSToolbarDelegate {
         window.title = "General"
         window.isReleasedWhenClosed = false
         window.minSize = NSSize(width: 560, height: 300)
+        window.maxSize = NSSize(width: 560, height: 10000)
         window.setContentSize(NSSize(width: 560, height: 500))
         window.center()
 
@@ -108,23 +109,22 @@ final class SettingsWindowController: NSWindowController, NSToolbarDelegate {
             case .about:       AnyView(AboutSettingsTab())
             }
             let controller = NSHostingController(rootView: view)
-            controller.sizingOptions = .preferredContentSize
             cachedControllers[tab] = controller
         }
 
         window?.contentViewController = cachedControllers[tab]
 
-        // Auto-resize window height, keep top edge and width fixed
-        if let window, let controller = cachedControllers[tab] {
-            let fixedWidth: CGFloat = 560
-            // Constrain width first so fittingSize calculates correct height
-            controller.view.frame.size.width = fixedWidth
-            controller.view.layoutSubtreeIfNeeded()
-            let fittingHeight = max(controller.view.fittingSize.height, 300)
-            let titlebarHeight = window.frame.height - window.contentView!.frame.height
+        // Resize per tab — keep top edge fixed, width locked
+        let height: CGFloat = switch tab {
+        case .general:  420
+        case .triggers: 700
+        case .about:    500
+        }
+        if let window {
             var frame = window.frame
             let topY = frame.maxY
-            frame.size = NSSize(width: fixedWidth, height: fittingHeight + titlebarHeight)
+            let titlebarHeight = frame.height - (window.contentView?.frame.height ?? 0)
+            frame.size = NSSize(width: 560, height: height + titlebarHeight)
             frame.origin.y = topY - frame.size.height
             window.setFrame(frame, display: true, animate: true)
         }

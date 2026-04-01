@@ -12,47 +12,128 @@ struct SettingsView: View {
 struct GeneralSettingsTab: View {
     @Environment(AppState.self) private var appState
     @State private var launchAtLogin = AppDelegate.isLaunchAtLoginEnabled
+    @State private var licenseInput = ""
+    @State private var licenseStatus: String?
+    @State private var isValidating = false
 
     var body: some View {
         @Bindable var state = appState
 
         Form {
-            Section {
-                Toggle("Start at login", isOn: $launchAtLogin)
-                    .onChange(of: launchAtLogin) { _, newValue in
-                        AppDelegate.setLaunchAtLogin(newValue)
+            // License
+            Section("License") {
+                if appState.isLicenseValid {
+                    HStack {
+                        Image(systemName: "checkmark.seal.fill")
+                            .foregroundStyle(.green)
+                        Text("Activated")
+                            .font(.system(size: 13, weight: .medium))
+                        Spacer()
+                        Text("••••••••")
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundStyle(.secondary)
                     }
-            }
-
-            Section("Character Pack") {
-                Picker("Pack", selection: $state.selectedCharacterPack) {
-                    ForEach(CharacterPackCatalog.all) { pack in
-                        HStack(spacing: 12) {
-                            packIcon(pack)
-                                .frame(width: 72, height: 72)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .fill(Color(white: 0.92))
-                                )
-                                .clipShape(RoundedRectangle(cornerRadius: 14))
-
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(pack.displayName)
-                                    .font(.system(size: 13, weight: .semibold))
-                                Text(pack.description)
-                                    .font(.system(size: 11))
-                                    .foregroundStyle(.secondary)
+                    #if DEBUG
+                    Button("Remove License") {
+                        appState.licenseKey = ""
+                        appState.isLicenseValid = false
+                        licenseInput = ""
+                        licenseStatus = nil
+                        SettingsStore.save(appState)
+                    }
+                    .foregroundStyle(.red)
+                    .font(.system(size: 11))
+                    #endif
+                } else {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            LeftAlignedTextField(text: $licenseInput, placeholder: "Enter license key")
+                            Button(isValidating ? "Validating..." : "Activate") {
+                                activateLicense()
                             }
+                            .disabled(licenseInput.isEmpty || isValidating)
                         }
-                        .tag(pack.id)
+                        if let status = licenseStatus {
+                            Text(status)
+                                .font(.system(size: 11))
+                                .foregroundStyle(status.contains("✓") ? .green : .red)
+                        }
+                        HStack(spacing: 4) {
+                            Text("Don't have a key?")
+                                .font(.system(size: 11))
+                                .foregroundStyle(.secondary)
+                            Link("Buy license", destination: URL(string: "https://judgymac.com/#pricing")!)
+                                .font(.system(size: 11))
+                        }
                     }
                 }
-                .pickerStyle(.radioGroup)
-                .labelsHidden()
-                .onChange(of: appState.selectedCharacterPack) { _, _ in SettingsStore.save(appState) }
+            }
+
+            if appState.isLicenseValid {
+                Section {
+                    Toggle("Start at login", isOn: $launchAtLogin)
+                        .onChange(of: launchAtLogin) { _, newValue in
+                            AppDelegate.setLaunchAtLogin(newValue)
+                        }
+                }
+
+                Section("Character Pack") {
+                    Picker("Pack", selection: $state.selectedCharacterPack) {
+                        ForEach(CharacterPackCatalog.all) { pack in
+                            HStack(spacing: 12) {
+                                packIcon(pack)
+                                    .frame(width: 72, height: 72)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .fill(Color(white: 0.92))
+                                    )
+                                    .clipShape(RoundedRectangle(cornerRadius: 14))
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(pack.displayName)
+                                        .font(.system(size: 13, weight: .semibold))
+                                    Text(pack.description)
+                                        .font(.system(size: 11))
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .tag(pack.id)
+                        }
+                    }
+                    .pickerStyle(.radioGroup)
+                    .labelsHidden()
+                    .onChange(of: appState.selectedCharacterPack) { _, _ in SettingsStore.save(appState) }
+                }
             }
         }
         .formStyle(.grouped)
+        .environment(\.layoutDirection, .leftToRight)
+    }
+
+    private func activateLicense() {
+        isValidating = true
+        licenseStatus = nil
+        Task {
+            let result = await LicenseManager.validate(key: licenseInput)
+            isValidating = false
+            switch result {
+            case .valid:
+                appState.licenseKey = licenseInput.trimmingCharacters(in: .whitespacesAndNewlines)
+                appState.isLicenseValid = true
+                licenseStatus = "✓ License activated!"
+                SettingsStore.save(appState)
+                // Pre-warm assets for instant first slap
+                SlapWindow.shared.warmUp(pack: appState.currentPack)
+                SoundPlayer.preload([
+                    appState.currentPack.slapSoundPath,
+                    "\(appState.currentPack.folderPath)/slap_voice",
+                ])
+            case .invalid:
+                licenseStatus = "✗ Invalid license key"
+            case .error(let msg):
+                licenseStatus = "✗ Error: \(msg)"
+            }
+        }
     }
 
     @ViewBuilder
@@ -86,6 +167,23 @@ struct TriggersSettingsTab: View {
     @Environment(AppState.self) private var appState
     var body: some View {
         @Bindable var state = appState
+
+        if !appState.isLicenseValid {
+            VStack(spacing: 12) {
+                Spacer()
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 32))
+                    .foregroundStyle(.secondary)
+                Text("Activate your license to configure triggers")
+                    .font(.system(size: 13))
+                    .foregroundStyle(.secondary)
+                Text("Go to General → License")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.tertiary)
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
 
         Form {
             // Slap + Voice grouped together
@@ -150,6 +248,9 @@ struct TriggersSettingsTab: View {
             .opacity(appState.toastEnabled ? 1 : 0.4)
         }
         .formStyle(.grouped)
+        .environment(\.layoutDirection, .leftToRight)
+
+        } // else isLicenseValid
     }
 
     private func triggerBinding(for trigger: TriggerType) -> Binding<Bool> {
@@ -210,5 +311,44 @@ struct AboutSettingsTab: View {
             }
         }
         .formStyle(.grouped)
+        .environment(\.layoutDirection, .leftToRight)
+    }
+}
+
+// MARK: - Left-Aligned TextField (NSViewRepresentable)
+
+struct LeftAlignedTextField: NSViewRepresentable {
+    @Binding var text: String
+    var placeholder: String
+
+    func makeNSView(context: Context) -> NSTextField {
+        let field = NSTextField()
+        field.placeholderString = placeholder
+        field.font = .systemFont(ofSize: 13)
+        field.alignment = .left
+        field.lineBreakMode = .byTruncatingTail
+        field.isBordered = true
+        field.isBezeled = true
+        field.bezelStyle = .roundedBezel
+        field.delegate = context.coordinator
+        return field
+    }
+
+    func updateNSView(_ nsView: NSTextField, context: Context) {
+        if nsView.stringValue != text {
+            nsView.stringValue = text
+        }
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator(text: $text) }
+
+    class Coordinator: NSObject, NSTextFieldDelegate {
+        var text: Binding<String>
+        init(text: Binding<String>) { self.text = text }
+        func controlTextDidChange(_ obj: Notification) {
+            if let field = obj.object as? NSTextField {
+                text.wrappedValue = field.stringValue
+            }
+        }
     }
 }

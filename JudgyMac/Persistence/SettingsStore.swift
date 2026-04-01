@@ -10,7 +10,8 @@ enum SettingsStore {
         static let isOnboarded = "com.judgymac.onboarded"
         static let toastEnabled = "com.judgymac.toastEnabled"
         static let voiceEnabled = "com.judgymac.voiceEnabled"
-        static let isFullVersion = "com.judgymac.fullVersion"
+        static let licenseKey = "com.judgymac.licenseKey"
+        static let isLicenseValid = "com.judgymac.licenseValid"
 
         // Stats
         static let statsDate = "com.judgymac.stats.date"
@@ -37,7 +38,10 @@ enum SettingsStore {
         defaults.set(state.isOnboarded, forKey: Keys.isOnboarded)
         defaults.set(state.toastEnabled, forKey: Keys.toastEnabled)
         defaults.set(state.voiceEnabled, forKey: Keys.voiceEnabled)
-        defaults.set(state.isFullVersion, forKey: Keys.isFullVersion)
+        if !state.licenseKey.isEmpty {
+            defaults.set(LicenseManager.hashKey(state.licenseKey), forKey: Keys.licenseKey)
+        }
+        defaults.set(state.isLicenseValid, forKey: Keys.isLicenseValid)
 
         let triggers = state.enabledTriggers.map(\.rawValue)
         defaults.set(triggers, forKey: Keys.enabledTriggers)
@@ -88,11 +92,8 @@ enum SettingsStore {
         if defaults.object(forKey: Keys.voiceEnabled) != nil {
             state.voiceEnabled = defaults.bool(forKey: Keys.voiceEnabled)
         }
-
-        // isFullVersion defaults to true — only override if explicitly saved as false
-        if defaults.object(forKey: Keys.isFullVersion) != nil {
-            state.isFullVersion = defaults.bool(forKey: Keys.isFullVersion)
-        }
+        state.licenseKey = defaults.string(forKey: Keys.licenseKey) ?? "" // stored as hash
+        state.isLicenseValid = defaults.bool(forKey: Keys.isLicenseValid)
 
         if let triggers = defaults.stringArray(forKey: Keys.enabledTriggers) {
             var loaded = Set(triggers.compactMap { TriggerType(rawValue: $0) })
