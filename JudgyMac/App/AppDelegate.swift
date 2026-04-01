@@ -44,15 +44,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         observeMenuBarSprite()
         SoundPlayer.isMuted = !_appState.voiceEnabled
 
-        // Pre-warm slap window so first slap is instant (only if licensed)
+        // Pre-warm slap window + sounds so first slap is instant (only if licensed)
         if _appState.isLicenseValid {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
                 guard let self else { return }
-                SlapWindow.shared.warmUp(pack: self._appState.currentPack)
-                SoundPlayer.preload([
-                    self._appState.currentPack.slapSoundPath,
-                    "\(self._appState.currentPack.folderPath)/slap_voice",
-                ])
+                let pack = self._appState.currentPack
+
+                // Warm up slap window (creates NSHostingController)
+                SlapWindow.shared.warmUp(pack: pack)
+
+                // Preload slap sounds + first few voice lines
+                var sounds = [
+                    pack.slapSoundPath,
+                    "\(pack.folderPath)/slap_voice",
+                    "\(pack.folderPath)/umph",
+                ]
+                // Preload first 4 slap voice files
+                for i in 1...4 {
+                    sounds.append("\(pack.folderPath)/slap_voices/slap_voice_\(i)")
+                }
+                SoundPlayer.preload(sounds)
             }
         }
 

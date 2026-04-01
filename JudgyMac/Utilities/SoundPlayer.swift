@@ -93,10 +93,13 @@ enum SoundPlayer {
 
     // MARK: - Preload
 
-    /// Preload sound URL resolution into cache for instant playback.
+    /// Preload sounds into cache — resolves URLs and decodes audio data.
     static func preload(_ names: [String]) {
         for name in names {
-            _ = resolveURL(name)
+            guard let url = resolveURL(name),
+                  let player = try? AVAudioPlayer(contentsOf: url) else { continue }
+            player.prepareToPlay()
+            // prepareToPlay() decodes audio into buffer — first play will be instant
         }
     }
 
