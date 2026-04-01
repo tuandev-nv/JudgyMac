@@ -106,12 +106,13 @@ final class SlapWindow {
                 SoundPlayer.play(voicePath)
             }
 
-            // After 5s: dismiss and reset so they can slap again
+            // After 3s: dismiss slap window → launch desktop runner
             dismissTask?.cancel()
             dismissTask = Task { [weak self] in
-                try? await Task.sleep(for: .seconds(5))
+                try? await Task.sleep(for: .seconds(3))
                 guard !Task.isCancelled else { return }
                 self?.dismiss()
+                self?.launchDesktopRunner(pack: pack)
             }
             return
         }
@@ -182,6 +183,16 @@ final class SlapWindow {
             reactionQueue = pack.reactions.flatMap(\.lines).shuffled()
         }
         return reactionQueue.isEmpty ? nil : reactionQueue.removeFirst()
+    }
+
+    // MARK: - Desktop Runner
+
+    private func launchDesktopRunner(pack: CharacterPack) {
+        NotificationCenter.default.post(name: .hideMenuBarSprite, object: nil)
+
+        DesktopRunnerWindow.shared.run(pack: pack) {
+            NotificationCenter.default.post(name: .showMenuBarSprite, object: nil)
+        }
     }
 
     // MARK: - Dismiss Timer

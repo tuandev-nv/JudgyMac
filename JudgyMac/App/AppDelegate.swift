@@ -39,6 +39,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         setupStatusItem()
         setupPopover()
         startEngine()
+        observeMenuBarSprite()
 
         // Pre-warm slap window so first slap is instant
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
@@ -312,6 +313,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
 
         if !spriteFrames.isEmpty {
             startSpriteAnimation()
+        }
+    }
+
+    // MARK: - Menu Bar Sprite Visibility (for Desktop Runner)
+
+    private func observeMenuBarSprite() {
+        NotificationCenter.default.addObserver(
+            forName: .hideMenuBarSprite, object: nil, queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            // Stop sprite animation, re-render stats without emoji
+            self.spriteTimer?.invalidate()
+            self.spriteTimer = nil
+            let cpu = Int(self._appState.cpuUsage * 100)
+            let gpu = Int(self._appState.gpuUsage * 100)
+            let ram = Int(self._appState.ramUsage * 100)
+            let stats = [("CPU", "\(cpu)%"), ("GPU", "\(gpu)%"), ("RAM", "\(ram)%")]
+            let combined = self.renderMenuBarImage(emoji: nil, stats: stats)
+            self.statusItem.button?.image = combined
+            self.statusItem.button?.title = ""
+        }
+        NotificationCenter.default.addObserver(
+            forName: .showMenuBarSprite, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.loadSpriteFrames()
         }
     }
 

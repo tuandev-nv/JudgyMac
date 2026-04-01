@@ -92,6 +92,13 @@ struct MenuBarView: View {
                 DevGridButton(icon: "🖥", label: "Screen Time") {
                     fireDevEvent(.screenTime(minutes: 90))
                 }
+                DevGridButton(icon: "🏃", label: "KO Run") {
+                    let pack = appState.currentPack
+                    NotificationCenter.default.post(name: .hideMenuBarSprite, object: nil)
+                    DesktopRunnerWindow.shared.run(pack: pack) {
+                        NotificationCenter.default.post(name: .showMenuBarSprite, object: nil)
+                    }
+                }
                 DevGridButton(icon: "🗑", label: "Reset") {
                     appState.todayStats = UserStats()
                     appState.currentRoast = nil
@@ -305,20 +312,6 @@ private func packIcon(pack: CharacterPack, size: CGFloat) -> some View {
     }
     .frame(width: size, height: size)
     .clipShape(RoundedRectangle(cornerRadius: size * 0.2))
-}
-
-// MARK: - Fluent Emoji Helper
-
-private func fluentFace(mood: Mood, size: CGFloat) -> some View {
-    Group {
-        let name = FluentEmoji.primary(for: mood)
-        if let img = FluentEmoji.swiftUIImage(named: name) {
-            img.resizable().aspectRatio(contentMode: .fit)
-        } else {
-            Text(mood.emoji).font(.system(size: size * 0.8))
-        }
-    }
-    .frame(width: size, height: size)
 }
 
 // MARK: - Bar Button

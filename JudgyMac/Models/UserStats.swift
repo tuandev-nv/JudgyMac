@@ -43,16 +43,6 @@ struct UserStats: Sendable {
         }
     }
 
-    /// Generates a "vibe" label based on today's stats
-    var todayVibe: String {
-        if roastCount == 0 { return "Unjudged... for now" }
-        if lidOpenCount > 10 { return "Serial Lid Opener" }
-        if maxIdleMinutes > 30 { return "Professional Procrastinator" }
-        if keystrokeCount > 3000 { return "Keyboard Warrior" }
-        if roastCount > 10 { return "Fully Roasted" }
-        return "Mildly Judged"
-    }
-
     /// Judgment bar progress (0.0 - 1.0)
     var judgmentLevel: Double {
         let score = Double(roastCount) / 20.0

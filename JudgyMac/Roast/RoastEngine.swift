@@ -48,7 +48,8 @@ final class RoastEngine {
             text: text,
             personality: pack.displayName,
             triggerType: event.type,
-            mood: mood
+            mood: mood,
+            customEmoji: pack.randomEmoji()
         )
     }
 

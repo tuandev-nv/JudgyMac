@@ -547,10 +547,43 @@ private struct ToastView: View {
         ZStack(alignment: .topTrailing) {
             HStack(alignment: .top, spacing: 16) {
                 fluentEmojiView
-                    .frame(width: 56, height: 56)
+                    .frame(width: 72, height: 72)
                     .scaleEffect(emojiVisible ? 1 : 0.01)
                     .rotationEffect(.degrees(emojiVisible ? 0 : -30))
                     .opacity(emojiVisible ? 1 : 0)
+                    .keyframeAnimator(
+                        initialValue: EmojiBounce(),
+                        trigger: emojiVisible
+                    ) { content, value in
+                        content
+                            .offset(y: value.offsetY)
+                            .rotationEffect(.degrees(value.rotation))
+                    } keyframes: { _ in
+                        KeyframeTrack(\.offsetY) {
+                            // 3s wobble — "talking" bounce
+                            SpringKeyframe(-4, duration: 0.25, spring: .bouncy)
+                            SpringKeyframe(2, duration: 0.25, spring: .bouncy)
+                            SpringKeyframe(-3, duration: 0.25, spring: .bouncy)
+                            SpringKeyframe(1, duration: 0.25, spring: .bouncy)
+                            SpringKeyframe(-4, duration: 0.3, spring: .bouncy)
+                            SpringKeyframe(2, duration: 0.2, spring: .bouncy)
+                            SpringKeyframe(-2, duration: 0.3, spring: .bouncy)
+                            SpringKeyframe(1, duration: 0.2, spring: .bouncy)
+                            SpringKeyframe(-3, duration: 0.25, spring: .bouncy)
+                            SpringKeyframe(0, duration: 0.45, spring: .bouncy)
+                        }
+                        KeyframeTrack(\.rotation) {
+                            SpringKeyframe(3, duration: 0.3, spring: .bouncy)
+                            SpringKeyframe(-3, duration: 0.3, spring: .bouncy)
+                            SpringKeyframe(2, duration: 0.3, spring: .bouncy)
+                            SpringKeyframe(-2, duration: 0.3, spring: .bouncy)
+                            SpringKeyframe(3, duration: 0.25, spring: .bouncy)
+                            SpringKeyframe(-2, duration: 0.25, spring: .bouncy)
+                            SpringKeyframe(1, duration: 0.3, spring: .bouncy)
+                            SpringKeyframe(-1, duration: 0.3, spring: .bouncy)
+                            SpringKeyframe(0, duration: 0.4, spring: .bouncy)
+                        }
+                    }
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text(roast.text)
@@ -567,17 +600,6 @@ private struct ToastView: View {
                         .opacity(metaVisible ? 1 : 0)
                         .offset(y: metaVisible ? 0 : 6)
 
-                    HStack(spacing: 4) {
-                        Text("JudgyMac")
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundStyle(.white.opacity(0.4))
-                        Text("·")
-                            .foregroundStyle(.white.opacity(0.2))
-                        Text("judgymac.com")
-                            .font(.system(size: 10))
-                            .foregroundStyle(.white.opacity(0.3))
-                    }
-                    .opacity(metaVisible ? 1 : 0)
                 }
             }
             .padding(.leading, 14)
@@ -600,6 +622,9 @@ private struct ToastView: View {
             ZStack {
                 // Deep dark glass base
                 Color(white: 0.06)
+
+                // US flag stripes — subtle, only for character packs that feel patriotic
+                flagStripes
 
                 // Mood tint
                 moodColor.opacity(0.03)
@@ -695,13 +720,45 @@ private struct ToastView: View {
         }
     }
 
+    // MARK: - US Flag Background
+
+    @ViewBuilder
+    private var flagStripes: some View {
+        // US flag background image
+        if let url = Bundle.main.resourceURL?
+            .appendingPathComponent("CharacterPacks/trump/roast_bg.png"),
+           let nsImage = NSImage(contentsOf: url) {
+            Image(nsImage: nsImage)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .opacity(0.15)
+                .clipShape(RoundedRectangle(cornerRadius: 32))
+        }
+    }
+
+    struct EmojiBounce {
+        var offsetY: CGFloat = 0
+        var rotation: Double = 0
+    }
+
     @ViewBuilder
     private var fluentEmojiView: some View {
-        let name = FluentEmoji.primary(for: roast.mood)
-        if let img = FluentEmoji.swiftUIImage(named: name) {
-            img.resizable().aspectRatio(contentMode: .fit)
+        if let emojiPath = roast.customEmoji,
+           let url = Bundle.main.resourceURL?.appendingPathComponent("\(emojiPath).png"),
+           let nsImage = NSImage(contentsOf: url) {
+            Image(nsImage: nsImage)
+                .resizable()
+                .interpolation(.high)
+                .antialiased(true)
+                .aspectRatio(contentMode: .fit)
+                .shadow(color: .black.opacity(0.5), radius: 2, y: 1)
         } else {
-            Text(roast.mood.emoji).font(.system(size: 40))
+            let name = FluentEmoji.primary(for: roast.mood)
+            if let img = FluentEmoji.swiftUIImage(named: name) {
+                img.resizable().aspectRatio(contentMode: .fit)
+            } else {
+                Text(roast.mood.emoji).font(.system(size: 40))
+            }
         }
     }
 }

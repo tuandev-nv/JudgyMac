@@ -29,7 +29,11 @@ final class DetectionCoordinator {
         detectors[.screenTime] = ScreenTimeDetector()
         detectors[.appSwitch] = AppSwitchDetector()
         detectors[.thermal] = ThermalDetector()
+        #if ACCELEROMETER_ENABLED
+        detectors[.slap] = AccelerometerDetector()
+        #else
         detectors[.slap] = SlapDetector()
+        #endif
     }
 
     // MARK: - Start / Stop
@@ -104,4 +108,6 @@ final class DetectionCoordinator {
 
 extension Notification.Name {
     static let behaviorEventDetected = Notification.Name("com.judgymac.behaviorEventDetected")
+    static let hideMenuBarSprite = Notification.Name("com.judgymac.hideMenuBarSprite")
+    static let showMenuBarSprite = Notification.Name("com.judgymac.showMenuBarSprite")
 }

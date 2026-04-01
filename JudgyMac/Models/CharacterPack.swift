@@ -77,6 +77,34 @@ struct CharacterPack: Identifiable, Sendable {
             .max(by: { $0.minHits < $1.minHits })
     }
 
+    /// Random emoji from pack's emojis/ folder. Returns nil if no custom emojis.
+    func randomEmoji() -> String? {
+        let cached = Self.emojiCache[id]
+        let emojis: [String]
+
+        if let cached {
+            emojis = cached
+        } else {
+            guard let dir = Bundle.main.resourceURL?
+                .appendingPathComponent(folderPath)
+                .appendingPathComponent("emojis"),
+                  let files = try? FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)
+                    .filter({ $0.pathExtension == "png" })
+                    .map({ $0.deletingPathExtension().lastPathComponent })
+            else {
+                Self.emojiCache[id] = []
+                return nil
+            }
+            emojis = files
+            Self.emojiCache[id] = files
+        }
+
+        guard let name = emojis.randomElement() else { return nil }
+        return "\(folderPath)/emojis/\(name)"
+    }
+
+    nonisolated(unsafe) private static var emojiCache: [String: [String]] = [:]
+
     /// Voice path for a roast template (if available)
     func roastVoicePath(templateId: String) -> String? {
         for templates in roastTemplates.values {

@@ -53,3 +53,38 @@ targets:
       properties:
         com.apple.security.app-sandbox: true
         com.apple.security.network.client: true
+
+  JudgyMacPro:
+    type: application
+    platform: macOS
+    sources:
+      - path: JudgyMac
+        excludes:
+          - "Resources/**"
+      - path: JudgyMac/Resources/CharacterPacks
+        type: folder
+        buildPhase: resources
+      - path: JudgyMac/Resources/Emoji
+        type: folder
+        buildPhase: resources
+      - path: JudgyMac/Resources/Sounds
+        type: folder
+        buildPhase: resources
+    info:
+      path: JudgyMac/Info.plist
+      properties:
+        LSUIElement: true
+        CFBundleDisplayName: JudgyMac Pro
+        NSHumanReadableCopyright: "Copyright © 2026 JudgyMac. All rights reserved."
+    settings:
+      base:
+        PRODUCT_NAME: JudgyMac Pro
+        PRODUCT_BUNDLE_IDENTIFIER: com.judgymac.pro
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: ACCELEROMETER_ENABLED
+        LD_RUNPATH_SEARCH_PATHS:
+          - "@executable_path/../Frameworks"
+    entitlements:
+      path: JudgyMac/JudgyMacPro.entitlements
+      properties:
+        com.apple.security.app-sandbox: false
+        com.apple.security.network.client: true
