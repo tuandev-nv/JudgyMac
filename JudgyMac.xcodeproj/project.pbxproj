@@ -58,6 +58,7 @@
 		7270FC211B986C2F320B42EC /* JudgyMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BE02200D5870AF01016DA0E /* JudgyMacApp.swift */; };
 		75E007050A70B7626378252F /* RoastPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A62757D14A172F7BDD17E8 /* RoastPresenter.swift */; };
 		77F29535B78E36AD753FE342 /* AccelerometerDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41C96D6970A9CB2BB061A55D /* AccelerometerDetector.swift */; };
+		7AEFBFCED7EF828100E79286 /* SlapSignalProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054CA71B6E571EF112AC2646 /* SlapSignalProcessor.swift */; };
 		7DB1BE2AAF7E9665D3557085 /* AppSwitchDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDCB418A07F03FA3DF9357EA /* AppSwitchDetector.swift */; };
 		7FA3ADFD692FEFFF375D007B /* AccessibilityHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D786061E93EA29E7F3A893 /* AccessibilityHelper.swift */; };
 		8308261336EE90F27DED82A2 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372FB6B53D1F0B92358F5D67 /* MenuBarView.swift */; };
@@ -91,6 +92,7 @@
 		B16D5B8A193F6A6CFF9A0613 /* RoastCooldownTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F6A61AD29F9DDFD9AA9C8A /* RoastCooldownTracker.swift */; };
 		B1F191E424BE1E5DE7290718 /* SlapWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336E4DCE2440E5914688639A /* SlapWindow.swift */; };
 		B27D6C0052DD50BD2CBC9B5F /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA629D49B1C788897ECD732C /* GlassCard.swift */; };
+		B2C82B301E7F8AF031B996D6 /* SlapSignalProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 054CA71B6E571EF112AC2646 /* SlapSignalProcessor.swift */; };
 		B948D7AD89C50162F3ABBA99 /* RoastEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65F45A53EAB9A5FF2172C637 /* RoastEngine.swift */; };
 		BD2EC15D563C9E1D1E53C5B6 /* DetectionCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7162979E25841246E79E8578 /* DetectionCoordinator.swift */; };
 		BDB6D701AC0FBB9C14C3F11A /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA02D1EC626473B027D56BDE /* SettingsStore.swift */; };
@@ -128,6 +130,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		054CA71B6E571EF112AC2646 /* SlapSignalProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlapSignalProcessor.swift; sourceTree = "<group>"; };
 		06148C9A9E28B56AE417AC2E /* ActivityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityMonitor.swift; sourceTree = "<group>"; };
 		0811A026395AC21A32063256 /* ToastWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastWindow.swift; sourceTree = "<group>"; };
 		0860369C5964AFF5D6DBE73D /* DesktopRunnerWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesktopRunnerWindow.swift; sourceTree = "<group>"; };
@@ -319,6 +322,7 @@
 				66BDE62CC433E43448BCD092 /* PressureTrackingView.swift */,
 				8AC2C68A6054309E5A14DBC3 /* ScreenTimeDetector.swift */,
 				C0AFD822028086438C8EE649 /* SlapDetector.swift */,
+				054CA71B6E571EF112AC2646 /* SlapSignalProcessor.swift */,
 				902119412E9AC6D670EB7461 /* SystemMonitor.swift */,
 				E18F5D092B33FACE9B7C389F /* ThermalDetector.swift */,
 				201D0EA6EFC1AB1F74FA4E5D /* TimeOfDayDetector.swift */,
@@ -544,6 +548,7 @@
 				FBCA40AC9856ED6D6C2B2E77 /* SlapAnimationView.swift in Sources */,
 				E7A3B83E39E6467FCA580173 /* SlapDetector.swift in Sources */,
 				6A12E5EBD9FA1E11CA344F95 /* SlapPresenter.swift in Sources */,
+				7AEFBFCED7EF828100E79286 /* SlapSignalProcessor.swift in Sources */,
 				B1F191E424BE1E5DE7290718 /* SlapWindow.swift in Sources */,
 				A832A00A90D770D307559B5E /* SoundPlayer.swift in Sources */,
 				917DBFDD57B109A5BA4E98F6 /* StatsStore.swift in Sources */,
@@ -606,6 +611,7 @@
 				A2152ADF8A126C14349C7450 /* SlapAnimationView.swift in Sources */,
 				1E6CE19518AC9BCFA4E257B3 /* SlapDetector.swift in Sources */,
 				267D85BFE780078C1D05B56B /* SlapPresenter.swift in Sources */,
+				B2C82B301E7F8AF031B996D6 /* SlapSignalProcessor.swift in Sources */,
 				92907AEFB63A2C6EFF3EEF23 /* SlapWindow.swift in Sources */,
 				37D5F54E16C82B0687704C6E /* SoundPlayer.swift in Sources */,
 				69B30361906EE9A1887BD44C /* StatsStore.swift in Sources */,

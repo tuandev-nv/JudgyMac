@@ -1,4 +1,5 @@
 #if ACCELEROMETER_ENABLED
+import AppKit
 import Foundation
 import IOKit
 
@@ -13,11 +14,14 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
     private var reportBuffer: UnsafeMutablePointer<UInt8>?
     private let reportBufferSize = 64
     private var lastSlapTime: Date = .distantPast
+    private var processor = SlapSignalProcessor()
+    private var suppressedUntil: Date = .distantPast
+    private var sleepWakeObservers: [NSObjectProtocol] = []
 
     // Tuning
-    private let spikeThreshold: Double = 0.1  // g-force threshold for slap detection
     private let debounceInterval: TimeInterval = 0.5
-    private var baselineMagnitude: Double = 1.0  // ~1g at rest
+    /// Suppress detection for this many seconds around sleep/wake (lid close/open).
+    private let lidSuppressionSeconds: TimeInterval = 3.0
 
     func start(onEvent: @escaping @Sendable (BehaviorEvent) -> Void) {
         guard !isRunning else { return }
@@ -35,14 +39,20 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
         }
 
         isRunning = true
+        observeSleepWake()
         #if DEBUG
-        print("🏋️ [Accelerometer] ✅ Started — threshold: \(spikeThreshold)g")
+        print("🏋️ [Accelerometer] ✅ Started — multi-algorithm voting (≥3/4)")
         #endif
     }
 
     func stop() {
         guard isRunning else { return }
         isRunning = false
+
+        for observer in sleepWakeObservers {
+            NSWorkspace.shared.notificationCenter.removeObserver(observer)
+        }
+        sleepWakeObservers.removeAll()
 
         if let device = hidDevice {
             IOHIDDeviceUnscheduleFromRunLoop(device, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
@@ -51,6 +61,41 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
         hidDevice = nil
         reportBuffer?.deallocate()
         reportBuffer = nil
+    }
+
+    // MARK: - Sleep/Wake Suppression
+
+    /// Suppress accelerometer around lid close/open to avoid false slaps from physical impact.
+    private func observeSleepWake() {
+        let center = NSWorkspace.shared.notificationCenter
+
+        let willSleep = center.addObserver(
+            forName: NSWorkspace.willSleepNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            self.suppressedUntil = Date().addingTimeInterval(self.lidSuppressionSeconds)
+            #if DEBUG
+            print("🏋️ [Accelerometer] 😴 Sleep — suppressing for \(self.lidSuppressionSeconds)s")
+            #endif
+        }
+
+        let didWake = center.addObserver(
+            forName: NSWorkspace.didWakeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            self.suppressedUntil = Date().addingTimeInterval(self.lidSuppressionSeconds)
+            // Reset processor baselines after wake (accelerometer state may have drifted)
+            self.processor = SlapSignalProcessor()
+            #if DEBUG
+            print("🏋️ [Accelerometer] ☀️ Wake — suppressing for \(self.lidSuppressionSeconds)s, reset processor")
+            #endif
+        }
+
+        sleepWakeObservers = [willSleep, didWake]
     }
 
     // MARK: - IOKit HID Setup
@@ -179,38 +224,36 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
     fileprivate func handleReport(_ report: UnsafeMutablePointer<UInt8>, length: CFIndex) {
         guard length >= 18 else { return }
 
+        // Suppress during lid close/open
+        guard Date() >= suppressedUntil else { return }
+
+        // Suppress when screen is locked
+        let isLocked = CGSessionCopyCurrentDictionary()
+            .flatMap { ($0 as NSDictionary)["CGSSessionScreenIsLocked"] as? Bool } ?? false
+        guard !isLocked else { return }
+
         // Parse BMI286 accelerometer data (Q16 fixed-point, little-endian)
         let x = parseQ16(report + 6)
         let y = parseQ16(report + 10)
         let z = parseQ16(report + 14)
 
-        let magnitude = sqrt(x * x + y * y + z * z)
-        let delta = abs(magnitude - baselineMagnitude)
-
         reportCount += 1
 
-        // Only log when delta exceeds slap threshold
-        if delta >= spikeThreshold {
-            print("🏋️ [Accel] 💥 SLAP! delta=\(String(format:"%.3f",delta)) mag=\(String(format:"%.2f",magnitude)) baseline=\(String(format:"%.2f",baselineMagnitude))")
-        }
+        // Multi-algorithm voting
+        let verdict = processor.process(x: x, y: y, z: z)
 
-        // Update baseline with exponential moving average
-        baselineMagnitude = baselineMagnitude * 0.99 + magnitude * 0.01
+        guard verdict.detected else { return }
 
-        // Check for slap
-        guard delta >= spikeThreshold else { return }
-
+        // Debounce
         let now = Date()
         guard now.timeIntervalSince(lastSlapTime) >= debounceInterval else { return }
         lastSlapTime = now
 
-        let normalizedPressure = min(delta / (spikeThreshold * 2), 1.0)
-
         #if DEBUG
-        print("🏋️ [Accelerometer] SLAP! delta=\(String(format: "%.2f", delta))g pressure=\(String(format: "%.2f", normalizedPressure))")
+        print("🏋️ [Accelerometer] 💥 SLAP! votes=\(verdict.votes)/4 mag=\(String(format: "%.3f", verdict.magnitude))g conf=\(String(format: "%.2f", verdict.confidence))")
         #endif
 
-        onEvent?(.slap(pressure: normalizedPressure, source: "body"))
+        onEvent?(.slap(pressure: verdict.confidence, source: "body"))
     }
 
     private func parseQ16(_ ptr: UnsafeMutablePointer<UInt8>) -> Double {
