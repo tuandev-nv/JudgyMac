@@ -219,7 +219,17 @@ enum CharacterPackCatalog {
 
     private static func loadAll() -> [CharacterPack] {
         guard let packsURL = Bundle.main.resourceURL?
-            .appendingPathComponent("CharacterPacks") else { return [] }
+            .appendingPathComponent("CharacterPacks") else {
+            #if DEBUG
+            print("📦 [Catalog] ❌ No CharacterPacks in bundle. resourceURL=\(Bundle.main.resourceURL?.path ?? "nil")")
+            #endif
+            return []
+        }
+
+        #if DEBUG
+        let exists = FileManager.default.fileExists(atPath: packsURL.path)
+        print("📦 [Catalog] CharacterPacks path: \(packsURL.path), exists: \(exists)")
+        #endif
 
         var packs: [CharacterPack] = []
 

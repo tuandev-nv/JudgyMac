@@ -131,12 +131,8 @@ final class RoastPresenter {
     }
 
     private func showToast(_ roast: RoastEntry) {
-        Task {
-            let settings = await UNUserNotificationCenter.current().notificationSettings()
-            if settings.authorizationStatus == .authorized {
-                ToastWindow.shared.show(roast: roast)
-            }
-        }
+        guard appState.toastEnabled else { return }
+        ToastWindow.shared.show(roast: roast)
     }
 
     // MARK: - Notification Delivery

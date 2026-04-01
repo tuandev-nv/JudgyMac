@@ -647,6 +647,7 @@
 				);
 				PRODUCT_NAME = JudgyMac;
 				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ACCELEROMETER_ENABLED";
 			};
 			name = Release;
 		};
@@ -743,6 +744,7 @@
 				);
 				PRODUCT_NAME = JudgyMac;
 				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ACCELEROMETER_ENABLED";
 			};
 			name = Debug;
 		};

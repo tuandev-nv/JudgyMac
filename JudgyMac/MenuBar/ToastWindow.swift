@@ -12,7 +12,7 @@ final class ToastWindow {
     /// Extra space: glow rendering + entrance animation headroom
     private let glowInset: CGFloat = 60
     private let toastWidth: CGFloat = 420
-    private let cornerRadius: CGFloat = 32
+    private let cornerRadius: CGFloat = 22
 
     static let shared = ToastWindow()
     private init() {}
@@ -613,7 +613,7 @@ private struct ToastView: View {
                     .background(.white.opacity(isHovering ? 0.15 : 0), in: Circle())
             }
             .buttonStyle(.plain)
-            .padding(8)
+            .offset(x: -10, y: 10)
             .opacity(textVisible ? 1 : 0)
         }
         .frame(width: 420)
@@ -652,7 +652,7 @@ private struct ToastView: View {
                     )
                     .frame(width: 280, height: 100)
                     .offset(x: -50, y: -45)
-                    .clipShape(RoundedRectangle(cornerRadius: 32))
+                    .clipShape(RoundedRectangle(cornerRadius: 22))
 
                 // Diagonal specular
                 LinearGradient(
@@ -674,10 +674,10 @@ private struct ToastView: View {
                     .frame(width: 140, height: 50)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
                     .offset(x: -10, y: -8)
-                    .clipShape(RoundedRectangle(cornerRadius: 32))
+                    .clipShape(RoundedRectangle(cornerRadius: 22))
 
                 // Double border
-                RoundedRectangle(cornerRadius: 32)
+                RoundedRectangle(cornerRadius: 22)
                     .strokeBorder(
                         LinearGradient(
                             colors: [.white.opacity(0.16), .white.opacity(0.05), .white.opacity(0.02), .white.opacity(0.04)],
@@ -686,7 +686,7 @@ private struct ToastView: View {
                         ),
                         lineWidth: 0.5
                     )
-                RoundedRectangle(cornerRadius: 30)
+                RoundedRectangle(cornerRadius: 20)
                     .strokeBorder(
                         LinearGradient(
                             colors: [.white.opacity(0.08), .white.opacity(0.02), .clear, .white.opacity(0.02)],
@@ -731,7 +731,7 @@ private struct ToastView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .opacity(0.15)
-                .clipShape(RoundedRectangle(cornerRadius: 32))
+                .clipShape(RoundedRectangle(cornerRadius: 22))
         }
     }
 

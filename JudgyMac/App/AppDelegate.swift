@@ -40,6 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         setupPopover()
         startEngine()
         observeMenuBarSprite()
+        SoundPlayer.isMuted = !_appState.voiceEnabled
 
         // Pre-warm slap window so first slap is instant
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
@@ -153,6 +154,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private func updateMenuBarIcon() {
         // Sprite animation handles its own icon updates
         if spriteTimer != nil { return }
+        // Don't restore emoji while desktop runner is active
+        if DesktopRunnerWindow.shared.isActive { return }
 
         let faceName = FluentEmoji.face(for: currentMood, frame: animationFrame)
         let emojiImage = FluentEmoji.menuBarImage(named: faceName)
@@ -347,16 +350,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private func startSpriteAnimation() {
         spriteFrame = 0
         spriteTick = 0
-        // Fixed 4Hz tick (like RunCat), frame advance rate scales with CPU
-        spriteTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { _ in
+        // 8Hz tick, frame advance rate scales with CPU
+        spriteTimer = Timer.scheduledTimer(withTimeInterval: 0.125, repeats: true) { _ in
             MainActor.assumeIsolated { [weak self] in
                 guard let self, !self.spriteFrames.isEmpty else { return }
                 let cpu = self._appState.cpuUsage
 
                 // CPU → how often to advance frame
-                // Low CPU: advance every 4 ticks (1fps idle stroll)
-                // High CPU: advance every tick (4fps sprint)
-                let skipRate = max(1, Int(4 - cpu * 3))
+                // Low CPU (0%): every 8 ticks = 1fps stroll
+                // Mid CPU (30%): every 3 ticks = 2.7fps jog
+                // High CPU (70%): every 1 tick = 8fps sprint
+                let skipRate = max(1, Int(round(8 * (1 - cpu * 1.2))))
                 self.spriteTick += 1
                 if self.spriteTick >= skipRate {
                     self.spriteTick = 0

@@ -7,12 +7,14 @@ enum SoundPlayer {
     private static var urlCache: [String: URL?] = [:]
     private static var activePlayers: [AVAudioPlayer] = []
     private static let maxActivePlayers = 10
+    static var isMuted = false
 
     // MARK: - Play
 
     /// Play a sound by name (without extension). Searches for .aiff, .mp3, .wav.
     /// If the sound is already playing, a new overlapping instance is created.
     static func play(_ name: String, volume: Float = 1.0, rate: Float = 1.0) {
+        guard !isMuted else { return }
         guard let url = resolveURL(name) else {
             #if DEBUG
             print("🔊 [SoundPlayer] Sound not found: \(name)")

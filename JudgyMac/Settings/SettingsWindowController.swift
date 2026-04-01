@@ -36,8 +36,8 @@ final class SettingsWindowController: NSWindowController, NSToolbarDelegate {
         )
         window.title = "General"
         window.isReleasedWhenClosed = false
-        window.minSize = NSSize(width: 560, height: 600)
-        window.setContentSize(NSSize(width: 560, height: 600))
+        window.minSize = NSSize(width: 560, height: 300)
+        window.setContentSize(NSSize(width: 560, height: 500))
         window.center()
 
         super.init(window: window)
@@ -108,18 +108,32 @@ final class SettingsWindowController: NSWindowController, NSToolbarDelegate {
             case .about:       AnyView(AboutSettingsTab())
             }
             let controller = NSHostingController(rootView: view)
-            controller.preferredContentSize = NSSize(width: 560, height: 600)
+            controller.sizingOptions = .preferredContentSize
             cachedControllers[tab] = controller
         }
 
         window?.contentViewController = cachedControllers[tab]
+
+        // Auto-resize window height, keep top edge and width fixed
+        if let window, let controller = cachedControllers[tab] {
+            let fixedWidth: CGFloat = 560
+            // Constrain width first so fittingSize calculates correct height
+            controller.view.frame.size.width = fixedWidth
+            controller.view.layoutSubtreeIfNeeded()
+            let fittingHeight = max(controller.view.fittingSize.height, 300)
+            let titlebarHeight = window.frame.height - window.contentView!.frame.height
+            var frame = window.frame
+            let topY = frame.maxY
+            frame.size = NSSize(width: fixedWidth, height: fittingHeight + titlebarHeight)
+            frame.origin.y = topY - frame.size.height
+            window.setFrame(frame, display: true, animate: true)
+        }
     }
 
     // MARK: - Show
 
     func showAndFocus() {
         if !(window?.isVisible ?? false) {
-            window?.setContentSize(NSSize(width: 560, height: 600))
             window?.center()
         }
         window?.makeKeyAndOrderFront(nil)

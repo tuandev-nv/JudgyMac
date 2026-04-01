@@ -10,11 +10,12 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
 
     private var onEvent: (@Sendable (BehaviorEvent) -> Void)?
     private var hidDevice: IOHIDDevice?
-    private var reportBuffer = [UInt8](repeating: 0, count: 64)
+    private var reportBuffer: UnsafeMutablePointer<UInt8>?
+    private let reportBufferSize = 64
     private var lastSlapTime: Date = .distantPast
 
     // Tuning
-    private let spikeThreshold: Double = 2.5  // g-force threshold for slap detection
+    private let spikeThreshold: Double = 0.075  // g-force threshold for slap detection
     private let debounceInterval: TimeInterval = 0.5
     private var baselineMagnitude: Double = 1.0  // ~1g at rest
 
@@ -22,28 +23,21 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
         guard !isRunning else { return }
         self.onEvent = onEvent
 
-        // IOHIDDeviceOpen requires elevated privileges (root/sudo)
-        // TODO: Implement proper privilege escalation or use SMAppService helper
-        // Run IOKit setup on background thread to avoid blocking main/RunLoop
-        DispatchQueue.global(qos: .utility).async { [weak self] in
-            guard let self else { return }
+        #if DEBUG
+        print("🏋️ [Accelerometer] Attempting to open accelerometer...")
+        #endif
 
+        guard openAccelerometer() else {
             #if DEBUG
-            print("🏋️ [Accelerometer] Attempting to open accelerometer...")
+            print("🏋️ [Accelerometer] ❌ Failed — Cmd+Shift slap still works.")
             #endif
-
-            guard self.openAccelerometer() else {
-                #if DEBUG
-                print("🏋️ [Accelerometer] ❌ Failed — may need elevated privileges. Cmd+Shift slap still works.")
-                #endif
-                return
-            }
-
-            self.isRunning = true
-            #if DEBUG
-            print("🏋️ [Accelerometer] ✅ Started — threshold: \(self.spikeThreshold)g")
-            #endif
+            return
         }
+
+        isRunning = true
+        #if DEBUG
+        print("🏋️ [Accelerometer] ✅ Started — threshold: \(spikeThreshold)g")
+        #endif
     }
 
     func stop() {
@@ -51,16 +45,22 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
         isRunning = false
 
         if let device = hidDevice {
+            IOHIDDeviceUnscheduleFromRunLoop(device, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
             IOHIDDeviceClose(device, IOOptionBits(kIOHIDOptionsTypeNone))
         }
         hidDevice = nil
+        reportBuffer?.deallocate()
+        reportBuffer = nil
     }
 
     // MARK: - IOKit HID Setup
 
     private func openAccelerometer() -> Bool {
-        let matching = IOServiceMatching("AppleSPUHIDDevice") as NSMutableDictionary
+        // Step 1: Wake ALL SPU sensors via AppleSPUHIDDriver
+        wakeSensors()
 
+        // Step 2: Find accelerometer device (usage page 0xFF00, usage 3)
+        let matching = IOServiceMatching("AppleSPUHIDDevice") as NSMutableDictionary
         var iterator: io_iterator_t = 0
         guard IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iterator) == KERN_SUCCESS else {
             #if DEBUG
@@ -70,7 +70,6 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
         }
         defer { IOObjectRelease(iterator) }
 
-        // Find accelerometer service (usage page 0xFF00, usage 3)
         var accelService: io_service_t = 0
         var serviceCount = 0
         var service = IOIteratorNext(iterator)
@@ -92,7 +91,6 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
             print("🏋️ [Accelerometer] Service \(serviceCount): usagePage=0x\(String(usagePage, radix: 16)) usage=\(usage)")
             #endif
 
-            // Accelerometer is usage=3 on Apple Silicon
             if usagePage == 0xFF00 && usage == 3 {
                 accelService = service
                 break
@@ -106,7 +104,7 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
         guard accelService != 0 else { return false }
         defer { IOObjectRelease(accelService) }
 
-        // Create and open HID device
+        // Step 3: Create and open HID device
         guard let dev = IOHIDDeviceCreate(kCFAllocatorDefault, accelService) else {
             #if DEBUG
             print("🏋️ [Accelerometer] ❌ IOHIDDeviceCreate failed")
@@ -122,30 +120,61 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
             return false
         }
 
-        // Wake sensor
+        // Step 4: Also wake via device properties (belt and suspenders)
         IOHIDDeviceSetProperty(dev, "ReportInterval" as CFString, 1000 as CFNumber)
         IOHIDDeviceSetProperty(dev, "SensorPropertyReportingState" as CFString, 1 as CFNumber)
         IOHIDDeviceSetProperty(dev, "SensorPropertyPowerState" as CFString, 1 as CFNumber)
 
         hidDevice = dev
 
-        // Register callback
+        // Step 5: Register callback
+        reportBuffer = .allocate(capacity: reportBufferSize)
+        reportBuffer?.initialize(repeating: 0, count: reportBufferSize)
+
         let context = Unmanaged.passUnretained(self).toOpaque()
-        reportBuffer.withUnsafeMutableBufferPointer { buffer in
-            IOHIDDeviceRegisterInputReportCallback(
-                dev,
-                buffer.baseAddress!,
-                buffer.count,
-                accelReportCallback,
-                context
-            )
-        }
+        IOHIDDeviceRegisterInputReportCallback(
+            dev,
+            reportBuffer!,
+            reportBufferSize,
+            accelReportCallback,
+            context
+        )
 
         IOHIDDeviceScheduleWithRunLoop(dev, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
         return true
     }
 
+    /// Wake sensors via AppleSPUHIDDriver (required before reading from Device)
+    private func wakeSensors() {
+        var iterator: io_iterator_t = 0
+        guard let matching = IOServiceMatching("AppleSPUHIDDriver") as NSMutableDictionary?,
+              IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iterator) == KERN_SUCCESS else {
+            #if DEBUG
+            print("🏋️ [Accelerometer] ⚠️ No AppleSPUHIDDriver found")
+            #endif
+            return
+        }
+        defer { IOObjectRelease(iterator) }
+
+        var count = 0
+        var svc = IOIteratorNext(iterator)
+        while svc != 0 {
+            count += 1
+            IORegistryEntrySetCFProperty(svc, "SensorPropertyReportingState" as CFString, 1 as CFNumber)
+            IORegistryEntrySetCFProperty(svc, "SensorPropertyPowerState" as CFString, 1 as CFNumber)
+            IORegistryEntrySetCFProperty(svc, "ReportInterval" as CFString, 1000 as CFNumber)
+            IOObjectRelease(svc)
+            svc = IOIteratorNext(iterator)
+        }
+
+        #if DEBUG
+        print("🏋️ [Accelerometer] Woke \(count) SPU drivers")
+        #endif
+    }
+
     // MARK: - Report Parsing
+
+    private var reportCount = 0
 
     fileprivate func handleReport(_ report: UnsafeMutablePointer<UInt8>, length: CFIndex) {
         guard length >= 18 else { return }
@@ -157,6 +186,13 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
 
         let magnitude = sqrt(x * x + y * y + z * z)
         let delta = abs(magnitude - baselineMagnitude)
+
+        reportCount += 1
+
+        // Only log when delta exceeds slap threshold
+        if delta >= spikeThreshold {
+            print("🏋️ [Accel] 💥 SLAP! delta=\(String(format:"%.3f",delta)) mag=\(String(format:"%.2f",magnitude)) baseline=\(String(format:"%.2f",baselineMagnitude))")
+        }
 
         // Update baseline with exponential moving average
         baselineMagnitude = baselineMagnitude * 0.99 + magnitude * 0.01
@@ -174,7 +210,7 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
         print("🏋️ [Accelerometer] SLAP! delta=\(String(format: "%.2f", delta))g pressure=\(String(format: "%.2f", normalizedPressure))")
         #endif
 
-        onEvent?(.slap(pressure: normalizedPressure))
+        onEvent?(.slap(pressure: normalizedPressure, source: "body"))
     }
 
     private func parseQ16(_ ptr: UnsafeMutablePointer<UInt8>) -> Double {

@@ -16,6 +16,8 @@ final class AppState {
 
     var selectedCharacterPack: String = "trump"
     var enabledTriggers: Set<TriggerType> = Set(TriggerType.allCases)
+    var toastEnabled: Bool = true
+    var voiceEnabled: Bool = true
     var isOnboarded: Bool = false
 
     // MARK: - System Stats

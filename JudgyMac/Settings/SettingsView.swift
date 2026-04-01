@@ -85,9 +85,43 @@ struct GeneralSettingsTab: View {
 struct TriggersSettingsTab: View {
     @Environment(AppState.self) private var appState
     var body: some View {
+        @Bindable var state = appState
+
         Form {
+            // Slap + Voice grouped together
+            Section("Slap") {
+                Toggle(isOn: triggerBinding(for: .slap)) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        HStack(spacing: 8) {
+                            Image(systemName: TriggerType.slap.icon)
+                                .foregroundStyle(.purple)
+                                .frame(width: 18)
+                            Text(TriggerType.slap.displayName)
+                                .font(.system(size: 13, weight: .medium))
+                        }
+                        Text(TriggerType.slap.triggerDescription)
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                            .padding(.leading, 26)
+                    }
+                    .padding(.vertical, 2)
+                }
+                Toggle("Voice sounds", isOn: $state.voiceEnabled)
+                    .onChange(of: appState.voiceEnabled) { _, newValue in
+                        SoundPlayer.isMuted = !newValue
+                        SettingsStore.save(appState)
+                    }
+            }
+
+            // Toast notification toggle
             Section {
-                ForEach(TriggerType.allCases, id: \.self) { trigger in
+                Toggle("Toast notifications", isOn: $state.toastEnabled)
+                    .onChange(of: appState.toastEnabled) { _, _ in SettingsStore.save(appState) }
+            }
+
+            // Behavior triggers (excluding slap)
+            Section {
+                ForEach(TriggerType.allCases.filter({ $0 != .slap }), id: \.self) { trigger in
                     Toggle(isOn: triggerBinding(for: trigger)) {
                         VStack(alignment: .leading, spacing: 3) {
                             HStack(spacing: 8) {
@@ -104,6 +138,7 @@ struct TriggersSettingsTab: View {
                         }
                         .padding(.vertical, 2)
                     }
+                    .disabled(!appState.toastEnabled)
                 }
             } header: {
                 Text("Behavior Triggers")
@@ -112,6 +147,7 @@ struct TriggersSettingsTab: View {
                     .font(.system(size: 11))
                     .foregroundStyle(.tertiary)
             }
+            .opacity(appState.toastEnabled ? 1 : 0.4)
         }
         .formStyle(.grouped)
     }
@@ -164,6 +200,13 @@ struct AboutSettingsTab: View {
                     Text("One-time purchase. All updates included.")
                         .foregroundStyle(.secondary)
                 }
+            }
+
+            Section("Parody & Disclaimer") {
+                Text("JudgyMac is a parody and satirical entertainment product. All character voices are AI-generated and clearly fictional. This product is not affiliated with, endorsed by, or associated with any real person. All character likenesses are original caricature artwork created for comedic purposes.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.tertiary)
+                    .padding(.vertical, 4)
             }
         }
         .formStyle(.grouped)

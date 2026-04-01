@@ -125,6 +125,12 @@ struct MenuBarView: View {
     }
 
     private func fireDevEvent(_ event: BehaviorEvent) {
+        guard appState.enabledTriggers.contains(event.type) else {
+            #if DEBUG
+            print("🛠 [DevTools] \(event.type.rawValue) is disabled — skipped")
+            #endif
+            return
+        }
         appState.handleEvent(event)
         NotificationCenter.default.post(
             name: .behaviorEventDetected,
@@ -298,7 +304,6 @@ private func packIcon(pack: CharacterPack, size: CGFloat) -> some View {
         let iconPath = pack.iconImagePath
         if let url = Bundle.main.resourceURL?.appendingPathComponent("\(avatarPath).png"),
            let nsImage = NSImage(contentsOf: url) {
-            let _ = { nsImage.size = NSSize(width: size, height: size) }()
             Image(nsImage: nsImage)
                 .resizable()
                 .interpolation(.high)

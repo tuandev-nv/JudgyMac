@@ -9,6 +9,7 @@ final class DesktopRunnerWindow {
 
     private var panel: NSPanel!
     private var hostingController: NSHostingController<AnyView>?
+    private(set) var isActive = false
 
     private init() {
         panel = NSPanel(
@@ -27,6 +28,7 @@ final class DesktopRunnerWindow {
     }
 
     func run(pack: CharacterPack, onFinished: @escaping @MainActor () -> Void) {
+        guard !isActive else { return }
         guard let screen = NSScreen.main else {
             onFinished()
             return
@@ -48,10 +50,12 @@ final class DesktopRunnerWindow {
         hostingController?.view.frame = NSRect(origin: .zero, size: screenFrame.size)
         panel.contentView = hostingController?.view
 
+        isActive = true
         panel.orderFrontRegardless()
     }
 
     private func dismiss() {
+        isActive = false
         panel.orderOut(nil)
         hostingController = nil
     }

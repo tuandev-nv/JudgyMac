@@ -46,12 +46,13 @@ targets:
     settings:
       base:
         PRODUCT_NAME: JudgyMac
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) ACCELEROMETER_ENABLED"
         LD_RUNPATH_SEARCH_PATHS:
           - "@executable_path/../Frameworks"
     entitlements:
       path: JudgyMac/JudgyMac.entitlements
       properties:
-        com.apple.security.app-sandbox: true
+        com.apple.security.app-sandbox: false
         com.apple.security.network.client: true
 
   JudgyMacPro:

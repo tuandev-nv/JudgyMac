@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JudgyMac — Your MacBook Judges You. Literally.</title>
+    <meta name="description" content="A sassy desktop companion that roasts your bad habits. Opens laptop too much? Late night coding? JudgyMac has words. Slap it back. It screams.">
+    <meta property="og:title" content="JudgyMac — Your MacBook Judges You">
+    <meta property="og:description" content="A sassy desktop companion that roasts your bad habits. Slap it back. It screams.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://judgymac.com">
+    <meta property="og:image" content="https://judgymac.com/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="dist/output.css">
+</head>
+<body class="bg-dark-900 text-white font-body antialiased">
+
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 bg-dark-900/80 backdrop-blur-lg border-b border-white/5">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <img src="assets/avatar.png" alt="JudgyMac" class="w-8 h-8 rounded-lg">
+                <span class="font-display font-bold text-lg">JudgyMac</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-sm text-white/60">
+                <a href="#features" class="hover:text-white transition">Features</a>
+                <a href="#characters" class="hover:text-white transition">Characters</a>
+                <a href="#pricing" class="hover:text-white transition">Pricing</a>
+                <a href="#faq" class="hover:text-white transition">FAQ</a>
+            </div>
+            <a href="#pricing" class="bg-brand-gold text-black font-bold text-sm px-5 py-2 rounded-full hover:brightness-110 transition glow-btn">
+                Download — $7
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
+        <!-- Flag background -->
+        <div class="absolute inset-0 flag-stripe opacity-30"></div>
+        <div class="absolute top-0 left-0 w-1/3 h-1/2 bg-brand-blue/10 blur-3xl rounded-full"></div>
+        <div class="absolute bottom-0 right-0 w-1/2 h-1/2 bg-brand-red/5 blur-3xl rounded-full"></div>
+
+        <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
+            <div class="float mb-8">
+                <img src="assets/hero-trump.png" alt="Trump character" class="w-48 h-48 mx-auto drop-shadow-2xl">
+            </div>
+
+            <h1 class="font-display text-5xl md:text-7xl font-black leading-tight mb-6">
+                Your MacBook<br>
+                <span class="gradient-text">Judges You.</span><br>
+                Literally.
+            </h1>
+
+            <p class="text-xl md:text-2xl text-white/60 max-w-2xl mx-auto mb-4">
+                A sassy desktop companion that roasts your bad habits.
+                Opens laptop too much? Late night coding? Alt-tab addict?
+            </p>
+            <p class="text-2xl font-bold text-brand-gold mb-10">
+                JudgyMac has words. Slap it back. It screams.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="#pricing" class="bg-brand-gold text-black font-bold text-lg px-8 py-4 rounded-full hover:brightness-110 transition glow-btn shake-hover">
+                    Download for Mac — $7
+                </a>
+                <span class="text-white/40 text-sm">macOS 14+ &bull; Apple Silicon</span>
+            </div>
+
+            <!-- Social proof -->
+            <div class="mt-12 flex flex-wrap justify-center gap-6 text-sm text-white/40">
+                <div class="glass px-4 py-2 rounded-full">
+                    <!-- Replace with real PH badge -->
+                    <span>&#9733; Featured on Product Hunt</span>
+                </div>
+                <div class="glass px-4 py-2 rounded-full">
+                    <span>"Funniest app I've installed" — Reddit</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Video -->
+    <section class="py-20 px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-dark-800">
+                <!-- Replace with actual demo video/GIF -->
+                <div class="aspect-video bg-dark-700 flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">&#9654;</div>
+                        <p class="text-white/40">Demo video — 30 seconds of judgment</p>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center text-white/30 text-sm mt-4">Turn sound on for the full experience</p>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-20 px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-center mb-16">
+                Three Steps to <span class="gradient-text">Total Judgment</span>
+            </h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass rounded-2xl p-8 text-center">
+                    <div class="text-5xl mb-4">&#128187;</div>
+                    <h3 class="font-bold text-xl mb-2">1. Install</h3>
+                    <p class="text-white/50">Download, open, done. Lives in your menu bar. Zero config.</p>
+                </div>
+                <div class="glass rounded-2xl p-8 text-center">
+                    <div class="text-5xl mb-4">&#128064;</div>
+                    <h3 class="font-bold text-xl mb-2">2. Use Your Mac</h3>
+                    <p class="text-white/50">JudgyMac watches. Lid opens, idle time, late nights, overheating — it sees everything.</p>
+                </div>
+                <div class="glass rounded-2xl p-8 text-center">
+                    <div class="text-5xl mb-4">&#128293;</div>
+                    <h3 class="font-bold text-xl mb-2">3. Get Roasted</h3>
+                    <p class="text-white/50">Custom voice roasts from characters like The Donald. Slap back with Cmd+Shift+Click. It screams.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="py-20 px-6 relative">
+        <div class="absolute inset-0 bg-gradient-to-b from-brand-blue/5 to-transparent"></div>
+        <div class="relative max-w-5xl mx-auto">
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-center mb-4">
+                Not Just a Slap App.
+            </h2>
+            <p class="text-center text-white/50 text-lg mb-16 max-w-2xl mx-auto">
+                JudgyMac is a full desktop companion with personality. It watches, judges, roasts, and runs away when you fight back.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="glass rounded-2xl p-6 flex gap-4">
+                    <div class="text-3xl">&#128483;</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">Voice Roasts</h3>
+                        <p class="text-white/50 text-sm">32 unique voice lines per character. Synced text + audio. Every roast hits different.</p>
+                    </div>
+                </div>
+                <div class="glass rounded-2xl p-6 flex gap-4">
+                    <div class="text-3xl">&#128065;</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">7 Behavior Detectors</h3>
+                        <p class="text-white/50 text-sm">Lid opens, idle time, late nights, overheating, app switching, screen time, and slaps.</p>
+                    </div>
+                </div>
+                <div class="glass rounded-2xl p-6 flex gap-4">
+                    <div class="text-3xl">&#127939;</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">Desktop Runner</h3>
+                        <p class="text-white/50 text-sm">Slap enough times and the character falls out of the menu bar, runs across your desktop, and talks back.</p>
+                    </div>
+                </div>
+                <div class="glass rounded-2xl p-6 flex gap-4">
+                    <div class="text-3xl">&#128200;</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">RunCat-Style Stats</h3>
+                        <p class="text-white/50 text-sm">CPU, GPU, RAM in your menu bar. Character runs faster when CPU spikes. Like RunCat, but judgmental.</p>
+                    </div>
+                </div>
+                <div class="glass rounded-2xl p-6 flex gap-4">
+                    <div class="text-3xl">&#127912;</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">Character Packs</h3>
+                        <p class="text-white/50 text-sm">Multiple personalities with unique voices, roast scripts, and art. Starting with The Donald. More coming.</p>
+                    </div>
+                </div>
+                <div class="glass rounded-2xl p-6 flex gap-4">
+                    <div class="text-3xl">&#128165;</div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">Slap Physics</h3>
+                        <p class="text-white/50 text-sm">8 damage levels, comic text effects, squash-stretch animations. KO at 32 hits triggers the Desktop Runner.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Characters -->
+    <section id="characters" class="py-20 px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-center mb-4">
+                Choose Your <span class="gradient-text">Judge</span>
+            </h2>
+            <p class="text-center text-white/50 text-lg mb-16">Each character has unique voice lines, roast scripts, and personality.</p>
+
+            <!-- Trump Pack -->
+            <div class="glass rounded-3xl p-8 md:p-12 relative overflow-hidden">
+                <div class="absolute inset-0 flag-stripe opacity-10"></div>
+                <div class="relative flex flex-col md:flex-row items-center gap-8">
+                    <div class="flex-shrink-0">
+                        <img src="assets/trump-pack.png" alt="The Donald" class="w-40 h-40 rounded-2xl shake-hover">
+                    </div>
+                    <div class="flex-1 text-center md:text-left">
+                        <div class="inline-block bg-brand-red/20 text-brand-red px-3 py-1 rounded-full text-xs font-bold mb-3">LAUNCH CHARACTER</div>
+                        <h3 class="font-display text-2xl font-bold mb-2">The Donald</h3>
+                        <p class="text-white/60 mb-4">"Make slapping great again." 32 voice lines. 76 unique roasts. Covers lid opens, idle time, late nights, thermal, app switching, screen time, and slaps.</p>
+
+                        <!-- Sample roasts -->
+                        <div class="space-y-2 text-sm">
+                            <div class="glass rounded-lg px-4 py-2 inline-block">
+                                <span class="text-brand-gold">"</span>Nobody sits at a computer longer than you. NOBODY. Get up. NOW.<span class="text-brand-gold">"</span>
+                            </div>
+                            <div class="glass rounded-lg px-4 py-2 inline-block">
+                                <span class="text-brand-gold">"</span>FAKE SLAP! I barely felt it. Very low energy.<span class="text-brand-gold">"</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coming Soon packs -->
+                <div class="relative mt-12 pt-8 border-t border-white/10">
+                    <p class="text-white/30 text-sm font-bold uppercase tracking-wider mb-4">Coming Soon</p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="glass rounded-xl px-4 py-3 text-sm text-white/40">
+                            <span class="text-lg mr-2">&#127462;&#127480;</span> Vietnamese Mom
+                        </div>
+                        <div class="glass rounded-xl px-4 py-3 text-sm text-white/40">
+                            <span class="text-lg mr-2">&#128188;</span> Toxic Boss
+                        </div>
+                        <div class="glass rounded-xl px-4 py-3 text-sm text-white/40">
+                            <span class="text-lg mr-2">&#128218;</span> Shakespeare
+                        </div>
+                        <div class="glass rounded-xl px-4 py-3 text-sm text-white/40">
+                            <span class="text-lg mr-2">&#129302;</span> Your Character?
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="py-20 px-6">
+        <div class="max-w-lg mx-auto text-center">
+            <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">
+                One Price. <span class="gradient-text">All Judgment.</span>
+            </h2>
+            <p class="text-white/50 text-lg mb-12">No subscriptions. No in-app purchases. No mercy.</p>
+
+            <div class="glass rounded-3xl p-8 relative overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-red via-brand-gold to-brand-blue"></div>
+
+                <div class="text-6xl font-display font-black mb-2">$7</div>
+                <p class="text-white/40 mb-8">One-time purchase. All updates included.</p>
+
+                <ul class="text-left space-y-3 mb-8 max-w-xs mx-auto">
+                    <li class="flex items-center gap-3 text-white/70">
+                        <span class="text-green-400">&#10003;</span> All behavior detectors
+                    </li>
+                    <li class="flex items-center gap-3 text-white/70">
+                        <span class="text-green-400">&#10003;</span> The Donald character pack
+                    </li>
+                    <li class="flex items-center gap-3 text-white/70">
+                        <span class="text-green-400">&#10003;</span> Desktop Runner animation
+                    </li>
+                    <li class="flex items-center gap-3 text-white/70">
+                        <span class="text-green-400">&#10003;</span> Menu bar system stats
+                    </li>
+                    <li class="flex items-center gap-3 text-white/70">
+                        <span class="text-green-400">&#10003;</span> Future character packs
+                    </li>
+                    <li class="flex items-center gap-3 text-white/70">
+                        <span class="text-green-400">&#10003;</span> Lifetime updates
+                    </li>
+                </ul>
+
+                <!-- Polar.sh checkout link — replace with real URL -->
+                <a href="https://polar.sh/judgymac/checkout" class="block w-full bg-brand-gold text-black font-bold text-lg py-4 rounded-full hover:brightness-110 transition glow-btn">
+                    Download for Mac
+                </a>
+                <p class="text-white/30 text-xs mt-4">Secure checkout via Polar.sh &bull; Instant download + license key</p>
+            </div>
+
+            <p class="text-white/20 text-sm mt-6">Less than a coffee. More fun than your therapist.</p>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-20 px-6">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-center mb-16">
+                Frequently Asked <span class="gradient-text">Questions</span>
+            </h2>
+
+            <div class="space-y-4">
+                <details class="glass rounded-2xl group" open>
+                    <summary class="p-6 cursor-pointer font-bold flex justify-between items-center">
+                        What does JudgyMac actually do?
+                        <span class="text-white/30 group-open:rotate-45 transition-transform text-xl">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 text-white/50">
+                        JudgyMac is a menu bar app that monitors your Mac usage (lid opens, idle time, late nights, etc.) and delivers voice roasts from characters like The Donald. You can slap the character back with Cmd+Shift+Click. Slap it 32 times and it runs across your desktop screaming.
+                    </div>
+                </details>
+
+                <details class="glass rounded-2xl group">
+                    <summary class="p-6 cursor-pointer font-bold flex justify-between items-center">
+                        What Macs are supported?
+                        <span class="text-white/30 group-open:rotate-45 transition-transform text-xl">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 text-white/50">
+                        macOS 14 (Sonoma) or later, Apple Silicon (M1/M2/M3/M4). Works on MacBook Air, MacBook Pro, Mac Mini, Mac Studio, and iMac.
+                    </div>
+                </details>
+
+                <details class="glass rounded-2xl group">
+                    <summary class="p-6 cursor-pointer font-bold flex justify-between items-center">
+                        Will this void my warranty?
+                        <span class="text-white/30 group-open:rotate-45 transition-transform text-xl">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 text-white/50">
+                        No. JudgyMac is a regular macOS app. It doesn't modify system files, access hardware directly, or do anything Apple wouldn't approve of. Your MacBook can handle a slap.
+                    </div>
+                </details>
+
+                <details class="glass rounded-2xl group">
+                    <summary class="p-6 cursor-pointer font-bold flex justify-between items-center">
+                        Does it drain battery?
+                        <span class="text-white/30 group-open:rotate-45 transition-transform text-xl">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 text-white/50">
+                        Minimal impact. JudgyMac uses ~0.1% CPU on average. The menu bar animation runs at 4Hz (like RunCat). Behavior detection is event-driven, not constant polling.
+                    </div>
+                </details>
+
+                <details class="glass rounded-2xl group">
+                    <summary class="p-6 cursor-pointer font-bold flex justify-between items-center">
+                        Can I turn off specific triggers?
+                        <span class="text-white/30 group-open:rotate-45 transition-transform text-xl">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 text-white/50">
+                        Yes. Each behavior trigger (lid open, idle, late night, thermal, app switch, screen time, slap) can be individually toggled in Settings.
+                    </div>
+                </details>
+
+                <details class="glass rounded-2xl group">
+                    <summary class="p-6 cursor-pointer font-bold flex justify-between items-center">
+                        Is there a refund policy?
+                        <span class="text-white/30 group-open:rotate-45 transition-transform text-xl">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 text-white/50">
+                        Yes. If JudgyMac doesn't judge you hard enough, email support@judgymac.com within 14 days for a full refund. No questions asked (but we might roast you one last time).
+                    </div>
+                </details>
+
+                <details class="glass rounded-2xl group">
+                    <summary class="p-6 cursor-pointer font-bold flex justify-between items-center">
+                        Will there be more characters?
+                        <span class="text-white/30 group-open:rotate-45 transition-transform text-xl">+</span>
+                    </summary>
+                    <div class="px-6 pb-6 text-white/50">
+                        Yes! Vietnamese Mom, Toxic Boss, Shakespeare, and community-suggested characters are in development. All future character packs are included in your purchase.
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="py-20 px-6">
+        <div class="max-w-2xl mx-auto text-center">
+            <p class="text-5xl mb-6">&#129300;</p>
+            <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">
+                Ready to be judged?
+            </h2>
+            <p class="text-white/50 text-lg mb-8">Your MacBook already thinks you're doing it wrong. Now it can say it out loud.</p>
+            <a href="#pricing" class="inline-block bg-brand-gold text-black font-bold text-lg px-10 py-4 rounded-full hover:brightness-110 transition glow-btn shake-hover">
+                Download JudgyMac — $7
+            </a>
+        </div>
+    </section>
+
+    <!-- Parody Disclaimer -->
+    <section class="py-12 px-6 border-t border-white/5">
+        <div class="max-w-3xl mx-auto text-center">
+            <p class="text-white/20 text-xs leading-relaxed">
+                <strong class="text-white/30">Parody &amp; Satire Notice:</strong> JudgyMac is a parody and satirical entertainment product. All character voices are AI-generated and clearly fictional. This product is not affiliated with, endorsed by, or associated with any real person, living or dead. All character likenesses are original caricature artwork created for comedic purposes. Use of any public figure's persona is protected under parody and fair use provisions of the First Amendment. No actual statements by any real person are used. This is a work of humor and creative expression.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-12 px-6">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <img src="assets/avatar.png" alt="JudgyMac" class="w-6 h-6 rounded">
+                <span class="text-white/40 text-sm">&copy; 2026 JudgyMac. All rights reserved.</span>
+            </div>
+            <div class="flex gap-6 text-sm text-white/30">
+                <a href="mailto:support@judgymac.com" class="hover:text-white/60 transition">Support</a>
+                <a href="/privacy" class="hover:text-white/60 transition">Privacy</a>
+                <a href="/terms" class="hover:text-white/60 transition">Terms</a>
+                <a href="#disclaimer" class="hover:text-white/60 transition">Parody Notice</a>
+                <a href="https://twitter.com/judgymac" class="hover:text-white/60 transition">Twitter</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

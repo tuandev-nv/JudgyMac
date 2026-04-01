@@ -8,6 +8,8 @@ enum SettingsStore {
         static let selectedCharacterPack = "com.judgymac.characterPack"
         static let enabledTriggers = "com.judgymac.enabledTriggers"
         static let isOnboarded = "com.judgymac.onboarded"
+        static let toastEnabled = "com.judgymac.toastEnabled"
+        static let voiceEnabled = "com.judgymac.voiceEnabled"
         static let isFullVersion = "com.judgymac.fullVersion"
 
         // Stats
@@ -33,6 +35,8 @@ enum SettingsStore {
     static func save(_ state: AppState) {
         defaults.set(state.selectedCharacterPack, forKey: Keys.selectedCharacterPack)
         defaults.set(state.isOnboarded, forKey: Keys.isOnboarded)
+        defaults.set(state.toastEnabled, forKey: Keys.toastEnabled)
+        defaults.set(state.voiceEnabled, forKey: Keys.voiceEnabled)
         defaults.set(state.isFullVersion, forKey: Keys.isFullVersion)
 
         let triggers = state.enabledTriggers.map(\.rawValue)
@@ -78,6 +82,12 @@ enum SettingsStore {
         }
 
         state.isOnboarded = defaults.bool(forKey: Keys.isOnboarded)
+        if defaults.object(forKey: Keys.toastEnabled) != nil {
+            state.toastEnabled = defaults.bool(forKey: Keys.toastEnabled)
+        }
+        if defaults.object(forKey: Keys.voiceEnabled) != nil {
+            state.voiceEnabled = defaults.bool(forKey: Keys.voiceEnabled)
+        }
 
         // isFullVersion defaults to true — only override if explicitly saved as false
         if defaults.object(forKey: Keys.isFullVersion) != nil {

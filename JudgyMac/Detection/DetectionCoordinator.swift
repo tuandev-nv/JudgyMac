@@ -69,7 +69,6 @@ final class DetectionCoordinator {
         }
 
         #if ACCELEROMETER_ENABLED
-        print("🏋️ [Coordinator] Accelerometer detector: \(accelerometerDetector != nil), slap enabled: \(appState.enabledTriggers.contains(.slap))")
         if appState.enabledTriggers.contains(.slap) {
             accelerometerDetector?.start { [weak self] event in
                 Task { @MainActor in
