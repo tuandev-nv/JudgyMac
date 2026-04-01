@@ -84,7 +84,14 @@ final class LidDetector: BehaviorDetector, @unchecked Sendable {
         switch messageType {
         case sleepMessage:
             IOAllowPowerChange(rootPort, messageArgument) // ACK FIRST — never delay this
-            lastCloseTime = Date()
+            // Only record close time if we've been awake for > 5s
+            // (avoids partial wake/sleep cycles overwriting the real close time)
+            if let lastOpen = lastOpenDate,
+               Date().timeIntervalSince(lastOpen) > 5 {
+                lastCloseTime = Date()
+            } else if lastCloseTime == nil {
+                lastCloseTime = Date()
+            }
 
         case wakeMessage:
             handleWake()
@@ -97,7 +104,36 @@ final class LidDetector: BehaviorDetector, @unchecked Sendable {
         }
     }
 
+    /// Check if the built-in display (lid) is actually open via IOKit.
+    /// Returns false when running clamshell mode (lid closed + external display).
+    private func isLidOpen() -> Bool {
+        var iterator: io_iterator_t = 0
+        let matching = IOServiceMatching("AppleClamshellState")
+        guard IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iterator) == KERN_SUCCESS else {
+            return true // Assume open if can't determine
+        }
+        defer { IOObjectRelease(iterator) }
+
+        let service = IOIteratorNext(iterator)
+        guard service != 0 else { return true }
+        defer { IOObjectRelease(service) }
+
+        if let prop = IORegistryEntryCreateCFProperty(service, "AppleClamshellState" as CFString, kCFAllocatorDefault, 0) {
+            let clamshellClosed = prop.takeRetainedValue() as? Bool ?? false
+            return !clamshellClosed
+        }
+        return true
+    }
+
     private func handleWake() {
+        // Skip if lid is still closed (clamshell mode — external display wake)
+        if !isLidOpen() {
+            #if DEBUG
+            print("🤨 [LidDetector] Wake in clamshell mode — skipping lid event")
+            #endif
+            return
+        }
+
         resetIfNewDay()
         lidOpenCountToday += 1
 
