@@ -21,19 +21,29 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
     func start(onEvent: @escaping @Sendable (BehaviorEvent) -> Void) {
         guard !isRunning else { return }
         self.onEvent = onEvent
-        isRunning = true
 
-        guard openAccelerometer() else {
+        // IOHIDDeviceOpen requires elevated privileges (root/sudo)
+        // TODO: Implement proper privilege escalation or use SMAppService helper
+        // Run IOKit setup on background thread to avoid blocking main/RunLoop
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            guard let self else { return }
+
             #if DEBUG
-            print("🏋️ [Accelerometer] ❌ Failed to open accelerometer")
+            print("🏋️ [Accelerometer] Attempting to open accelerometer...")
             #endif
-            isRunning = false
-            return
-        }
 
-        #if DEBUG
-        print("🏋️ [Accelerometer] ✅ Started — threshold: \(spikeThreshold)g")
-        #endif
+            guard self.openAccelerometer() else {
+                #if DEBUG
+                print("🏋️ [Accelerometer] ❌ Failed — may need elevated privileges. Cmd+Shift slap still works.")
+                #endif
+                return
+            }
+
+            self.isRunning = true
+            #if DEBUG
+            print("🏋️ [Accelerometer] ✅ Started — threshold: \(self.spikeThreshold)g")
+            #endif
+        }
     }
 
     func stop() {
@@ -53,14 +63,19 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
 
         var iterator: io_iterator_t = 0
         guard IOServiceGetMatchingServices(kIOMainPortDefault, matching, &iterator) == KERN_SUCCESS else {
+            #if DEBUG
+            print("🏋️ [Accelerometer] ❌ IOServiceGetMatchingServices failed")
+            #endif
             return false
         }
         defer { IOObjectRelease(iterator) }
 
         // Find accelerometer service (usage page 0xFF00, usage 3)
         var accelService: io_service_t = 0
+        var serviceCount = 0
         var service = IOIteratorNext(iterator)
         while service != 0 {
+            serviceCount += 1
             defer {
                 if service != accelService { IOObjectRelease(service) }
                 service = IOIteratorNext(iterator)
@@ -73,19 +88,37 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
             let usagePage = dict["PrimaryUsagePage"] as? Int ?? 0
             let usage = dict["PrimaryUsage"] as? Int ?? 0
 
+            #if DEBUG
+            print("🏋️ [Accelerometer] Service \(serviceCount): usagePage=0x\(String(usagePage, radix: 16)) usage=\(usage)")
+            #endif
+
+            // Accelerometer is usage=3 on Apple Silicon
             if usagePage == 0xFF00 && usage == 3 {
                 accelService = service
                 break
             }
         }
 
+        #if DEBUG
+        print("🏋️ [Accelerometer] Found \(serviceCount) services, accel=\(accelService != 0)")
+        #endif
+
         guard accelService != 0 else { return false }
         defer { IOObjectRelease(accelService) }
 
         // Create and open HID device
-        guard let dev = IOHIDDeviceCreate(kCFAllocatorDefault, accelService) else { return false }
+        guard let dev = IOHIDDeviceCreate(kCFAllocatorDefault, accelService) else {
+            #if DEBUG
+            print("🏋️ [Accelerometer] ❌ IOHIDDeviceCreate failed")
+            #endif
+            return false
+        }
 
-        guard IOHIDDeviceOpen(dev, IOOptionBits(kIOHIDOptionsTypeNone)) == kIOReturnSuccess else {
+        let openResult = IOHIDDeviceOpen(dev, IOOptionBits(kIOHIDOptionsTypeNone))
+        guard openResult == kIOReturnSuccess else {
+            #if DEBUG
+            print("🏋️ [Accelerometer] ❌ IOHIDDeviceOpen failed: \(String(format: "0x%X", openResult))")
+            #endif
             return false
         }
 

@@ -184,7 +184,7 @@ struct SlapAnimationView: View {
         let burstW = min(CGFloat(comic.text.count) * 24 + 40, 600)
         let burstH: CGFloat = comic.text.count > 25 ? 90 : 65
 
-        return ZStack {
+        ZStack {
             if comic.hasBurst {
                 ComicBurstShape()
                     .fill(comic.color.opacity(0.9))

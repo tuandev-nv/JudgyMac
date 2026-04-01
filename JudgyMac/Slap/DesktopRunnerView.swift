@@ -124,20 +124,22 @@ struct DesktopRunnerView: View {
         let groundY = CGFloat.random(in: screenSize.height * 0.5 ... screenSize.height * 0.85)
         runDuration = Double.random(in: 3...5)
 
-        timer = Timer.scheduledTimer(withTimeInterval: fps, repeats: true) { [self] _ in
-            switch phase {
-            case .falling:
-                tickFalling(groundY: groundY)
-            case .running:
-                tickRunning()
-            case .stopped:
-                break
-            case .exiting:
-                tickExiting()
-            case .done:
-                timer?.invalidate()
-                timer = nil
-                onFinished()
+        timer = Timer.scheduledTimer(withTimeInterval: fps, repeats: true) { _ in
+            MainActor.assumeIsolated { [self] in
+                switch phase {
+                case .falling:
+                    tickFalling(groundY: groundY)
+                case .running:
+                    tickRunning()
+                case .stopped:
+                    break
+                case .exiting:
+                    tickExiting()
+                case .done:
+                    timer?.invalidate()
+                    timer = nil
+                    onFinished()
+                }
             }
         }
     }

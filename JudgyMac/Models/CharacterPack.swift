@@ -208,7 +208,7 @@ enum CharacterPackCatalog {
     }
 
     static var defaultPack: CharacterPack {
-        all.first ?? fallbackPack
+        all.first!
     }
 
     static func reload() {
@@ -219,13 +219,13 @@ enum CharacterPackCatalog {
 
     private static func loadAll() -> [CharacterPack] {
         guard let packsURL = Bundle.main.resourceURL?
-            .appendingPathComponent("CharacterPacks") else { return [fallbackPack] }
+            .appendingPathComponent("CharacterPacks") else { return [] }
 
         var packs: [CharacterPack] = []
 
         guard let folders = try? FileManager.default
             .contentsOfDirectory(at: packsURL, includingPropertiesForKeys: [.isDirectoryKey]) else {
-            return [fallbackPack]
+            return []
         }
 
         for folder in folders {
@@ -302,42 +302,6 @@ enum CharacterPackCatalog {
             packs.append(pack)
         }
 
-        return packs.isEmpty ? [fallbackPack] : packs
+        return packs
     }
-
-    // MARK: - Fallback
-
-    private static let fallbackPack = CharacterPack(
-        id: "default",
-        displayName: "Judgmental Face",
-        language: "en",
-        description: "Default judge",
-        iconImagePath: "",
-        slapLimit: 50,
-        slapVoiceCount: 0,
-        folderPath: "",
-        animationStyle: .shake,
-        slapSoundPath: "slap_hit",
-        faces: CharacterPack.FaceSet(
-            normal: "face_with_raised_eyebrow_3d",
-            hit: "flushed_face_3d",
-            damaged1: "unamused_face_3d",
-            damaged2: "unamused_face_3d",
-            damaged3: "face_with_steam_from_nose_3d",
-            damaged4: "face_with_steam_from_nose_3d",
-            damaged5: "face_screaming_in_fear_3d",
-            damaged6: "face_screaming_in_fear_3d",
-            damaged7: "exploding_head_3d",
-            ko: "exploding_head_3d",
-            rage: nil
-        ),
-        reactions: [
-            .init(minHits: 1, lines: [.init(text: "OW!", voicePath: nil), .init(text: "HEY!", voicePath: nil)]),
-            .init(minHits: 4, lines: [.init(text: "STOP!", voicePath: nil), .init(text: "ENOUGH!", voicePath: nil)]),
-            .init(minHits: 8, lines: [.init(text: "MERCY!", voicePath: nil), .init(text: "PLEASE!", voicePath: nil)]),
-            .init(minHits: 16, lines: [.init(text: "💀", voicePath: nil), .init(text: "K.O!", voicePath: nil)]),
-        ],
-        rageReaction: nil,
-        roastTemplates: [:]
-    )
 }

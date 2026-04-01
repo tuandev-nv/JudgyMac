@@ -1,4 +1,4 @@
-import AppKit
+@preconcurrency import AppKit
 import SwiftUI
 
 /// Dark glass floating toast with bubble-pop animation + rainbow glow border.
@@ -16,6 +16,13 @@ final class ToastWindow {
 
     static let shared = ToastWindow()
     private init() {}
+
+    private func clearSubviewBackgrounds(_ view: NSView) {
+        view.wantsLayer = true
+        view.layer?.backgroundColor = .clear
+        view.layer?.isOpaque = false
+        for sub in view.subviews { clearSubviewBackgrounds(sub) }
+    }
 
     func show(roast: RoastEntry) {
         dismiss()
@@ -73,14 +80,8 @@ final class ToastWindow {
         hostingView.layer?.mask = mask
 
         // Walk all subviews and force clear backgrounds to prevent gray flash
-        DispatchQueue.main.async {
-            func clearBg(_ view: NSView) {
-                view.wantsLayer = true
-                view.layer?.backgroundColor = .clear
-                view.layer?.isOpaque = false
-                for sub in view.subviews { clearBg(sub) }
-            }
-            for sub in hostingView.subviews { clearBg(sub) }
+        Task { @MainActor in
+            clearSubviewBackgrounds(hostingView)
         }
 
         container.addSubview(hostingView)
@@ -132,13 +133,13 @@ final class ToastWindow {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { revealState.showMeta() }
 
         // Rainbow glow border — almost immediate
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { @MainActor [weak self] in
             guard let self else { return }
             self.addRainbowGlow(to: layer, toastRect: toastRect)
         }
 
         // Shimmer sweep
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) { @MainActor [weak self] in
             guard let self else { return }
             self.addShimmerSweep(to: layer, toastRect: toastRect)
         }
@@ -355,13 +356,13 @@ final class ToastWindow {
         parentLayer.addSublayer(shimmerContainer)
 
         // Pick 2 random non-repeating directions
-        var dirs = ShimmerDirection.allCases.shuffled()
+        let dirs = ShimmerDirection.allCases.shuffled()
         let dir1 = dirs[0]
         let dir2 = dirs[1]
 
         runShimmerPass(in: shimmerContainer, toastRect: toastRect, direction: dir1) {
             let pause = Double.random(in: 0.8...1.5)
-            DispatchQueue.main.asyncAfter(deadline: .now() + pause) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + pause) { @MainActor in
                 self.runShimmerPass(in: shimmerContainer, toastRect: toastRect, direction: dir2) {
                     shimmerContainer.removeFromSuperlayer()
                 }
@@ -473,13 +474,11 @@ final class ToastWindow {
         layer.removeAnimation(forKey: "entrance")
 
         CATransaction.begin()
-        CATransaction.setCompletionBlock { [weak self] in
-            Task { @MainActor in
-                self?.glowBorderLayer?.removeFromSuperlayer()
-                self?.glowBorderLayer = nil
-                panel.orderOut(nil)
-                self?.window = nil
-            }
+        CATransaction.setCompletionBlock { @MainActor [weak self] in
+            self?.glowBorderLayer?.removeFromSuperlayer()
+            self?.glowBorderLayer = nil
+            panel.orderOut(nil)
+            self?.window = nil
         }
 
         let shrink = CASpringAnimation(keyPath: "transform.scale")

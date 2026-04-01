@@ -78,9 +78,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         #endif
 
         // Auto-save every 30 seconds
-        saveTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            Task { @MainActor in
+        saveTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { _ in
+            MainActor.assumeIsolated { [weak self] in
+                guard let self else { return }
                 SettingsStore.save(self._appState)
             }
         }
@@ -110,10 +110,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private func startMenuBarAnimation() {
         // Respect Reduce Motion — use static icon, only update mood (no frame cycling)
         let interval: TimeInterval = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? 5.0 : 1.5
-        animationTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            Task { @MainActor in
-                self.tickAnimation()
+        animationTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
+            MainActor.assumeIsolated { [weak self] in
+                self?.tickAnimation()
             }
         }
     }
@@ -161,7 +160,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         let cpu = Int(_appState.cpuUsage * 100)
         let gpu = Int(_appState.gpuUsage * 100)
         let ram = Int(_appState.ramUsage * 100)
-        let disk = Int(_appState.diskUsage * 100)
 
         let stats = [
             ("CPU", "\(cpu)%"),
@@ -321,40 +319,56 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private func observeMenuBarSprite() {
         NotificationCenter.default.addObserver(
             forName: .hideMenuBarSprite, object: nil, queue: .main
-        ) { [weak self] _ in
-            guard let self else { return }
-            // Stop sprite animation, re-render stats without emoji
-            self.spriteTimer?.invalidate()
-            self.spriteTimer = nil
-            let cpu = Int(self._appState.cpuUsage * 100)
-            let gpu = Int(self._appState.gpuUsage * 100)
-            let ram = Int(self._appState.ramUsage * 100)
-            let stats = [("CPU", "\(cpu)%"), ("GPU", "\(gpu)%"), ("RAM", "\(ram)%")]
-            let combined = self.renderMenuBarImage(emoji: nil, stats: stats)
-            self.statusItem.button?.image = combined
-            self.statusItem.button?.title = ""
-        }
-        NotificationCenter.default.addObserver(
-            forName: .showMenuBarSprite, object: nil, queue: .main
-        ) { [weak self] _ in
-            self?.loadSpriteFrames()
-        }
-    }
-
-    private func startSpriteAnimation() {
-        spriteFrame = 0
-        // ~6 FPS — 4 frames = smooth run cycle
-        spriteTimer = Timer.scheduledTimer(withTimeInterval: 0.16, repeats: true) { [weak self] _ in
-            guard let self, !self.spriteFrames.isEmpty else { return }
-            Task { @MainActor in
-                self.spriteFrame = (self.spriteFrame + 1) % self.spriteFrames.count
-                let image = self.spriteFrames[self.spriteFrame]
-
+        ) { _ in
+            MainActor.assumeIsolated { [weak self] in
+                guard let self else { return }
+                self.spriteTimer?.invalidate()
+                self.spriteTimer = nil
                 let cpu = Int(self._appState.cpuUsage * 100)
                 let gpu = Int(self._appState.gpuUsage * 100)
                 let ram = Int(self._appState.ramUsage * 100)
-
                 let stats = [("CPU", "\(cpu)%"), ("GPU", "\(gpu)%"), ("RAM", "\(ram)%")]
+                let combined = self.renderMenuBarImage(emoji: nil, stats: stats)
+                self.statusItem.button?.image = combined
+                self.statusItem.button?.title = ""
+            }
+        }
+        NotificationCenter.default.addObserver(
+            forName: .showMenuBarSprite, object: nil, queue: .main
+        ) { _ in
+            MainActor.assumeIsolated { [weak self] in
+                self?.loadSpriteFrames()
+            }
+        }
+    }
+
+    private var spriteTick = 0
+
+    private func startSpriteAnimation() {
+        spriteFrame = 0
+        spriteTick = 0
+        // Fixed 4Hz tick (like RunCat), frame advance rate scales with CPU
+        spriteTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { _ in
+            MainActor.assumeIsolated { [weak self] in
+                guard let self, !self.spriteFrames.isEmpty else { return }
+                let cpu = self._appState.cpuUsage
+
+                // CPU → how often to advance frame
+                // Low CPU: advance every 4 ticks (1fps idle stroll)
+                // High CPU: advance every tick (4fps sprint)
+                let skipRate = max(1, Int(4 - cpu * 3))
+                self.spriteTick += 1
+                if self.spriteTick >= skipRate {
+                    self.spriteTick = 0
+                    self.spriteFrame = (self.spriteFrame + 1) % self.spriteFrames.count
+                }
+
+                let image = self.spriteFrames[self.spriteFrame]
+                let cpuPct = Int(cpu * 100)
+                let gpu = Int(self._appState.gpuUsage * 100)
+                let ram = Int(self._appState.ramUsage * 100)
+
+                let stats = [("CPU", "\(cpuPct)%"), ("GPU", "\(gpu)%"), ("RAM", "\(ram)%")]
                 let combined = self.renderMenuBarImage(emoji: image, stats: stats)
                 combined.accessibilityDescription = "JudgyMac"
                 self.statusItem.button?.image = combined

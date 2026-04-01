@@ -7,6 +7,9 @@ final class DetectionCoordinator {
     private let appState: AppState
     private var detectors: [TriggerType: any BehaviorDetector] = [:]
     private var isRunning = false
+    #if ACCELEROMETER_ENABLED
+    private var accelerometerDetector: AccelerometerDetector?
+    #endif
 
     init(appState: AppState) {
         self.appState = appState
@@ -29,10 +32,10 @@ final class DetectionCoordinator {
         detectors[.screenTime] = ScreenTimeDetector()
         detectors[.appSwitch] = AppSwitchDetector()
         detectors[.thermal] = ThermalDetector()
-        #if ACCELEROMETER_ENABLED
-        detectors[.slap] = AccelerometerDetector()
-        #else
         detectors[.slap] = SlapDetector()
+        #if ACCELEROMETER_ENABLED
+        // Additional: physical slap via accelerometer (runs alongside Cmd+Shift)
+        accelerometerDetector = AccelerometerDetector()
         #endif
     }
 
@@ -64,6 +67,17 @@ final class DetectionCoordinator {
                 }
             }
         }
+
+        #if ACCELEROMETER_ENABLED
+        print("🏋️ [Coordinator] Accelerometer detector: \(accelerometerDetector != nil), slap enabled: \(appState.enabledTriggers.contains(.slap))")
+        if appState.enabledTriggers.contains(.slap) {
+            accelerometerDetector?.start { [weak self] event in
+                Task { @MainActor in
+                    self?.handleEvent(event)
+                }
+            }
+        }
+        #endif
     }
 
     func stop() {
@@ -77,6 +91,10 @@ final class DetectionCoordinator {
             stopped.insert(id)
             detector.stop()
         }
+
+        #if ACCELEROMETER_ENABLED
+        accelerometerDetector?.stop()
+        #endif
     }
 
     func restart() {
