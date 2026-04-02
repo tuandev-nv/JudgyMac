@@ -59,11 +59,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
                     "\(pack.folderPath)/slap_voice",
                     "\(pack.folderPath)/umph",
                 ]
-                // Preload first 4 slap voice files
                 for i in 1...4 {
                     sounds.append("\(pack.folderPath)/slap_voices/slap_voice_\(i)")
                 }
                 SoundPlayer.preload(sounds)
+            }
+
+            // Welcome roast — greet user 3s after launch
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+                self?.deliverWelcomeRoast()
             }
         }
 
@@ -414,6 +418,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         }
     }
 
+    // MARK: - Welcome Roast
+
+    private static let welcomeRoasts = [
+        "You're back! I was starting to enjoy the silence.",
+        "Oh great, YOU again. Let's see how long before you do something stupid.",
+        "Another day, another chance for me to judge you. Tremendous.",
+        "I've been waiting. Not because I missed you — because I have OPINIONS.",
+        "Welcome back. Your MacBook told me EVERYTHING you did yesterday.",
+        "Rise and shine! Time to make bad decisions while I watch.",
+    ]
+
+    private func deliverWelcomeRoast() {
+        guard _appState.toastEnabled else { return }
+        let pack = _appState.currentPack
+        let text = Self.welcomeRoasts.randomElement()!
+        let entry = RoastEntry(
+            text: text,
+            personality: pack.displayName,
+            triggerType: .lidOpen,
+            mood: .judging,
+            customEmoji: pack.randomEmoji()
+        )
+        _appState.deliverRoast(entry)
+        ToastWindow.shared.show(roast: entry)
+    }
+
     // MARK: - Popover
 
     private func setupPopover() {
@@ -441,13 +471,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     @objc private func togglePopover() {
         guard let button = statusItem.button else { return }
 
+        // Option+Click → play random voice line instead of opening popover
+        if NSApp.currentEvent?.modifierFlags.contains(.option) == true {
+            playRandomVoiceLine()
+            return
+        }
+
         if popover.isShown {
             popover.performClose(nil)
         } else {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-            // Ensure popover window is key so clicks work
             popover.contentViewController?.view.window?.makeKey()
         }
+    }
+
+    private func playRandomVoiceLine() {
+        let pack = _appState.currentPack
+        guard pack.slapVoiceCount > 0 else { return }
+        let index = Int.random(in: 1...pack.slapVoiceCount)
+        let voicePath = "\(pack.folderPath)/slap_voices/slap_voice_\(index)"
+        SoundPlayer.playVoiceReturningDuration(voicePath, volume: 0.9)
     }
 
     // MARK: - Actions (run after popover closes)

@@ -127,6 +127,9 @@ struct DesktopRunnerView: View {
         let groundY = CGFloat.random(in: screenSize.height * 0.5 ... screenSize.height * 0.85)
         runDuration = Double.random(in: 3...5)
 
+        // Play falling sound
+        SoundPlayer.play("\(pack.folderPath)/ko_falling", volume: 0.8)
+
         timer = Timer.scheduledTimer(withTimeInterval: fps, repeats: true) { _ in
             MainActor.assumeIsolated { [self] in
                 switch phase {
@@ -167,6 +170,9 @@ struct DesktopRunnerView: View {
             phase = .landed
             frame = 0
             frameTick = 0
+
+            // Landing thud
+            SoundPlayer.play("\(pack.folderPath)/ko_landing", volume: 0.9)
 
             // Landing squash
             squash = 1.3
