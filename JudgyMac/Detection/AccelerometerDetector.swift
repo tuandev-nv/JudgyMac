@@ -13,6 +13,8 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
     private var hidDevice: IOHIDDevice?
     private var reportBuffer: UnsafeMutablePointer<UInt8>?
     private let reportBufferSize = 64
+    private var hidThread: Thread?
+    private var hidRunLoop: CFRunLoop?
     private var lastSlapTime: Date = .distantPast
     private var processor = SlapSignalProcessor()
     private var suppressedUntil: Date = .distantPast
@@ -54,11 +56,14 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
         }
         sleepWakeObservers.removeAll()
 
-        if let device = hidDevice {
-            IOHIDDeviceUnscheduleFromRunLoop(device, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        if let device = hidDevice, let runLoop = hidRunLoop {
+            IOHIDDeviceUnscheduleFromRunLoop(device, runLoop, CFRunLoopMode.defaultMode.rawValue)
+            CFRunLoopStop(runLoop)
             IOHIDDeviceClose(device, IOOptionBits(kIOHIDOptionsTypeNone))
         }
         hidDevice = nil
+        hidRunLoop = nil
+        hidThread = nil
         reportBuffer?.deallocate()
         reportBuffer = nil
     }
@@ -185,7 +190,17 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
             context
         )
 
-        IOHIDDeviceScheduleWithRunLoop(dev, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        // Schedule on dedicated background thread to avoid blocking main thread
+        let thread = Thread { [weak self] in
+            guard let self, let device = self.hidDevice else { return }
+            self.hidRunLoop = CFRunLoopGetCurrent()
+            IOHIDDeviceScheduleWithRunLoop(device, CFRunLoopGetCurrent(), CFRunLoopMode.defaultMode.rawValue)
+            CFRunLoopRun()
+        }
+        thread.name = "com.judgymac.accelerometer"
+        thread.qualityOfService = .utility
+        thread.start()
+        hidThread = thread
         return true
     }
 
@@ -220,17 +235,28 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
     // MARK: - Report Parsing
 
     private var reportCount = 0
+    private var isScreenLocked = false
+    private var lastLockCheck: UInt64 = 0
+    private var lastProcessTime: UInt64 = 0
 
     fileprivate func handleReport(_ report: UnsafeMutablePointer<UInt8>, length: CFIndex) {
         guard length >= 18 else { return }
 
+        // Throttle to ~100Hz (from 800Hz hardware)
+        let now = DispatchTime.now().uptimeNanoseconds
+        guard now - lastProcessTime >= 10_000_000 else { return } // 10ms
+        lastProcessTime = now
+
         // Suppress during lid close/open
         guard Date() >= suppressedUntil else { return }
 
-        // Suppress when screen is locked
-        let isLocked = CGSessionCopyCurrentDictionary()
-            .flatMap { ($0 as NSDictionary)["CGSSessionScreenIsLocked"] as? Bool } ?? false
-        guard !isLocked else { return }
+        // Check screen lock every 5s
+        if now - lastLockCheck > 5_000_000_000 {
+            lastLockCheck = now
+            isScreenLocked = CGSessionCopyCurrentDictionary()
+                .flatMap { ($0 as NSDictionary)["CGSSessionScreenIsLocked"] as? Bool } ?? false
+        }
+        guard !isScreenLocked else { return }
 
         // Parse BMI286 accelerometer data (Q16 fixed-point, little-endian)
         let x = parseQ16(report + 6)
@@ -245,9 +271,9 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
         guard verdict.detected else { return }
 
         // Debounce
-        let now = Date()
-        guard now.timeIntervalSince(lastSlapTime) >= debounceInterval else { return }
-        lastSlapTime = now
+        let slapNow = Date()
+        guard slapNow.timeIntervalSince(lastSlapTime) >= debounceInterval else { return }
+        lastSlapTime = slapNow
 
         #if DEBUG
         print("🏋️ [Accelerometer] 💥 SLAP! votes=\(verdict.votes)/4 mag=\(String(format: "%.3f", verdict.magnitude))g conf=\(String(format: "%.2f", verdict.confidence))")

@@ -157,6 +157,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         #endif
     }
 
+    private var currentStats: [(String, String)] {
+        let cpu = Int(_appState.cpuUsage * 100)
+        let ram = Int(_appState.ramUsage * 100)
+        return [("CPU", "\(cpu)%"), ("RAM", "\(ram)%")]
+    }
+
     // MARK: - Status Item (Menu Bar Icon)
 
     private func setupStatusItem() {
@@ -172,11 +178,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
 
         // Animate menu bar icon — speed based on CPU
         startMenuBarAnimation()
+        // Prime CPU monitor (needs 2 reads with delay for delta)
+        _ = cpuMonitor.currentUsage()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.tickAnimation()
+        }
     }
 
     private func startMenuBarAnimation() {
         // Respect Reduce Motion — use static icon, only update mood (no frame cycling)
-        let interval: TimeInterval = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? 10.0 : 5.0
+        let interval: TimeInterval = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion ? 10.0 : 2.0
         animationTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
             MainActor.assumeIsolated { [weak self] in
                 self?.tickAnimation()
@@ -188,19 +199,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         // Update mood from app state
         currentMood = _appState.currentMood
 
-        // CPU every tick (5s), RAM every ~10s, GPU every ~15s
-        let cpu = cpuMonitor.currentUsage()
-        _appState.cpuUsage = cpu
+        // CPU + RAM every tick (2s)
+        _appState.cpuUsage = cpuMonitor.currentUsage()
+        _appState.ramUsage = currentRAMUsage()
         systemStatsTick += 1
-        if systemStatsTick % 2 == 0 {
-            _appState.ramUsage = currentRAMUsage()
-        }
-        if systemStatsTick % 3 == 0 {
-            _appState.gpuUsage = currentGPUUsage()
-        }
+
 
         // Faster animation = higher CPU (skip fewer ticks)
-        animationSkipRate = switch cpu {
+        animationSkipRate = switch _appState.cpuUsage {
         case 0.8...: 1   // Every tick — panic
         case 0.5..<0.8: 1 // Every tick — stressed
         case 0.2..<0.5: 1 // Every tick — normal
@@ -225,17 +231,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         let faceName = FluentEmoji.face(for: currentMood, frame: animationFrame)
         let emojiImage = FluentEmoji.menuBarImage(named: faceName)
 
-        let cpu = Int(_appState.cpuUsage * 100)
-        let gpu = Int(_appState.gpuUsage * 100)
-        let ram = Int(_appState.ramUsage * 100)
-
-        let stats = [
-            ("CPU", "\(cpu)%"),
-            ("GPU", "\(gpu)%"),
-            ("RAM", "\(ram)%"),
-        ]
-
-        let combined = renderMenuBarImage(emoji: emojiImage, stats: stats)
+        let combined = renderMenuBarImage(emoji: emojiImage, stats: currentStats)
         combined.accessibilityDescription = "JudgyMac — \(currentMood.displayName)"
         statusItem.button?.image = combined
         statusItem.button?.title = ""
@@ -403,11 +399,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
                 guard let self else { return }
                 self.spriteTimer?.invalidate()
                 self.spriteTimer = nil
-                let cpu = Int(self._appState.cpuUsage * 100)
-                let gpu = Int(self._appState.gpuUsage * 100)
-                let ram = Int(self._appState.ramUsage * 100)
-                let stats = [("CPU", "\(cpu)%"), ("GPU", "\(gpu)%"), ("RAM", "\(ram)%")]
-                let combined = self.renderMenuBarImage(emoji: nil, stats: stats)
+                let combined = self.renderMenuBarImage(emoji: nil, stats: self.currentStats)
                 self.statusItem.button?.image = combined
                 self.statusItem.button?.title = ""
             }
@@ -426,38 +418,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private func startSpriteAnimation() {
         spriteFrame = 0
         spriteTick = 0
-        // 12Hz tick, frame advance rate scales with CPU
-        spriteTimer = Timer.scheduledTimer(withTimeInterval: 0.083, repeats: true) { _ in
-            MainActor.assumeIsolated { [weak self] in
-                guard let self, !self.spriteFrames.isEmpty else { return }
-                let cpu = self._appState.cpuUsage
 
-                // CPU → how often to advance frame
-                // No data (0%): every 3 ticks = 4fps default jog
-                // Low CPU (10%): every 3 ticks = 4fps walk
-                // Mid CPU (30%): every 2 ticks = 6fps jog
-                // High CPU (60%+): every 1 tick = 12fps sprint
-                let skipRate: Int = cpu < 0.01 ? 3 : max(1, Int(round(4 * (1 - cpu * 1.5))))
-                self.spriteTick += 1
-                if self.spriteTick >= skipRate {
-                    self.spriteTick = 0
-                    self.spriteFrame = (self.spriteFrame + 1) % self.spriteFrames.count
-                }
+        // 8Hz sprite via target/selector (avoids @Sendable closure warnings)
+        spriteTimer = Timer.scheduledTimer(timeInterval: 0.125, target: self, selector: #selector(tickSprite), userInfo: nil, repeats: true)
+    }
 
-                // Only update status bar when sprite frame actually changes
-                guard self.spriteTick == 0 else { return }
-
-                let image = self.spriteFrames[self.spriteFrame]
-                let cpuPct = Int(cpu * 100)
-                let gpu = Int(self._appState.gpuUsage * 100)
-                let ram = Int(self._appState.ramUsage * 100)
-
-                let stats = [("CPU", "\(cpuPct)%"), ("GPU", "\(gpu)%"), ("RAM", "\(ram)%")]
-                let combined = self.renderMenuBarImage(emoji: image, stats: stats)
-                combined.accessibilityDescription = "JudgyMac"
-                self.statusItem.button?.image = combined
-                self.statusItem.button?.title = ""
-            }
+    @objc private func tickSprite() {
+        guard !spriteFrames.isEmpty else { return }
+        spriteFrame = (spriteFrame + 1) % spriteFrames.count
+        autoreleasepool {
+            let combined = renderMenuBarImage(emoji: spriteFrames[spriteFrame], stats: currentStats)
+            combined.accessibilityDescription = "JudgyMac"
+            statusItem.button?.image = combined
+            statusItem.button?.title = ""
         }
     }
 

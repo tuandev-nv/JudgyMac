@@ -17,10 +17,13 @@ func currentRAMUsage() -> Double {
     guard result == KERN_SUCCESS else { return 0 }
 
     let pageSize = UInt64(getpagesize())
-    let active = UInt64(stats.active_count) * pageSize
+    // Match Activity Monitor: App Memory (internal - purgeable) + Wired + Compressed
+    let internal_ = UInt64(stats.internal_page_count) * pageSize
+    let purgeable = UInt64(stats.purgeable_count) * pageSize
     let wired = UInt64(stats.wire_count) * pageSize
     let compressed = UInt64(stats.compressor_page_count) * pageSize
-    let used = active + wired + compressed
+    let appMemory = internal_ - purgeable
+    let used = appMemory + wired + compressed
 
     let total = UInt64(ProcessInfo.processInfo.physicalMemory)
     guard total > 0 else { return 0 }

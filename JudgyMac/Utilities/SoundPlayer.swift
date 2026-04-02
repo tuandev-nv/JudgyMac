@@ -8,7 +8,7 @@ enum SoundPlayer {
     private static var activePlayers: [AVAudioPlayer] = []
     private static var currentVoicePlayer: AVAudioPlayer?
     private static var voiceDebounceTask: Task<Void, Never>?
-    private static let maxActivePlayers = 10
+    private static let maxActivePlayers = 5
     /// Debounce interval — voice only plays after this pause between slaps.
     private static let voiceDebounceMs: UInt64 = 500
     static var isMuted = false

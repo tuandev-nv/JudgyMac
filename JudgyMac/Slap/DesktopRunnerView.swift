@@ -67,7 +67,10 @@ struct DesktopRunnerView: View {
             preloadFrames()
             startFalling()
         }
-        .onDisappear { timer?.invalidate() }
+        .onDisappear {
+            timer?.invalidate()
+            cachedFrames.removeAll()
+        }
     }
 
     // MARK: - Preload & Sprite

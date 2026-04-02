@@ -10,10 +10,13 @@ final class AppUpdater {
 
     private init() {
         updaterController = SPUStandardUpdaterController(
-            startingUpdater: true,
+            startingUpdater: false,
             updaterDelegate: nil,
             userDriverDelegate: nil
         )
+        // Don't auto-check — menu bar app, user checks manually via Settings
+        updaterController.updater.automaticallyChecksForUpdates = false
+        try? updaterController.updater.start()
     }
 
     var updater: SPUUpdater {

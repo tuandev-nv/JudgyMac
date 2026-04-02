@@ -56,6 +56,7 @@ final class DesktopRunnerWindow {
 
     private func dismiss() {
         isActive = false
+        panel.contentView = nil
         panel.orderOut(nil)
         hostingController = nil
     }
