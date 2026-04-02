@@ -44,6 +44,7 @@ final class SettingsWindowController: NSWindowController, NSToolbarDelegate {
         super.init(window: window)
 
         setupToolbar()
+        setupQuitButton()
         showTab(.general)
     }
 
@@ -62,6 +63,29 @@ final class SettingsWindowController: NSWindowController, NSToolbarDelegate {
 
         window?.toolbar = toolbar
         window?.toolbarStyle = .preference  // This gives the CleanShotX look!
+    }
+
+    // MARK: - Quit Button (title bar right side)
+
+    private func setupQuitButton() {
+        let button = NSButton(title: "Quit", target: self, action: #selector(quitApp))
+        button.bezelStyle = .accessoryBarAction
+        button.contentTintColor = .systemRed
+        button.setContentHuggingPriority(.required, for: .horizontal)
+
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 80, height: 38))
+        button.frame = NSRect(x: 8, y: 10, width: 60, height: 24)
+        container.addSubview(button)
+
+        let accessory = NSTitlebarAccessoryViewController()
+        accessory.view = container
+        accessory.layoutAttribute = .trailing
+        accessory.fullScreenMinHeight = 38
+        window?.addTitlebarAccessoryViewController(accessory)
+    }
+
+    @objc private func quitApp() {
+        NSApplication.shared.terminate(nil)
     }
 
     // MARK: - NSToolbarDelegate

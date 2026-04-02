@@ -38,6 +38,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         // Load persisted data
         SettingsStore.load(into: _appState)
 
+        warnIfNotInApplications()
         setupStatusItem()
         setupPopover()
         startEngine()
@@ -120,6 +121,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     func applicationWillTerminate(_ notification: Notification) {
         guard !skipSaveOnTerminate else { return }
         SettingsStore.save(_appState)
+    }
+
+    // MARK: - Applications Folder Check
+
+    private func warnIfNotInApplications() {
+        #if !DEBUG
+        let appPath = Bundle.main.bundlePath
+        guard !appPath.hasPrefix("/Applications") else { return }
+
+        let alert = NSAlert()
+        alert.messageText = "Move to Applications"
+        alert.informativeText = "JudgyMac works best from the Applications folder. Move it there for auto-updates and a better experience."
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Move to Applications")
+        alert.addButton(withTitle: "Continue Anyway")
+
+        if alert.runModal() == .alertFirstButtonReturn {
+            let dest = "/Applications/JudgyMac.app"
+            do {
+                if FileManager.default.fileExists(atPath: dest) {
+                    try FileManager.default.removeItem(atPath: dest)
+                }
+                try FileManager.default.copyItem(atPath: appPath, toPath: dest)
+                NSWorkspace.shared.open(URL(fileURLWithPath: dest))
+                NSApplication.shared.terminate(nil)
+            } catch {
+                let errAlert = NSAlert()
+                errAlert.messageText = "Could not move"
+                errAlert.informativeText = "Please drag JudgyMac.app to your Applications folder manually."
+                errAlert.runModal()
+            }
+        }
+        #endif
     }
 
     // MARK: - Status Item (Menu Bar Icon)

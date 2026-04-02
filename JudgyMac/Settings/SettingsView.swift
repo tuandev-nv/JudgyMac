@@ -71,10 +71,16 @@ struct GeneralSettingsTab: View {
 
             if appState.isLicenseValid {
                 Section {
-                    Toggle("Start at login", isOn: $launchAtLogin)
-                        .onChange(of: launchAtLogin) { _, newValue in
-                            AppDelegate.setLaunchAtLogin(newValue)
-                        }
+                    HStack {
+                        Text("Start at login")
+                        Spacer()
+                        Toggle("", isOn: $launchAtLogin)
+                            .toggleStyle(.switch)
+                            .labelsHidden()
+                            .onChange(of: launchAtLogin) { _, newValue in
+                                AppDelegate.setLaunchAtLogin(newValue)
+                            }
+                    }
                 }
 
                 Section("Character Pack") {
@@ -117,6 +123,7 @@ struct GeneralSettingsTab: View {
                     }
                 }
             }
+
         }
         .formStyle(.grouped)
         .environment(\.layoutDirection, .leftToRight)
