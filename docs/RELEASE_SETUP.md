@@ -33,7 +33,10 @@ xcodebuild archive -scheme JudgyMac -archivePath build/JudgyMac.xcarchive
 xcodebuild -exportArchive -archivePath build/JudgyMac.xcarchive \
   -exportOptionsPlist ExportOptions.plist -exportPath build/
 
-# 3. Create DMG
+# 3. Re-sign with ad-hoc (Sparkle framework needs matching signature)
+codesign --force --deep --sign - build/JudgyMac.app
+
+# 4. Create DMG
 hdiutil create -volname "JudgyMac" -srcfolder build/JudgyMac.app \
   -ov -format UDZO build/JudgyMac-v1.0.0.dmg
 
