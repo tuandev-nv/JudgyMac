@@ -35,7 +35,7 @@ struct SummaryCardView: View {
             }
 
             Spacer()
-            Text("judgymac.com").font(.caption).foregroundStyle(.tertiary)
+            Text("judgymac.xyz").font(.caption).foregroundStyle(.tertiary)
         }
         .padding(32)
         .frame(width: 360, height: 480)

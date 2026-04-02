@@ -2,7 +2,7 @@ import Foundation
 
 enum Constants {
     static let appName = "JudgyMac"
-    static let websiteURL = URL(string: "https://judgymac.com")!
+    static let websiteURL = URL(string: "https://judgymac.xyz")!
     static let bundleIdentifier = "com.judgymac.app"
 
     enum Roast {

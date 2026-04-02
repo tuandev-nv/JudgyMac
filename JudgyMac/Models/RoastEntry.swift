@@ -27,7 +27,7 @@ struct RoastEntry: Identifiable, Sendable {
     }
 
     var shareText: String {
-        "\"\(text)\" — JudgyMac (\(personality)) | judgymac.com"
+        "\"\(text)\" — JudgyMac (\(personality)) | judgymac.xyz"
     }
 
     var timeAgo: String {

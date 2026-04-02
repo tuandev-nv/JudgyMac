@@ -62,7 +62,7 @@ struct GeneralSettingsTab: View {
                             Text("Don't have a key?")
                                 .font(.system(size: 11))
                                 .foregroundStyle(.secondary)
-                            Link("Buy license", destination: URL(string: "https://judgymac.com/#pricing")!)
+                            Link("Buy license", destination: URL(string: "https://judgymac.xyz/#pricing")!)
                                 .font(.system(size: 11))
                         }
                     }
@@ -289,10 +289,10 @@ struct AboutSettingsTab: View {
 
             Section {
                 LabeledContent("Website") {
-                    Link("judgymac.com", destination: URL(string: "https://judgymac.com")!)
+                    Link("judgymac.xyz", destination: URL(string: "https://judgymac.xyz")!)
                 }
                 LabeledContent("Support") {
-                    Link("support@judgymac.com", destination: URL(string: "mailto:support@judgymac.com")!)
+                    Link("support@judgymac.xyz", destination: URL(string: "mailto:support@judgymac.xyz")!)
                 }
             }
 
