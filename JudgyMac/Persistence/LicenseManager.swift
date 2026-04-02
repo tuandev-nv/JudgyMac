@@ -59,9 +59,10 @@ enum LicenseManager {
             }
 
             if httpResponse.statusCode == 200 {
-                // Parse response to check validity
+                // Polar returns the license key object if valid
                 if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                   let valid = json["valid"] as? Bool, valid {
+                   let status = json["status"] as? String,
+                   status == "granted" {
                     return .valid
                 }
                 return .invalid
