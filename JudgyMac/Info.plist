@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>JudgyMac Pro</string>
+	<string>JudgyMac</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -24,5 +24,11 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2026 JudgyMac. All rights reserved.</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string>https://judgymac.xyz/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>Xfd02WUmoEFCf2iTe2LieBlksVYsR0A/VB1GutZO+nw=</string>
 </dict>
 </plist>

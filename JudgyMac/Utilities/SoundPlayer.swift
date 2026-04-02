@@ -56,11 +56,11 @@ enum SoundPlayer {
         }
 
         // Voice line — debounced. Only plays if no new slap within debounce window.
-        guard let voice = voiceSound else { return }
+        guard !isMuted, let voice = voiceSound else { return }
         voiceDebounceTask?.cancel()
         voiceDebounceTask = Task {
             try? await Task.sleep(for: .milliseconds(voiceDebounceMs))
-            guard !Task.isCancelled else { return }
+            guard !Task.isCancelled, !isMuted else { return }
             currentVoicePlayer?.stop()
             currentVoicePlayer = nil
             guard let url = resolveURL(voice),

@@ -76,11 +76,16 @@ final class RoastEngine {
         var ctx = event.metadata
         let stats = appState.todayStats
 
-        ctx["count"] = "\(stats.lidOpenCount)"
+        // Only set count from stats if event doesn't already provide it
+        if ctx["count"] == nil {
+            ctx["count"] = "\(stats.lidOpenCount)"
+        }
         ctx["total_today"] = "\(stats.roastCount)"
 
         let hour = Calendar.current.component(.hour, from: Date())
-        ctx["hour"] = "\(hour)"
+        if ctx["hour"] == nil {
+            ctx["hour"] = "\(hour)"
+        }
 
         ctx["time"] = Self.timeFormatter.string(from: Date())
 

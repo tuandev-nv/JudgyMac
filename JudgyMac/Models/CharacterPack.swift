@@ -19,6 +19,9 @@ struct CharacterPack: Identifiable, Sendable {
     let reactions: [Reaction]
     let rageReaction: RageReaction?
 
+    // Emojis (preloaded at init)
+    let emojiNames: [String]
+
     // Roasts
     var roastTemplates: [String: [RoastTemplate]]
 
@@ -77,33 +80,11 @@ struct CharacterPack: Identifiable, Sendable {
             .max(by: { $0.minHits < $1.minHits })
     }
 
-    /// Random emoji from pack's emojis/ folder. Returns nil if no custom emojis.
+    /// Random emoji from preloaded list. Returns nil if no custom emojis.
     func randomEmoji() -> String? {
-        let cached = Self.emojiCache[id]
-        let emojis: [String]
-
-        if let cached {
-            emojis = cached
-        } else {
-            guard let dir = Bundle.main.resourceURL?
-                .appendingPathComponent(folderPath)
-                .appendingPathComponent("emojis"),
-                  let files = try? FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)
-                    .filter({ $0.pathExtension == "png" })
-                    .map({ $0.deletingPathExtension().lastPathComponent })
-            else {
-                Self.emojiCache[id] = []
-                return nil
-            }
-            emojis = files
-            Self.emojiCache[id] = files
-        }
-
-        guard let name = emojis.randomElement() else { return nil }
+        guard let name = emojiNames.randomElement() else { return nil }
         return "\(folderPath)/emojis/\(name)"
     }
-
-    nonisolated(unsafe) private static var emojiCache: [String: [String]] = [:]
 
     /// Voice path for a roast template (if available)
     func roastVoicePath(templateId: String) -> String? {
@@ -266,6 +247,13 @@ enum CharacterPackCatalog {
                 }
             }
 
+            // Preload emoji names from emojis/ folder
+            let emojisDir = folder.appendingPathComponent("emojis")
+            let emojiNames: [String] = (try? FileManager.default
+                .contentsOfDirectory(at: emojisDir, includingPropertiesForKeys: nil)
+                .filter { $0.pathExtension == "png" }
+                .map { $0.deletingPathExtension().lastPathComponent }) ?? []
+
             let pack = CharacterPack(
                 id: json.id,
                 displayName: json.displayName,
@@ -307,6 +295,7 @@ enum CharacterPackCatalog {
                         voicePath: $0.voice.map { "\(folderPath)/slap_voices/\($0)" }
                     )
                 },
+                emojiNames: emojiNames,
                 roastTemplates: roasts
             )
             packs.append(pack)

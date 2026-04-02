@@ -3,6 +3,9 @@ import SwiftUI
 struct MenuBarView: View {
     @Environment(AppState.self) private var appState
     @State private var showHistory = false
+    @State private var licenseInput = ""
+    @State private var licenseStatus: String?
+    @State private var isValidating = false
 
     // Actions handled by AppDelegate (closes popover first)
     var onOpenSettings: () -> Void = {}
@@ -52,6 +55,7 @@ struct MenuBarView: View {
 
             // Judgment bar
             judgmentBar
+
 
             #if DEBUG
             devTools
@@ -113,6 +117,27 @@ struct MenuBarView: View {
                     appState.currentRoast = nil
                     appState.currentMood = .neutral
                 }
+                DevGridButton(icon: "💣", label: "Wipe All") {
+                    SettingsStore.clearAll()
+                    // Reset in-memory state to fresh install
+                    appState.todayStats = UserStats()
+                    appState.currentRoast = nil
+                    appState.roastHistory = []
+                    appState.currentMood = .neutral
+                    appState.isOnboarded = false
+                    appState.selectedCharacterPack = "trump"
+                    appState.licenseKey = ""
+                    appState.isLicenseValid = false
+                    appState.toastEnabled = true
+                    appState.voiceEnabled = true
+                    appState.enabledTriggers = Set(TriggerType.allCases)
+                    SoundPlayer.isMuted = false
+                    // Reload menu bar sprite
+                    NotificationCenter.default.post(name: .showMenuBarSprite, object: nil)
+                    #if DEBUG
+                    print("💣 [Wipe] Done. hasLaunched=\(UserDefaults.standard.bool(forKey: "com.judgymac.hasLaunchedBefore"))")
+                    #endif
+                }
             }
         } label: {
             Button {
@@ -147,6 +172,80 @@ struct MenuBarView: View {
         )
     }
     #endif
+
+    // MARK: - License
+
+    private var licenseRow: some View {
+        VStack(spacing: 8) {
+            Button {
+                guard let clipboard = NSPasteboard.general.string(forType: .string),
+                      !clipboard.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                    licenseStatus = "✗ Copy a license key first"
+                    return
+                }
+                licenseInput = clipboard.trimmingCharacters(in: .whitespacesAndNewlines)
+                activateLicense()
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "doc.on.clipboard")
+                        .font(.system(size: 12))
+                    Text(isValidating ? "Validating..." : "Paste & Activate License")
+                        .font(.system(size: 12, weight: .medium))
+                }
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .background(.purple, in: RoundedRectangle(cornerRadius: 8))
+            }
+            .buttonStyle(.plain)
+            .disabled(isValidating)
+
+            if let status = licenseStatus {
+                Text(status)
+                    .font(.system(size: 10))
+                    .foregroundStyle(status.contains("✓") ? .green : .red)
+            }
+
+            HStack(spacing: 4) {
+                Text("No key?")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.tertiary)
+                Link("Buy license", destination: URL(string: "https://judgymac.xyz/#pricing")!)
+                    .font(.system(size: 10))
+            }
+        }
+        .padding(10)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(.purple.opacity(0.2), lineWidth: 0.5)
+        )
+    }
+
+    private func activateLicense() {
+        isValidating = true
+        licenseStatus = nil
+        Task {
+            let result = await LicenseManager.validate(key: licenseInput)
+            isValidating = false
+            switch result {
+            case .valid:
+                appState.licenseKey = licenseInput
+                appState.isLicenseValid = true
+                licenseStatus = "✓ License activated!"
+                SettingsStore.save(appState)
+                SlapWindow.shared.warmUp(pack: appState.currentPack)
+                SoundPlayer.preload([
+                    appState.currentPack.slapSoundPath,
+                    "\(appState.currentPack.folderPath)/slap_voice",
+                ])
+            case .invalid:
+                licenseStatus = "✗ Invalid license key"
+            case .error(let msg):
+                licenseStatus = "✗ \(msg)"
+            }
+        }
+    }
 
     // MARK: - Roast
 

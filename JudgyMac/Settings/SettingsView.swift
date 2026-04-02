@@ -105,6 +105,18 @@ struct GeneralSettingsTab: View {
                     .onChange(of: appState.selectedCharacterPack) { _, _ in SettingsStore.save(appState) }
                 }
             }
+
+            Section("Updates") {
+                HStack {
+                    Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?")")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Button("Check for Updates") {
+                        AppUpdater.shared.checkForUpdates()
+                    }
+                }
+            }
         }
         .formStyle(.grouped)
         .environment(\.layoutDirection, .leftToRight)

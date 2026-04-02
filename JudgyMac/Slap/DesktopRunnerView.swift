@@ -38,9 +38,9 @@ struct DesktopRunnerView: View {
 
     private let spriteSize: CGFloat = 120
     private let gravity: CGFloat = 600      // Slower fall — more dramatic
-    private let runSpeed: CGFloat = 150
+    private let runSpeed: CGFloat = 320
     private let fps: TimeInterval = 1.0 / 60.0
-    private let frameEveryNTicks: Int = 10  // ~6fps sprite, smooth movement at 60fps
+    private let frameEveryNTicks: Int = 5  // ~12fps sprite, smooth movement at 60fps
 
     /// All reaction lines from the pack (text + voice paired)
     private var allReactionLines: [CharacterPack.ReactionLine] {

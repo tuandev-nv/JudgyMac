@@ -44,6 +44,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         observeMenuBarSprite()
         SoundPlayer.isMuted = !_appState.voiceEnabled
 
+        // Initialize Sparkle auto-updater
+        _ = AppUpdater.shared
+
         // Pre-warm slap window + sounds so first slap is instant (only if licensed)
         if _appState.isLicenseValid {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
@@ -64,11 +67,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
                 }
                 SoundPlayer.preload(sounds)
             }
+        }
 
-            // Welcome roast — greet user 3s after launch
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-                self?.deliverWelcomeRoast()
-            }
+        // Welcome roast — greet user 3s after launch
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            self?.deliverWelcomeRoast()
         }
 
         #if DEBUG
@@ -110,7 +113,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         }
     }
 
+    var skipSaveOnTerminate = false
+
     func applicationWillTerminate(_ notification: Notification) {
+        guard !skipSaveOnTerminate else { return }
         SettingsStore.save(_appState)
     }
 
@@ -429,15 +435,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         "Rise and shine! Time to make bad decisions while I watch.",
     ]
 
+    private static let firstLaunchKey = "com.judgymac.hasLaunchedBefore"
+
     private func deliverWelcomeRoast() {
         guard _appState.toastEnabled else { return }
         let pack = _appState.currentPack
-        let text = Self.welcomeRoasts.randomElement()!
+        let isFirstLaunch = !UserDefaults.standard.bool(forKey: Self.firstLaunchKey)
+
+        let text: String
+        if isFirstLaunch {
+            text = "Welcome! I'm here to Make Slap Great Again. Your MacBook will never be the same. Tremendous."
+            UserDefaults.standard.set(true, forKey: Self.firstLaunchKey)
+            // Play fixed welcome voice
+            SoundPlayer.play("\(pack.folderPath)/welcome", volume: 0.85)
+        } else {
+            text = Self.welcomeRoasts.randomElement()!
+        }
+
         let entry = RoastEntry(
             text: text,
             personality: pack.displayName,
             triggerType: .lidOpen,
-            mood: .judging,
+            mood: isFirstLaunch ? .raging : .judging,
             customEmoji: pack.randomEmoji()
         )
         _appState.deliverRoast(entry)
@@ -474,6 +493,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         // Option+Click → play random voice line instead of opening popover
         if NSApp.currentEvent?.modifierFlags.contains(.option) == true {
             playRandomVoiceLine()
+            return
+        }
+
+        // No license → go straight to Settings
+        if !_appState.isLicenseValid {
+            openSettings()
             return
         }
 

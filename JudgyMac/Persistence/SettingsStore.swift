@@ -142,6 +142,32 @@ enum SettingsStore {
         }
     }
 
+    // MARK: - Clear All Data
+
+    static func clearAll() {
+        // Nuclear: remove entire persistent domain + individual keys
+        if let bundleId = Bundle.main.bundleIdentifier {
+            defaults.removePersistentDomain(forName: bundleId)
+        }
+        // Also remove individually (covers keys outside bundle domain)
+        let allKeys = [
+            Keys.selectedCharacterPack, Keys.enabledTriggers, Keys.isOnboarded,
+            Keys.toastEnabled, Keys.voiceEnabled, Keys.licenseKey, Keys.isLicenseValid,
+            Keys.statsDate, Keys.statsLidOpens, Keys.statsKeystrokes,
+            Keys.statsRoastCount, Keys.statsMaxIdle, Keys.statsTriggerCounts,
+            Keys.roastHistory,
+            "com.judgymac.stats.slapCount", "com.judgymac.stats.appSwitchCount",
+            "com.judgymac.stats.thermalCount", "com.judgymac.stats.screenTime",
+            "com.judgymac.hasLaunchedBefore",
+        ]
+        for key in allKeys {
+            defaults.removeObject(forKey: key)
+        }
+        defaults.synchronize()
+        // Kill cfprefsd cache so changes take effect immediately
+        _ = try? Process.run(URL(fileURLWithPath: "/usr/bin/killall"), arguments: ["cfprefsd"])
+    }
+
     // MARK: - Migration
 
     private static func migrateLegacyKeys() {
