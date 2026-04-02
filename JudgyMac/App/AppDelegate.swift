@@ -332,7 +332,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
 
         spriteFrames = files.compactMap { url in
             guard let img = NSImage(contentsOf: url) else { return nil }
-            img.size = NSSize(width: 20, height: 22)
+            img.size = NSSize(width: 18, height: 18)
             img.isTemplate = false
             return img
         }
@@ -386,10 +386,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
                 let cpu = self._appState.cpuUsage
 
                 // CPU → how often to advance frame
-                // Low CPU (0%): every 8 ticks = 1fps stroll
-                // Mid CPU (30%): every 3 ticks = 2.7fps jog
-                // High CPU (70%): every 1 tick = 8fps sprint
-                let skipRate = max(1, Int(round(8 * (1 - cpu * 1.2))))
+                // No data (0%): every 3 ticks = 4fps default jog
+                // Low CPU (10%): every 3 ticks = 4fps walk
+                // Mid CPU (30%): every 2 ticks = 6fps jog
+                // High CPU (60%+): every 1 tick = 12fps sprint
+                let skipRate: Int = cpu < 0.01 ? 3 : max(1, Int(round(4 * (1 - cpu * 1.5))))
                 self.spriteTick += 1
                 if self.spriteTick >= skipRate {
                     self.spriteTick = 0

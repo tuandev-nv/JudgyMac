@@ -4,8 +4,9 @@ import SwiftUI
 
 enum RunnerPhase: Equatable {
     case falling
+    case landed   // pause after hitting ground
     case running
-    case stopped
+    case stopped  // talking
     case exiting
     case done
 }
@@ -131,10 +132,10 @@ struct DesktopRunnerView: View {
                 switch phase {
                 case .falling:
                     tickFalling(groundY: groundY)
+                case .landed, .stopped:
+                    break
                 case .running:
                     tickRunning()
-                case .stopped:
-                    break
                 case .exiting:
                     tickExiting()
                 case .done:
@@ -163,8 +164,7 @@ struct DesktopRunnerView: View {
         if y >= groundY {
             y = groundY
             rotation = 0
-            phase = .running
-            runStartTime = Date()
+            phase = .landed
             frame = 0
             frameTick = 0
 
@@ -172,6 +172,12 @@ struct DesktopRunnerView: View {
             squash = 1.3
             withAnimation(.spring(response: 0.3, dampingFraction: 0.4)) {
                 squash = 1.0
+            }
+
+            // Pause on landing, then start running
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                phase = .running
+                runStartTime = Date()
             }
         }
     }
@@ -226,15 +232,19 @@ struct DesktopRunnerView: View {
         }
 
         quote = line.text
+
+        // Play voice and get duration to wait
+        var voiceDuration: TimeInterval = 2.5
         if let voicePath = line.voicePath {
-            SoundPlayer.play(voicePath, volume: 0.9)
+            voiceDuration = max(SoundPlayer.playVoiceReturningDuration(voicePath, volume: 0.9), 2.0)
         }
 
         withAnimation(.easeIn(duration: 0.3)) {
             quoteOpacity = 1
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+        // Wait for voice to finish, then exit
+        DispatchQueue.main.asyncAfter(deadline: .now() + voiceDuration + 0.5) {
             withAnimation(.easeOut(duration: 0.3)) {
                 quoteOpacity = 0
             }
