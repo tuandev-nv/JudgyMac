@@ -51,6 +51,8 @@ targets:
       properties:
         LSUIElement: true
         CFBundleDisplayName: JudgyMac
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         NSHumanReadableCopyright: "Copyright © 2026 JudgyMac. All rights reserved."
         SUFeedURL: "https://judgymac.xyz/appcast.xml"
         SUPublicEDKey: "Xfd02WUmoEFCf2iTe2LieBlksVYsR0A/VB1GutZO+nw="
