@@ -51,6 +51,8 @@ final class AppSwitchDetector: BehaviorDetector, @unchecked Sendable {
 
     private func recordSwitch(app: String) {
         let now = Date()
+        // Notify for raw count (every single switch)
+        NotificationCenter.default.post(name: .appSwitchRawCount, object: nil)
         switchTimestamps.append(now)
 
         // Prune timestamps outside the window

@@ -46,7 +46,6 @@ final class SlapWindow {
         let size = Constants.Slap.windowSize
         let windowHeight = size + 120
 
-        // Use the screen with the current mouse pointer for multi-display support
         let mouseLocation = NSEvent.mouseLocation
         let screen = NSScreen.screens.first(where: { $0.frame.contains(mouseLocation) }) ?? NSScreen.main
 
@@ -103,6 +102,7 @@ final class SlapWindow {
         if slapState.hitCount >= pack.slapLimit {
             slapState.isKnockedOut = true
             slapState.impactTrigger += 1
+            NotificationCenter.default.post(name: .slapKO, object: nil)
 
             // Play rage voice if available
             if let rage = pack.rageReaction, let voicePath = rage.voicePath {
@@ -224,11 +224,11 @@ final class SlapState {
     var hitCount: Int = 0
     var impactTrigger: Int = 0
     var isKnockedOut: Bool = false
-    var currentReactionText: String?  // Set by SlapWindow, used by SlapAnimationView
+    var currentReactionText: String?
 
     var deformationLevel: Int {
         switch hitCount {
-        case 0...1:   return 0  // idle
+        case 0...1:   return 0
         case 2...4:   return 1
         case 5...8:   return 2
         case 9...12:  return 3
@@ -236,7 +236,7 @@ final class SlapState {
         case 17...20: return 5
         case 21...25: return 6
         case 26...31: return 7
-        default:      return 8  // KO / rage
+        default:      return 8
         }
     }
 

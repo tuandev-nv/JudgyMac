@@ -147,6 +147,7 @@ struct SlapAnimationView: View {
                 }
             }
             .frame(width: 1000, height: 1000)
+
         }
         .scaleEffect(appeared ? 1 : 0.1)
         .opacity(appeared ? 1 : 0)

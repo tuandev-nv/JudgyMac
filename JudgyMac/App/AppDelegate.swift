@@ -43,6 +43,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         setupPopover()
         startEngine()
         observeMenuBarSprite()
+        observeRawAppSwitches()
         SoundPlayer.isMuted = !_appState.voiceEnabled
 
         // Initialize Sparkle auto-updater (delayed to avoid blocking launch)
@@ -108,7 +109,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         #endif
 
         // Auto-save every 30 seconds
-        saveTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { _ in
+        saveTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
             MainActor.assumeIsolated { [weak self] in
                 guard let self else { return }
                 SettingsStore.save(self._appState)
@@ -456,6 +457,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
                 combined.accessibilityDescription = "JudgyMac"
                 self.statusItem.button?.image = combined
                 self.statusItem.button?.title = ""
+            }
+        }
+    }
+
+    // MARK: - Raw App Switch Counter
+
+    private nonisolated(unsafe) var appSwitchObserver: Any?
+    private nonisolated(unsafe) var koObserver: Any?
+
+    private func observeRawAppSwitches() {
+        appSwitchObserver = NotificationCenter.default.addObserver(
+            forName: .appSwitchRawCount, object: nil, queue: .main
+        ) { _ in
+            Task { @MainActor [weak self] in
+                self?._appState.todayStats.totalAppSwitchCount += 1
+            }
+        }
+        koObserver = NotificationCenter.default.addObserver(
+            forName: .slapKO, object: nil, queue: .main
+        ) { _ in
+            Task { @MainActor [weak self] in
+                self?._appState.todayStats.koCount += 1
             }
         }
     }

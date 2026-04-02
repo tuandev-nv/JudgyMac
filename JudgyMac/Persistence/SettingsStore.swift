@@ -54,7 +54,9 @@ enum SettingsStore {
         defaults.set(state.todayStats.maxIdleMinutes, forKey: Keys.statsMaxIdle)
         defaults.set(state.todayStats.slapCount, forKey: "com.judgymac.stats.slapCount")
         defaults.set(state.todayStats.appSwitchCount, forKey: "com.judgymac.stats.appSwitchCount")
+        defaults.set(state.todayStats.totalAppSwitchCount, forKey: "com.judgymac.stats.totalAppSwitchCount")
         defaults.set(state.todayStats.thermalCount, forKey: "com.judgymac.stats.thermalCount")
+        defaults.set(state.todayStats.koCount, forKey: "com.judgymac.stats.koCount")
         defaults.set(state.todayStats.screenTimeMinutes, forKey: "com.judgymac.stats.screenTime")
         let triggerCountsDict = Dictionary(uniqueKeysWithValues:
             state.todayStats.triggerCounts.map { ($0.key.rawValue, $0.value) }
@@ -116,7 +118,9 @@ enum SettingsStore {
             state.todayStats.maxIdleMinutes = defaults.integer(forKey: Keys.statsMaxIdle)
             state.todayStats.slapCount = defaults.integer(forKey: "com.judgymac.stats.slapCount")
             state.todayStats.appSwitchCount = defaults.integer(forKey: "com.judgymac.stats.appSwitchCount")
+            state.todayStats.totalAppSwitchCount = defaults.integer(forKey: "com.judgymac.stats.totalAppSwitchCount")
             state.todayStats.thermalCount = defaults.integer(forKey: "com.judgymac.stats.thermalCount")
+            state.todayStats.koCount = defaults.integer(forKey: "com.judgymac.stats.koCount")
             state.todayStats.screenTimeMinutes = defaults.integer(forKey: "com.judgymac.stats.screenTime")
             if let saved = defaults.dictionary(forKey: Keys.statsTriggerCounts) as? [String: Int] {
                 for (key, value) in saved {
@@ -157,7 +161,9 @@ enum SettingsStore {
             Keys.statsRoastCount, Keys.statsMaxIdle, Keys.statsTriggerCounts,
             Keys.roastHistory,
             "com.judgymac.stats.slapCount", "com.judgymac.stats.appSwitchCount",
-            "com.judgymac.stats.thermalCount", "com.judgymac.stats.screenTime",
+            "com.judgymac.stats.totalAppSwitchCount",
+            "com.judgymac.stats.thermalCount", "com.judgymac.stats.koCount",
+            "com.judgymac.stats.screenTime",
             "com.judgymac.hasLaunchedBefore",
             "com.judgymac.welcomeShownForVersion",
         ]

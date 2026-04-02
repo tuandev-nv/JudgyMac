@@ -7,7 +7,9 @@ struct UserStats: Sendable {
     var maxIdleMinutes: Int = 0
     var slapCount: Int = 0
     var appSwitchCount: Int = 0
+    var totalAppSwitchCount: Int = 0
     var thermalCount: Int = 0
+    var koCount: Int = 0
     var screenTimeMinutes: Int = 0
     var triggerCounts: [TriggerType: Int] = [:]
     var date: Date = Calendar.current.startOfDay(for: Date())

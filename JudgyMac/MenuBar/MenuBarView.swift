@@ -283,8 +283,8 @@ struct MenuBarView: View {
             StatPill(icon: "flame", value: "\(stats.roastCount)", label: "Roasts")
             StatPill(icon: "clock.arrow.circlepath", value: "\(stats.screenTimeMinutes)m", label: "Screen")
             StatPill(icon: "hand.raised", value: "\(stats.slapCount)", label: "Slaps")
-            StatPill(icon: "arrow.left.arrow.right", value: "\(stats.appSwitchCount)", label: "Alt-Tab")
-            StatPill(icon: "thermometer.sun.fill", value: "\(stats.thermalCount)", label: "Overheat")
+            StatPill(icon: "arrow.left.arrow.right", value: "\(stats.totalAppSwitchCount)", label: "Alt-Tab")
+            StatPill(icon: "face.dashed", value: "\(stats.koCount)", label: "K.O.")
         }
     }
 
