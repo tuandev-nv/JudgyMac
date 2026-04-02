@@ -53,8 +53,6 @@ struct MenuBarView: View {
             // Stats
             statsRow
 
-            // Judgment bar
-            judgmentBar
 
 
             #if DEBUG
@@ -290,28 +288,6 @@ struct MenuBarView: View {
         }
     }
 
-    // MARK: - Judgment Bar
-
-    private var judgmentBar: some View {
-        VStack(spacing: 5) {
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(.quaternary).frame(height: 5)
-                    Capsule()
-                        .fill(LinearGradient(colors: [.purple, .pink], startPoint: .leading, endPoint: .trailing))
-                        .frame(width: max(geo.size.width * appState.todayStats.judgmentLevel, 5), height: 5)
-                }
-            }
-            .frame(height: 5)
-
-            HStack {
-                Text("Unjudged").font(.system(size: 10)).foregroundStyle(.tertiary)
-                Spacer()
-                Text("Fully Roasted").font(.system(size: 10)).foregroundStyle(.tertiary)
-            }
-        }
-    }
-
     // MARK: - Bottom Bar
 
     private var bottomBar: some View {
@@ -373,7 +349,8 @@ struct MenuBarView: View {
                                     .lineLimit(2)
 
                                 HStack {
-                                    Text("\(entry.mood.emoji) \(entry.personality)")
+                                    packIcon(pack: appState.currentPack, size: 14)
+                                    Text(entry.personality)
                                         .font(.system(size: 10))
                                         .foregroundStyle(.secondary)
                                     Spacer()

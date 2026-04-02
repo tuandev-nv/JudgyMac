@@ -44,8 +44,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         observeMenuBarSprite()
         SoundPlayer.isMuted = !_appState.voiceEnabled
 
-        // Initialize Sparkle auto-updater
-        _ = AppUpdater.shared
+        // Initialize Sparkle auto-updater (delayed to avoid blocking launch)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 30) {
+            _ = AppUpdater.shared
+        }
 
         // Pre-warm slap window + sounds so first slap is instant (only if licensed)
         if _appState.isLicenseValid {
@@ -435,28 +437,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         "Rise and shine! Time to make bad decisions while I watch.",
     ]
 
-    private static let firstLaunchKey = "com.judgymac.hasLaunchedBefore"
-
     private func deliverWelcomeRoast() {
         guard _appState.toastEnabled else { return }
         let pack = _appState.currentPack
-        let isFirstLaunch = !UserDefaults.standard.bool(forKey: Self.firstLaunchKey)
-
-        let text: String
-        if isFirstLaunch {
-            text = "Welcome! I'm here to Make Slap Great Again. Your MacBook will never be the same. Tremendous."
-            UserDefaults.standard.set(true, forKey: Self.firstLaunchKey)
-            // Play fixed welcome voice
-            SoundPlayer.play("\(pack.folderPath)/welcome", volume: 0.85)
-        } else {
-            text = Self.welcomeRoasts.randomElement()!
-        }
+        let text = Self.welcomeRoasts.randomElement()!
+        SoundPlayer.play("\(pack.folderPath)/welcome", volume: 0.85)
 
         let entry = RoastEntry(
             text: text,
             personality: pack.displayName,
             triggerType: .lidOpen,
-            mood: isFirstLaunch ? .raging : .judging,
+            mood: .judging,
             customEmoji: pack.randomEmoji()
         )
         _appState.deliverRoast(entry)

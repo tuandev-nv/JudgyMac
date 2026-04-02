@@ -159,6 +159,7 @@ enum SettingsStore {
             "com.judgymac.stats.slapCount", "com.judgymac.stats.appSwitchCount",
             "com.judgymac.stats.thermalCount", "com.judgymac.stats.screenTime",
             "com.judgymac.hasLaunchedBefore",
+            "com.judgymac.welcomeShownForVersion",
         ]
         for key in allKeys {
             defaults.removeObject(forKey: key)
