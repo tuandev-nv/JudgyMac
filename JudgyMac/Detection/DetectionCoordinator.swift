@@ -132,4 +132,5 @@ extension Notification.Name {
     static let showMenuBarSprite = Notification.Name("com.judgymac.showMenuBarSprite")
     static let appSwitchRawCount = Notification.Name("com.judgymac.appSwitchRawCount")
     static let slapKO = Notification.Name("com.judgymac.slapKO")
+    static let triggersDidChange = Notification.Name("com.judgymac.triggersDidChange")
 }

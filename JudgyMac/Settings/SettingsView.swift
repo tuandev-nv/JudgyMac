@@ -282,6 +282,7 @@ struct TriggersSettingsTab: View {
                     appState.enabledTriggers.remove(trigger)
                 }
                 SettingsStore.save(appState)
+                NotificationCenter.default.post(name: .triggersDidChange, object: nil)
             }
         )
     }

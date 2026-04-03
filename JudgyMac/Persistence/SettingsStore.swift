@@ -12,6 +12,7 @@ enum SettingsStore {
         static let voiceEnabled = "com.judgymac.voiceEnabled"
         static let licenseKey = "com.judgymac.licenseKey"
         static let isLicenseValid = "com.judgymac.licenseValid"
+        static let knownTriggers = "com.judgymac.knownTriggers"
 
         // Stats
         static let statsDate = "com.judgymac.stats.date"
@@ -45,6 +46,8 @@ enum SettingsStore {
 
         let triggers = state.enabledTriggers.map(\.rawValue)
         defaults.set(triggers, forKey: Keys.enabledTriggers)
+        // Save all known trigger types so we can detect truly new ones on load
+        defaults.set(TriggerType.allCases.map(\.rawValue), forKey: Keys.knownTriggers)
 
         // Stats
         defaults.set(Date().timeIntervalSince1970, forKey: Keys.statsDate)
@@ -99,10 +102,9 @@ enum SettingsStore {
 
         if let triggers = defaults.stringArray(forKey: Keys.enabledTriggers) {
             var loaded = Set(triggers.compactMap { TriggerType(rawValue: $0) })
-            // Auto-enable new trigger types that didn't exist when settings were saved
-            let allKnown = Set(TriggerType.allCases)
-            let savedRawValues = Set(triggers)
-            for trigger in allKnown where !savedRawValues.contains(trigger.rawValue) {
+            // Auto-enable only truly new trigger types (not known at last save)
+            let knownAtSave = Set(defaults.stringArray(forKey: Keys.knownTriggers) ?? triggers)
+            for trigger in TriggerType.allCases where !knownAtSave.contains(trigger.rawValue) {
                 loaded.insert(trigger)
             }
             state.enabledTriggers = loaded

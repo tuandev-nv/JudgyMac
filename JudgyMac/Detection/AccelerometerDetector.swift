@@ -171,7 +171,7 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
         }
 
         // Step 4: Also wake via device properties (belt and suspenders)
-        IOHIDDeviceSetProperty(dev, "ReportInterval" as CFString, 1000 as CFNumber)
+        IOHIDDeviceSetProperty(dev, "ReportInterval" as CFString, 20_000 as CFNumber)
         IOHIDDeviceSetProperty(dev, "SensorPropertyReportingState" as CFString, 1 as CFNumber)
         IOHIDDeviceSetProperty(dev, "SensorPropertyPowerState" as CFString, 1 as CFNumber)
 
@@ -222,7 +222,7 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
             count += 1
             IORegistryEntrySetCFProperty(svc, "SensorPropertyReportingState" as CFString, 1 as CFNumber)
             IORegistryEntrySetCFProperty(svc, "SensorPropertyPowerState" as CFString, 1 as CFNumber)
-            IORegistryEntrySetCFProperty(svc, "ReportInterval" as CFString, 1000 as CFNumber)
+            IORegistryEntrySetCFProperty(svc, "ReportInterval" as CFString, 20_000 as CFNumber)
             IOObjectRelease(svc)
             svc = IOIteratorNext(iterator)
         }
@@ -242,9 +242,9 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
     fileprivate func handleReport(_ report: UnsafeMutablePointer<UInt8>, length: CFIndex) {
         guard length >= 18 else { return }
 
-        // Throttle to ~100Hz (from 800Hz hardware)
+        // Throttle to ~50Hz (from 800Hz hardware)
         let now = DispatchTime.now().uptimeNanoseconds
-        guard now - lastProcessTime >= 10_000_000 else { return } // 10ms
+        guard now - lastProcessTime >= 20_000_000 else { return } // 20ms
         lastProcessTime = now
 
         // Suppress during lid close/open

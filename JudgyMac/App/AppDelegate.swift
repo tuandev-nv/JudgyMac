@@ -27,6 +27,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private var spriteFrame = 0
     private var cachedStatsPill: NSImage?
     private var cachedStatsPillKey = ""
+    private var cachedSpriteComposites: [NSImage] = []
 
     // MARK: - App Lifecycle
 
@@ -419,19 +420,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         spriteFrame = 0
         spriteTick = 0
 
-        // 8Hz sprite via target/selector (avoids @Sendable closure warnings)
-        spriteTimer = Timer.scheduledTimer(timeInterval: 0.125, target: self, selector: #selector(tickSprite), userInfo: nil, repeats: true)
+        // 4Hz sprite via target/selector (avoids @Sendable closure warnings)
+        spriteTimer = Timer.scheduledTimer(timeInterval: 0.25, target: self, selector: #selector(tickSprite), userInfo: nil, repeats: true)
     }
 
     @objc private func tickSprite() {
         guard !spriteFrames.isEmpty else { return }
         spriteFrame = (spriteFrame + 1) % spriteFrames.count
-        autoreleasepool {
-            let combined = renderMenuBarImage(emoji: spriteFrames[spriteFrame], stats: currentStats)
-            combined.accessibilityDescription = "JudgyMac"
-            statusItem.button?.image = combined
-            statusItem.button?.title = ""
+
+        // Rebuild composite cache when stats change
+        let statsKey = currentStats.map { "\($0.0)\($0.1)" }.joined()
+        if cachedSpriteComposites.count != spriteFrames.count || statsKey != cachedStatsPillKey {
+            cachedSpriteComposites = spriteFrames.map { frame in
+                renderMenuBarImage(emoji: frame, stats: currentStats)
+            }
         }
+
+        let img = cachedSpriteComposites[spriteFrame]
+        img.accessibilityDescription = "JudgyMac"
+        statusItem.button?.image = img
+        statusItem.button?.title = ""
     }
 
     // MARK: - Raw App Switch Counter
@@ -452,6 +460,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         ) { _ in
             Task { @MainActor [weak self] in
                 self?._appState.todayStats.koCount += 1
+            }
+        }
+        NotificationCenter.default.addObserver(
+            forName: .triggersDidChange, object: nil, queue: .main
+        ) { _ in
+            Task { @MainActor [weak self] in
+                self?.coordinator?.restart()
             }
         }
     }
