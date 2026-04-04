@@ -1,11 +1,11 @@
 import Foundation
 import CryptoKit
 
-/// Validates license keys via Polar.sh API.
+/// Validates license keys via LemonSqueezy License API.
 @MainActor
 enum LicenseManager {
-    private static let organizationId = "87153ee2-de7a-473a-bc5d-e150e027e4f0"
-    private static let validateURL = URL(string: "https://api.polar.sh/v1/customer-portal/license-keys/validate")!
+    private static let validateURL = URL(string: "https://api.lemonsqueezy.com/v1/licenses/validate")!
+
     /// Hash a license key for secure local storage
     nonisolated static func hashKey(_ key: String) -> String {
         let salt = "JudgyMac202613040303"
@@ -25,32 +25,27 @@ enum LicenseManager {
         case error(String)
     }
 
-    /// Validate a license key against Polar.sh API.
+    /// Validate a license key against LemonSqueezy License API.
     static func validate(key: String) async -> Result {
-        guard !key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+        let trimmedKey = key.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedKey.isEmpty else {
             return .invalid
         }
 
         // Dev mode: accept "DEV" key
         #if DEBUG
-        if key.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() == "DEV" {
+        if trimmedKey.uppercased() == "DEV" {
             return .valid
         }
         #endif
 
         var request = URLRequest(url: validateURL)
         request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
-        let body: [String: String] = [
-            "key": key.trimmingCharacters(in: .whitespacesAndNewlines),
-            "organization_id": organizationId,
-        ]
-
-        guard let httpBody = try? JSONSerialization.data(withJSONObject: body) else {
-            return .error("Failed to encode request")
-        }
-        request.httpBody = httpBody
+        let bodyString = "license_key=\(trimmedKey)"
+        request.httpBody = bodyString.data(using: .utf8)
 
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
@@ -59,10 +54,9 @@ enum LicenseManager {
             }
 
             if httpResponse.statusCode == 200 {
-                // Polar returns the license key object if valid
                 if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                   let status = json["status"] as? String,
-                   status == "granted" {
+                   let valid = json["valid"] as? Bool,
+                   valid {
                     return .valid
                 }
                 return .invalid
