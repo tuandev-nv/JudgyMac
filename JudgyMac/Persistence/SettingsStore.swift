@@ -10,6 +10,7 @@ enum SettingsStore {
         static let isOnboarded = "com.judgymac.onboarded"
         static let toastEnabled = "com.judgymac.toastEnabled"
         static let voiceEnabled = "com.judgymac.voiceEnabled"
+        static let lidCreakEnabled = "com.judgymac.lidCreakEnabled"
         static let licenseKey = "com.judgymac.licenseKey"
         static let isLicenseValid = "com.judgymac.licenseValid"
         static let knownTriggers = "com.judgymac.knownTriggers"
@@ -39,6 +40,7 @@ enum SettingsStore {
         defaults.set(state.isOnboarded, forKey: Keys.isOnboarded)
         defaults.set(state.toastEnabled, forKey: Keys.toastEnabled)
         defaults.set(state.voiceEnabled, forKey: Keys.voiceEnabled)
+        defaults.set(state.lidCreakEnabled, forKey: Keys.lidCreakEnabled)
         if !state.licenseKey.isEmpty {
             defaults.set(LicenseManager.hashKey(state.licenseKey), forKey: Keys.licenseKey)
         }
@@ -96,6 +98,9 @@ enum SettingsStore {
         }
         if defaults.object(forKey: Keys.voiceEnabled) != nil {
             state.voiceEnabled = defaults.bool(forKey: Keys.voiceEnabled)
+        }
+        if defaults.object(forKey: Keys.lidCreakEnabled) != nil {
+            state.lidCreakEnabled = defaults.bool(forKey: Keys.lidCreakEnabled)
         }
         state.licenseKey = defaults.string(forKey: Keys.licenseKey) ?? "" // stored as hash
         state.isLicenseValid = defaults.bool(forKey: Keys.isLicenseValid)

@@ -230,6 +230,15 @@ struct TriggersSettingsTab: View {
                     }
             }
 
+            // Lid creak toggle
+            Section {
+                Toggle("Lid creak sound", isOn: $state.lidCreakEnabled)
+                    .onChange(of: appState.lidCreakEnabled) { _, _ in
+                        SettingsStore.save(appState)
+                        NotificationCenter.default.post(name: .lidCreakDidChange, object: nil)
+                    }
+            }
+
             // Toast notification toggle
             Section {
                 Toggle("Toast notifications", isOn: $state.toastEnabled)

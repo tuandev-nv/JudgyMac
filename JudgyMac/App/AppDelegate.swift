@@ -613,6 +613,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     // MARK: - Lid Angle Creak
 
     private func startLidCreak() {
+        guard _appState.lidCreakEnabled else { return }
+
         let sensor = LidAngleSensor()
         guard sensor.isAvailable else { return }
 
@@ -623,11 +625,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         creak.start()
         creakEngine = creak
 
-        // Feed velocity to creak engine at 30Hz (synced with sensor)
+        // Feed angle to creak engine at 30Hz (synced with sensor)
         lidCreakTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { [weak self] _ in
             guard let self, let sensor = self.lidAngleSensor, let creak = self.creakEngine else { return }
             creak.update(angle: sensor.angle)
         }
+
+        // Observe toggle
+        NotificationCenter.default.addObserver(
+            forName: .lidCreakDidChange, object: nil, queue: .main
+        ) { _ in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                if self._appState.lidCreakEnabled {
+                    self.lidAngleSensor?.start()
+                    self.creakEngine?.start()
+                } else {
+                    self.lidAngleSensor?.stop()
+                    self.creakEngine?.stop()
+                }
+            }
+        }
+    }
+
+    private func stopLidCreak() {
+        lidCreakTimer?.invalidate()
+        lidCreakTimer = nil
+        lidAngleSensor?.stop()
+        creakEngine?.stop()
     }
 
     // MARK: - Update Menu Bar Icon
