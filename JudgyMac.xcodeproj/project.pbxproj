@@ -11,6 +11,7 @@
 		118E2439288F4D9BFC0136F9 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1793841F167922FBC48BDEEF /* PaywallView.swift */; };
 		129433952593655A98DE179F /* CPUMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3F4279DEAB034963BF3879 /* CPUMonitor.swift */; };
 		14C70E038FC91B16A70DFE95 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55EE2BD5868466FD569BEE3 /* SettingsView.swift */; };
+		18A5F9CE5C7C21A8BF746CCD /* CreakAudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703A99C67B0F5707A495236D /* CreakAudioEngine.swift */; };
 		1C76E6CAD2E2742343BD1A5A /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38E714ECDC40E0710486EDE9 /* SettingsWindowController.swift */; };
 		1E05BA5C9EA142AF536CC63F /* DesktopRunnerWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0860369C5964AFF5D6DBE73D /* DesktopRunnerWindow.swift */; };
 		1E6CE19518AC9BCFA4E257B3 /* SlapDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0AFD822028086438C8EE649 /* SlapDetector.swift */; };
@@ -47,6 +48,7 @@
 		94D48CD67AA617B676C3ECF5 /* Emoji in Resources */ = {isa = PBXBuildFile; fileRef = 6B27FE2482465FBC17BC4011 /* Emoji */; };
 		9513A82AA2118F4EAA68AEDA /* SummaryCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1099E327C918F88773A0CD69 /* SummaryCardView.swift */; };
 		9661F064E0C3EB4E29282C83 /* Mood.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66B9C7466A2F6F286959A58 /* Mood.swift */; };
+		97610BCF6A5B6093592CD70E /* LidAngleSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9441718010CC87AC8D25B28 /* LidAngleSensor.swift */; };
 		98EACAB9F19C61C984E30678 /* SystemMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902119412E9AC6D670EB7461 /* SystemMonitor.swift */; };
 		98EFB9A3865F4938F6CDD2D4 /* ProductIdentifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CFD1CCB886B29269B6FF3 /* ProductIdentifiers.swift */; };
 		A2152ADF8A126C14349C7450 /* SlapAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F736FBB5FE1C36AE5B14633 /* SlapAnimationView.swift */; };
@@ -105,6 +107,7 @@
 		66BDE62CC433E43448BCD092 /* PressureTrackingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PressureTrackingView.swift; sourceTree = "<group>"; };
 		675FFD5CA556A54DEEE43D37 /* UserStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStats.swift; sourceTree = "<group>"; };
 		6B27FE2482465FBC17BC4011 /* Emoji */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Emoji; path = JudgyMac/Resources/Emoji; sourceTree = SOURCE_ROOT; };
+		703A99C67B0F5707A495236D /* CreakAudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreakAudioEngine.swift; sourceTree = "<group>"; };
 		7162979E25841246E79E8578 /* DetectionCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectionCoordinator.swift; sourceTree = "<group>"; };
 		73D56B2FBEA579D21960B264 /* AppUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdater.swift; sourceTree = "<group>"; };
 		77EA0E0B982C531DC3DA28E2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -118,6 +121,7 @@
 		AA629D49B1C788897ECD732C /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
 		AB08813283AB6FA67974B4E0 /* EntitlementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitlementManager.swift; sourceTree = "<group>"; };
 		ACB34E1CBC3D8B34DCAE15EC /* DesktopRunnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesktopRunnerView.swift; sourceTree = "<group>"; };
+		B9441718010CC87AC8D25B28 /* LidAngleSensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LidAngleSensor.swift; sourceTree = "<group>"; };
 		BCC34BF823FCBCCDCA5C2A0C /* DailySummaryGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailySummaryGenerator.swift; sourceTree = "<group>"; };
 		BF25446265E393933579BE1C /* BehaviorEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehaviorEvent.swift; sourceTree = "<group>"; };
 		BF30272CC10DE7074C471CF2 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -279,8 +283,10 @@
 				06148C9A9E28B56AE417AC2E /* ActivityMonitor.swift */,
 				CDCB418A07F03FA3DF9357EA /* AppSwitchDetector.swift */,
 				4A3F4279DEAB034963BF3879 /* CPUMonitor.swift */,
+				703A99C67B0F5707A495236D /* CreakAudioEngine.swift */,
 				7162979E25841246E79E8578 /* DetectionCoordinator.swift */,
 				38B35251CB604B1CED9835B5 /* IdleDetector.swift */,
+				B9441718010CC87AC8D25B28 /* LidAngleSensor.swift */,
 				237AB8A5032A73070937DB19 /* LidDetector.swift */,
 				66BDE62CC433E43448BCD092 /* PressureTrackingView.swift */,
 				8AC2C68A6054309E5A14DBC3 /* ScreenTimeDetector.swift */,
@@ -452,6 +458,7 @@
 				129433952593655A98DE179F /* CPUMonitor.swift in Sources */,
 				597956FD9A89FF8250FFFFDF /* CharacterPack.swift in Sources */,
 				EEF111B1F50F7449C31A6A04 /* Constants.swift in Sources */,
+				18A5F9CE5C7C21A8BF746CCD /* CreakAudioEngine.swift in Sources */,
 				229AC52AE0C821CCE442EEDD /* DailySummaryGenerator.swift in Sources */,
 				47A6242C6C28CF7CA4164B57 /* DesktopRunnerView.swift in Sources */,
 				1E05BA5C9EA142AF536CC63F /* DesktopRunnerWindow.swift in Sources */,
@@ -463,6 +470,7 @@
 				4332C1F72B138EEF404397B6 /* IdleDetector.swift in Sources */,
 				7270FC211B986C2F320B42EC /* JudgyMacApp.swift in Sources */,
 				BE20AEF2EEA0B7FC6B293CE5 /* LicenseManager.swift in Sources */,
+				97610BCF6A5B6093592CD70E /* LidAngleSensor.swift in Sources */,
 				662DE64D63EB8805A711EE24 /* LidDetector.swift in Sources */,
 				8308261336EE90F27DED82A2 /* MenuBarView.swift in Sources */,
 				9661F064E0C3EB4E29282C83 /* Mood.swift in Sources */,
@@ -556,7 +564,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -571,7 +579,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.7;
+				MARKETING_VERSION = 1.0.8;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.judgymac.app;
@@ -637,7 +645,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -658,7 +666,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0.7;
+				MARKETING_VERSION = 1.0.8;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

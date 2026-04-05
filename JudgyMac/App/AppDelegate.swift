@@ -29,6 +29,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
     private var cachedStatsPillKey = ""
     private var cachedSpriteComposites: [NSImage] = []
 
+    // Lid angle creak
+    private var lidAngleSensor: LidAngleSensor?
+    private var creakEngine: CreakAudioEngine?
+    private var lidCreakTimer: Timer?
+
     // MARK: - App Lifecycle
 
     private var saveTimer: Timer?
@@ -597,9 +602,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         coord.start()
         coordinator = coord
 
+        // Lid angle creak
+        startLidCreak()
+
         #if DEBUG
         print("🤨 [JudgyMac] App started. Detectors running.")
         #endif
+    }
+
+    // MARK: - Lid Angle Creak
+
+    private func startLidCreak() {
+        let sensor = LidAngleSensor()
+        guard sensor.isAvailable else { return }
+
+        lidAngleSensor = sensor
+        sensor.start()
+
+        let creak = CreakAudioEngine()
+        creak.start()
+        creakEngine = creak
+
+        // Feed velocity to creak engine at 30Hz (synced with sensor)
+        lidCreakTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { [weak self] _ in
+            guard let self, let sensor = self.lidAngleSensor, let creak = self.creakEngine else { return }
+            creak.update(angle: sensor.angle)
+        }
     }
 
     // MARK: - Update Menu Bar Icon
