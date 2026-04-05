@@ -15,7 +15,7 @@ final class CreakAudioEngine {
     private var playheadPosition: TimeInterval = 0
 
     /// Degrees of lid change before playing a crack sound.
-    private let degreesPerCrack = 2.0
+    private let degreesPerCrack = 1.0
     /// Duration of each crack snippet in seconds.
     private let snippetDuration = 0.2
     /// Max concurrent players.
