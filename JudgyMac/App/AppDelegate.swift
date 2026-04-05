@@ -627,7 +627,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
 
         // Feed angle to creak engine at 30Hz (synced with sensor)
         lidCreakTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { [weak self] _ in
-            guard let self, let sensor = self.lidAngleSensor, let creak = self.creakEngine else { return }
+            guard let self, self._appState.isLicenseValid,
+                  let sensor = self.lidAngleSensor, let creak = self.creakEngine else { return }
             creak.update(angle: sensor.angle)
         }
 

@@ -134,4 +134,5 @@ extension Notification.Name {
     static let slapKO = Notification.Name("com.judgymac.slapKO")
     static let triggersDidChange = Notification.Name("com.judgymac.triggersDidChange")
     static let lidCreakDidChange = Notification.Name("com.judgymac.lidCreakDidChange")
+    static let licenseDidActivate = Notification.Name("com.judgymac.licenseDidActivate")
 }

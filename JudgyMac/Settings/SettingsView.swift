@@ -141,6 +141,7 @@ struct GeneralSettingsTab: View {
                 appState.isLicenseValid = true
                 licenseStatus = "✓ License activated!"
                 SettingsStore.save(appState)
+                NotificationCenter.default.post(name: .licenseDidActivate, object: nil)
                 // Pre-warm assets for instant first slap
                 SlapWindow.shared.warmUp(pack: appState.currentPack)
                 SoundPlayer.preload([

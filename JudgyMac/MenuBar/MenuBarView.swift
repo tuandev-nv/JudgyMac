@@ -232,6 +232,7 @@ struct MenuBarView: View {
                 appState.isLicenseValid = true
                 licenseStatus = "✓ License activated!"
                 SettingsStore.save(appState)
+                NotificationCenter.default.post(name: .licenseDidActivate, object: nil)
                 SlapWindow.shared.warmUp(pack: appState.currentPack)
                 SoundPlayer.preload([
                     appState.currentPack.slapSoundPath,
