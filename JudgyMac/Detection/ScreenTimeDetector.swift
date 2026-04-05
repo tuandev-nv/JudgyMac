@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 
 /// Detects continuous screen usage without breaks.
 /// Fires `.screenTime` after 45 minutes of active use, then every 45 minutes.
@@ -14,17 +15,30 @@ final class ScreenTimeDetector: BehaviorDetector, @unchecked Sendable {
     private let checkInterval: TimeInterval = 60
     private let breakThresholdSeconds: TimeInterval = 300  // 5 min idle = break
     private let fireIntervalMinutes: Int = 45
+    private var lastCheckTime: Date?
+    private var sleepObservers: [NSObjectProtocol] = []
 
     func start(onEvent: @escaping @Sendable (BehaviorEvent) -> Void) {
         guard !isRunning else { return }
         self.onEvent = onEvent
         isRunning = true
         sessionStartTime = Date()
+        lastCheckTime = Date()
 
         ActivityMonitor.shared.subscribe()
         timer = Timer.scheduledTimer(withTimeInterval: checkInterval, repeats: true) { [weak self] _ in
             self?.check()
         }
+
+        // Reset session on wake from sleep
+        let wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didWakeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.sessionStartTime = nil
+            self?.lastFireTime = nil
+            self?.lastCheckTime = Date()
+        }
+        sleepObservers.append(wakeObserver)
 
         #if DEBUG
         print("👁️ [ScreenTime] Started — will remind every \(fireIntervalMinutes) min")
@@ -36,10 +50,22 @@ final class ScreenTimeDetector: BehaviorDetector, @unchecked Sendable {
         isRunning = false
         timer?.invalidate()
         timer = nil
+        for obs in sleepObservers {
+            NSWorkspace.shared.notificationCenter.removeObserver(obs)
+        }
+        sleepObservers.removeAll()
         ActivityMonitor.shared.unsubscribe()
     }
 
     private func check() {
+        // Detect sleep gap — if last check was more than 2 min ago, machine was sleeping
+        let now = Date()
+        if let lastCheck = lastCheckTime, now.timeIntervalSince(lastCheck) > checkInterval * 2 {
+            sessionStartTime = nil
+            lastFireTime = nil
+        }
+        lastCheckTime = now
+
         let idleSeconds = ActivityMonitor.shared.idleSeconds
 
         // User took a real break — reset session
@@ -55,12 +81,12 @@ final class ScreenTimeDetector: BehaviorDetector, @unchecked Sendable {
         }
 
         guard let start = sessionStartTime else { return }
-        let activeMinutes = Int(Date().timeIntervalSince(start) / 60)
+        let activeMinutes = Int(now.timeIntervalSince(start) / 60)
 
         guard activeMinutes >= fireIntervalMinutes else { return }
 
         if let lastFire = lastFireTime {
-            let minutesSinceLastFire = Int(Date().timeIntervalSince(lastFire) / 60)
+            let minutesSinceLastFire = Int(now.timeIntervalSince(lastFire) / 60)
             guard minutesSinceLastFire >= fireIntervalMinutes else { return }
         }
 
