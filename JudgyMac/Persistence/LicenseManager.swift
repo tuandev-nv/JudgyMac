@@ -1,10 +1,11 @@
 import Foundation
 import CryptoKit
 
-/// Validates license keys via LemonSqueezy License API.
+/// Validates license keys via Polar.sh API.
 @MainActor
 enum LicenseManager {
-    private static let validateURL = URL(string: "https://api.lemonsqueezy.com/v1/licenses/validate")!
+    private static let organizationId = "87153ee2-de7a-473a-bc5d-e150e027e4f0"
+    private static let validateURL = URL(string: "https://api.polar.sh/v1/customer-portal/license-keys/validate")!
 
     /// Hash a license key for secure local storage
     nonisolated static func hashKey(_ key: String) -> String {
@@ -25,7 +26,7 @@ enum LicenseManager {
         case error(String)
     }
 
-    /// Validate a license key against LemonSqueezy License API.
+    /// Validate a license key against Polar.sh API.
     static func validate(key: String) async -> Result {
         let trimmedKey = key.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedKey.isEmpty else {
@@ -41,11 +42,17 @@ enum LicenseManager {
 
         var request = URLRequest(url: validateURL)
         request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        let bodyString = "license_key=\(trimmedKey)"
-        request.httpBody = bodyString.data(using: .utf8)
+        let body: [String: String] = [
+            "key": trimmedKey,
+            "organization_id": organizationId,
+        ]
+
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: body) else {
+            return .error("Failed to encode request")
+        }
+        request.httpBody = httpBody
 
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
@@ -55,8 +62,8 @@ enum LicenseManager {
 
             if httpResponse.statusCode == 200 {
                 if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                   let valid = json["valid"] as? Bool,
-                   valid {
+                   let status = json["status"] as? String,
+                   status == "granted" {
                     return .valid
                 }
                 return .invalid
