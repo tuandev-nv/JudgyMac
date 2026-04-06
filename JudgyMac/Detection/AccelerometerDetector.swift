@@ -250,8 +250,8 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
         // Suppress during lid close/open
         guard Date() >= suppressedUntil else { return }
 
-        // Check screen lock every 5s
-        if now - lastLockCheck > 5_000_000_000 {
+        // Check screen lock every 3s
+        if now - lastLockCheck > 3_000_000_000 {
             lastLockCheck = now
             isScreenLocked = CGSessionCopyCurrentDictionary()
                 .flatMap { ($0 as NSDictionary)["CGSSessionScreenIsLocked"] as? Bool } ?? false
@@ -286,6 +286,7 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
         let raw = Int32(ptr[0]) | (Int32(ptr[1]) << 8) | (Int32(ptr[2]) << 16) | (Int32(ptr[3]) << 24)
         return Double(raw) / 65536.0
     }
+
 }
 
 // MARK: - C Callback
