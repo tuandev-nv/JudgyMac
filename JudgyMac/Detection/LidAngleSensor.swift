@@ -63,7 +63,7 @@ final class LidAngleSensor: @unchecked Sendable {
         guard isAvailable, timer == nil, let device = hidDevice else { return }
         guard IOHIDDeviceOpen(device, Self.noOptions) == kIOReturnSuccess else { return }
         isDeviceOpen = true
-        timer = .scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { [weak self] _ in
+        timer = .scheduledTimer(withTimeInterval: 1.0 / 10.0, repeats: true) { [weak self] _ in
             self?.poll()
         }
         #if DEBUG
