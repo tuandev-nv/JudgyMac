@@ -229,6 +229,36 @@ struct TriggersSettingsTab: View {
                         SoundPlayer.isMuted = !newValue
                         SettingsStore.save(appState)
                     }
+
+                // Sensitivity slider — only enabled when slap is on
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text("Slap sensitivity")
+                            .font(.system(size: 13))
+                        Spacer()
+                        Text(String(format: "%.3fg", appState.slapSensitivity))
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                    }
+                    Slider(value: $state.slapSensitivity, in: 0.02...0.1, step: 0.001)
+                        .disabled(!appState.enabledTriggers.contains(.slap))
+                        .onChange(of: appState.slapSensitivity) { _, newValue in
+                            SettingsStore.save(appState)
+                            #if ACCELEROMETER_ENABLED
+                            SlapSignalProcessor.magnitudeFloor = newValue
+                            #endif
+                        }
+                    HStack {
+                        Text("Butterfly landing")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.tertiary)
+                        Spacer()
+                        Text("Full commitment")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.tertiary)
+                    }
+                }
+                .padding(.top, 4)
             }
 
             // Lid creak toggle

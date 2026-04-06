@@ -1,7 +1,7 @@
-import AVFoundation
+@preconcurrency import AVFoundation
 
 /// Plays sequential snippets of a creak sound each time the lid angle changes by N degrees.
-final class CreakAudioEngine {
+final class CreakAudioEngine: @unchecked Sendable {
 
     private(set) var isRunning = false
 
@@ -111,11 +111,9 @@ final class CreakAudioEngine {
 
         // Stop after snippet duration
         let dur = snippetDuration
-        let playerRef = player
-        Timer.scheduledTimer(withTimeInterval: dur, repeats: false) { _ in
-            MainActor.assumeIsolated {
-                playerRef.stop()
-            }
+        nonisolated(unsafe) let playerRef = player
+        Timer.scheduledTimer(withTimeInterval: dur, repeats: false) { @Sendable _ in
+            playerRef.stop()
         }
     }
 }

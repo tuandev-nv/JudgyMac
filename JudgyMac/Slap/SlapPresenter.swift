@@ -80,9 +80,10 @@ final class SlapPresenter {
         let slapCount = appState.todayStats.slapCount
         let isMilestone = slapCount > 0 && slapCount % 50 == 0
 
-        // Suppress voice on the milestone slap itself (duration updated after audio loads)
+        // Suppress normal voice on milestone slap — milestone voice takes priority
         if isMilestone {
             SlapWindow.shared.voiceSuppressedUntil = .distantFuture
+            SlapWindow.shared.cancelPendingVoice()
         }
 
         // Always do normal slap animation (voice suppressed during milestone)
@@ -94,12 +95,9 @@ final class SlapPresenter {
             let text = milestone.lines[index]
             let voicePath = "\(pack.folderPath)/milestone_voices/\(milestone.prefix)_\(index + 1)"
 
-            // Play milestone voice after short delay, suppress other voices until it finishes
-            Task {
-                try? await Task.sleep(for: .milliseconds(300))
-                let duration = SoundPlayer.playVoiceReturningDuration(voicePath, volume: 1.0)
-                SlapWindow.shared.voiceSuppressedUntil = Date().addingTimeInterval(duration)
-            }
+            // Play milestone voice immediately, suppress other voices until it finishes
+            let duration = SoundPlayer.playVoiceReturningDuration(voicePath, volume: 1.0)
+            SlapWindow.shared.voiceSuppressedUntil = Date().addingTimeInterval(duration)
 
             let entry = RoastEntry(
                 text: text,
@@ -114,12 +112,5 @@ final class SlapPresenter {
             }
         }
 
-        if source == "body" {
-            // Physical slap → also trigger desktop runner simultaneously
-            NotificationCenter.default.post(name: .hideMenuBarSprite, object: nil)
-            DesktopRunnerWindow.shared.run(pack: pack) {
-                NotificationCenter.default.post(name: .showMenuBarSprite, object: nil)
-            }
-        }
     }
 }

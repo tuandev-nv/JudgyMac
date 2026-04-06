@@ -19,6 +19,7 @@ final class AppState {
     var toastEnabled: Bool = true
     var voiceEnabled: Bool = true
     var lidCreakEnabled: Bool = true
+    var slapSensitivity: Double = 0.05  // g-force threshold
     var isOnboarded: Bool = false
 
     // MARK: - System Stats

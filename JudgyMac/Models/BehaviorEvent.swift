@@ -99,7 +99,11 @@ struct BehaviorEvent: Sendable {
         BehaviorEvent(type: .appSwitch, metadata: ["count": "\(count)", "app": app])
     }
 
-    static func slap(pressure: Double, source: String = "trackpad") -> BehaviorEvent {
-        BehaviorEvent(type: .slap, metadata: ["pressure": String(format: "%.2f", pressure), "source": source])
+    static func slap(pressure: Double, source: String = "trackpad", magnitude: Double = 0) -> BehaviorEvent {
+        BehaviorEvent(type: .slap, metadata: [
+            "pressure": String(format: "%.2f", pressure),
+            "source": source,
+            "magnitude": String(format: "%.3f", magnitude),
+        ])
     }
 }

@@ -127,7 +127,7 @@ struct DesktopRunnerView: View {
         rotationSpeed = Double.random(in: 200...400) * (Bool.random() ? 1 : -1) // Spin direction
         direction = Bool.random() ? 1 : -1
 
-        let groundY = CGFloat.random(in: screenSize.height * 0.5 ... screenSize.height * 0.85)
+        let groundY = CGFloat.random(in: screenSize.height * 0.75 ... screenSize.height * 0.95)
         runDuration = Double.random(in: 3...5)
 
         // Play falling sound

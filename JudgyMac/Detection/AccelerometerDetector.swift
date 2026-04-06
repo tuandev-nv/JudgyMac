@@ -21,7 +21,7 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
     private var sleepWakeObservers: [NSObjectProtocol] = []
 
     // Tuning
-    private let debounceInterval: TimeInterval = 0.5
+    private let debounceInterval: TimeInterval = 0.3
     /// Suppress detection for this many seconds around sleep/wake (lid close/open).
     private let lidSuppressionSeconds: TimeInterval = 3.0
 
@@ -279,7 +279,7 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
         print("🏋️ [Accelerometer] 💥 SLAP! votes=\(verdict.votes)/4 mag=\(String(format: "%.3f", verdict.magnitude))g conf=\(String(format: "%.2f", verdict.confidence))")
         #endif
 
-        onEvent?(.slap(pressure: verdict.confidence, source: "body"))
+        onEvent?(.slap(pressure: verdict.confidence, source: "body", magnitude: verdict.magnitude))
     }
 
     private func parseQ16(_ ptr: UnsafeMutablePointer<UInt8>) -> Double {

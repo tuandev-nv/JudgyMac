@@ -43,6 +43,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
 
         // Load persisted data
         SettingsStore.load(into: _appState)
+        #if ACCELEROMETER_ENABLED
+        SlapSignalProcessor.magnitudeFloor = _appState.slapSensitivity
+        #endif
 
         warnIfNotInApplications()
         setupStatusItem()

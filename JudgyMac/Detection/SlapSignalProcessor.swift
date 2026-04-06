@@ -40,7 +40,7 @@ struct HighPassFilter {
 /// Compares short-term vs long-term energy at 3 timescales.
 /// Any scale exceeding threshold → vote YES. Catches slaps of varying duration.
 struct MultiScaleSTALTA {
-    let threshold: Double = 4.0
+    let threshold: Double = 2.0
 
     // Scale 1: Fast (20ms / 500ms) — catches sharp, brief slaps
     private var sta1: Double = 0
@@ -85,7 +85,7 @@ struct MultiScaleSTALTA {
 /// Normal motion: kurtosis ~3. Slap impulse: >> 3.
 struct RollingKurtosis {
     let windowSize = 200
-    let threshold: Double = 10.0
+    let threshold: Double = 6.0
 
     private var buffer: [Double]
     private var index = 0
@@ -139,7 +139,7 @@ struct RollingKurtosis {
 /// Gradual changes absorbed by drift. Sharp impulses exceed threshold instantly.
 struct CUSUMDetector {
     private let drift: Double = 0.02
-    let threshold: Double = 0.5
+    let threshold: Double = 0.03
 
     private var sum: Double = 0
     private var mu: Double = 0
@@ -165,7 +165,7 @@ struct CUSUMDetector {
 struct PeakMADDetector {
     private let windowSize = 200
     /// How many MADs above median to be an outlier
-    let madMultiplier: Double = 6.0
+    let madMultiplier: Double = 3.0
 
     private var buffer: [Double]
     private var sortedBuffer: [Double]
@@ -233,9 +233,8 @@ struct SlapSignalProcessor {
     private let baselineAlpha: Double = 0.01
 
     // Thresholds
-    private let magnitudeFloor: Double = 0.12
-    private let hpThreshold: Double = 0.15
-    private let votesRequired = 3
+    nonisolated(unsafe) static var magnitudeFloor: Double = 0.05
+    private let kurtosisMinimum: Double = 6.0
 
     mutating func process(x: Double, y: Double, z: Double) -> SlapVerdict {
         // Raw magnitude and delta
@@ -243,44 +242,23 @@ struct SlapSignalProcessor {
         let delta = abs(rawMag - baselineMagnitude)
         baselineMagnitude = baselineMagnitude * (1 - baselineAlpha) + rawMag * baselineAlpha
 
-        // High-pass filter (always runs to feed other algorithms)
+        // High-pass filter
         let (fx, fy, fz) = highPass.filter(x: x, y: y, z: z)
         let filteredMag = sqrt(fx * fx + fy * fy + fz * fz)
 
-        // Hard magnitude floor — reject typing/fan vibrations immediately
-        guard delta >= magnitudeFloor else {
-            // Still feed algorithms to keep baselines updated
-            let energy = filteredMag * filteredMag
-            _ = staLta.process(energy)
-            _ = kurtosis.process(filteredMag)
-            _ = cusum.process(filteredMag)
-            _ = peakMad.process(filteredMag)
-            return SlapVerdict(detected: false, confidence: 0, magnitude: delta, votes: 0)
-        }
-
-        // Algorithm 1: High-pass threshold
-        let hpVote = filteredMag >= hpThreshold
-
-        // Algorithm 2: Multi-scale STA/LTA
-        let energy = filteredMag * filteredMag
-        let ratio = staLta.process(energy)
-        let staVote = ratio >= staLta.threshold
-
-        // Algorithm 3: Kurtosis
+        // Only kurtosis needed for spike detection
         let kurt = kurtosis.process(filteredMag)
-        let kurtVote = kurtosis.isWarmedUp && kurt >= kurtosis.threshold
 
-        // Algorithm 4: CUSUM
-        let cusumVal = cusum.process(filteredMag)
-        let cusumVote = cusumVal >= cusum.threshold
+        // Detection: magnitude above floor + kurtosis confirms sharp spike (not sustained vibration)
+        let passesFloor = delta >= Self.magnitudeFloor
+        let isSharpSpike = !kurtosis.isWarmedUp || kurt >= kurtosisMinimum
+        let detected = passesFloor && isSharpSpike
 
-        // Algorithm 5: Peak/MAD outlier detection
-        let madScore = peakMad.process(filteredMag)
-        let madVote = peakMad.isWarmedUp && madScore >= peakMad.madMultiplier
-
-        // Voting: need ≥3 out of 5
-        let votes = [hpVote, staVote, kurtVote, cusumVote, madVote].filter { $0 }.count
-        let detected = votes >= votesRequired
+        #if DEBUG
+        if passesFloor {
+            print("👊 [Slap] mag=\(String(format: "%.3f", delta)) kurt=\(String(format: "%.1f", kurt)) \(detected ? "✅ SLAP" : "❌ (not sharp)")")
+        }
+        #endif
 
         let confidence = detected ? min(delta / 0.36, 1.0) : 0
 
@@ -288,7 +266,7 @@ struct SlapSignalProcessor {
             detected: detected,
             confidence: confidence,
             magnitude: delta,
-            votes: votes
+            votes: detected ? 2 : 0
         )
     }
 }

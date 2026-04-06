@@ -76,6 +76,13 @@ final class SlapWindow {
 
     /// Suppress slap voice lines until this time (milestone voice playing).
     var voiceSuppressedUntil: Date = .distantPast
+    /// Delayed voice task — cancelled if another slap comes in
+    private var pendingVoiceTask: Task<Void, Never>?
+
+    func cancelPendingVoice() {
+        pendingVoiceTask?.cancel()
+        pendingVoiceTask = nil
+    }
 
     func slap(pack: CharacterPack) {
         // KO — ignore all slaps during cooldown
@@ -135,15 +142,30 @@ final class SlapWindow {
             self.slapState.impactTrigger += 1
         }
 
-        // Pick ONE reaction line → use both text and voice
+        // Pick ONE reaction line → text shown immediately, voice delayed
         let pickedLine = pickReactionLine(pack: pack)
         slapState.currentReactionText = pickedLine?.text
-        let isVoiceSuppressed = Date() < voiceSuppressedUntil
+
+        // Cancel any pending voice from previous slap
+        pendingVoiceTask?.cancel()
+
+        // Play only impact sounds immediately (no voice)
         SoundPlayer.playSlapCombo(
             slapSound: pack.slapSoundPath,
             umphSound: "\(pack.folderPath)/slap_voice",
-            voiceSound: isVoiceSuppressed ? nil : pickedLine?.voicePath
+            voiceSound: nil
         )
+
+        // Schedule voice after combo pause (2.5x debounce)
+        let isVoiceSuppressed = Date() < voiceSuppressedUntil
+        if !isVoiceSuppressed, let voicePath = pickedLine?.voicePath {
+            let delay = Constants.Slap.debounceSeconds * 2.5
+            pendingVoiceTask = Task {
+                try? await Task.sleep(for: .seconds(delay))
+                guard !Task.isCancelled else { return }
+                SoundPlayer.play(voicePath)
+            }
+        }
 
         restartDismissTimer()
     }
