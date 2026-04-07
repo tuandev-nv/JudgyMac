@@ -45,6 +45,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, @preconcurrency UNUser
         SettingsStore.load(into: _appState)
         #if ACCELEROMETER_ENABLED
         SlapSignalProcessor.magnitudeFloor = _appState.slapSensitivity
+        AccelerometerDetector.debounceInterval = _appState.slapCooldown
         #endif
 
         warnIfNotInApplications()

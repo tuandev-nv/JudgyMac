@@ -259,6 +259,36 @@ struct TriggersSettingsTab: View {
                     }
                 }
                 .padding(.top, 4)
+
+                // Cooldown slider
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text("Slap cooldown")
+                            .font(.system(size: 13))
+                        Spacer()
+                        Text(String(format: "%.1fs", appState.slapCooldown))
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                    }
+                    Slider(value: $state.slapCooldown, in: 0.1...2.0, step: 0.1)
+                        .disabled(!appState.enabledTriggers.contains(.slap))
+                        .onChange(of: appState.slapCooldown) { _, newValue in
+                            SettingsStore.save(appState)
+                            #if ACCELEROMETER_ENABLED
+                            AccelerometerDetector.debounceInterval = newValue
+                            #endif
+                        }
+                    HStack {
+                        Text("Rapid fire")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.tertiary)
+                        Spacer()
+                        Text("Chill")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.tertiary)
+                    }
+                }
+                .padding(.top, 4)
             }
 
             // Lid creak toggle

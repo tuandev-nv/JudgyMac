@@ -20,6 +20,7 @@ final class AppState {
     var voiceEnabled: Bool = true
     var lidCreakEnabled: Bool = true
     var slapSensitivity: Double = 0.05  // g-force threshold
+    var slapCooldown: Double = 0.3     // seconds between slaps
     var isOnboarded: Bool = false
 
     // MARK: - System Stats

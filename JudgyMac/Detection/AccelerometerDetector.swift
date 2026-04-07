@@ -21,7 +21,7 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
     private var sleepWakeObservers: [NSObjectProtocol] = []
 
     // Tuning
-    private let debounceInterval: TimeInterval = 0.3
+    nonisolated(unsafe) static var debounceInterval: TimeInterval = 0.3
     /// Suppress detection for this many seconds around sleep/wake (lid close/open).
     private let lidSuppressionSeconds: TimeInterval = 3.0
 
@@ -272,7 +272,7 @@ final class AccelerometerDetector: BehaviorDetector, @unchecked Sendable {
 
         // Debounce
         let slapNow = Date()
-        guard slapNow.timeIntervalSince(lastSlapTime) >= debounceInterval else { return }
+        guard slapNow.timeIntervalSince(lastSlapTime) >= Self.debounceInterval else { return }
         lastSlapTime = slapNow
 
         #if DEBUG
